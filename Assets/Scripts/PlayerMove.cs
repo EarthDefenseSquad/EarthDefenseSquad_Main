@@ -78,7 +78,13 @@ public class PlayerMove : MonoBehaviour
             RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
 
             if (rayHit.collider != null) {
-                if (rayHit.distance < 0.5f) {
+                //Debug.Log(rayHit.collider.name);
+                //Debug.Log(rayHit.distance); // 거리 0.5076 이렇게나옴
+                if (rayHit.distance < 0.6f)
+                // 플레이어중심(레이시작점)-(레이쏴서맞은)플랫폼 거리가 0.5보다 커서 0.5f로하면 점핑모션 안끝나는 버그가 있었음.
+                // 0.6f로 수정하니 해결..
+                // 바닥에 비비다보면 점핑모션 제대로 끝났는데 그건 왜된거지 -> 가끔 0.4로 찍히는 곳도 있는데 이래서 끝난듯
+                {
                     anim.SetBool("isJumping", false);
                 }
 
