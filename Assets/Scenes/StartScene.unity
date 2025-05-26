@@ -533,7 +533,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 854203116}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
@@ -909,11 +909,11 @@ RectTransform:
   - {fileID: 854203117}
   m_Father: {fileID: 1695718818}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -50, y: 50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 970, y: 50}
   m_SizeDelta: {x: 900, y: 300}
-  m_Pivot: {x: 1, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1 &197989044
 GameObject:
   m_ObjectHideFlags: 0
@@ -1378,6 +1378,18 @@ MonoBehaviour:
       - m_Target: {fileID: 861570434}
         m_TargetAssemblyTypeName: PanelManager, Assembly-CSharp
         m_MethodName: GoCharacterPanel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1940869744}
+        m_TargetAssemblyTypeName: PhotonManager, Assembly-CSharp
+        m_MethodName: OnGameStartButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3129,7 +3141,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3755635884403132370, guid: b028314870cd5694e961dd423f110c14, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.0002708435
+      value: 0.00024414062
       objectReference: {fileID: 0}
     - target: {fileID: 3755635884403132370, guid: b028314870cd5694e961dd423f110c14, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6420,7 +6432,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1765699288}
         m_TargetAssemblyTypeName: GameDataManager, Assembly-CSharp
@@ -7431,7 +7443,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 676363350}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
@@ -9421,7 +9433,7 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 1
+          m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1765699288}
         m_TargetAssemblyTypeName: GameDataManager, Assembly-CSharp
@@ -10051,6 +10063,76 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1940869743
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1940869745}
+  - component: {fileID: 1940869744}
+  - component: {fileID: 1940869746}
+  m_Layer: 0
+  m_Name: Photon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1940869744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940869743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3f742abc2f916e4c8bad40d6be19dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterSelect_Panel: {fileID: 1695718817}
+  RoomLoadingPanel: {fileID: 1716634156}
+  Button_Start: {fileID: 231725078}
+--- !u!4 &1940869745
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940869743}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 960, y: 540, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1940869746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940869743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1943051478
 GameObject:
   m_ObjectHideFlags: 0
@@ -10896,7 +10978,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3755635884403132370, guid: b028314870cd5694e961dd423f110c14, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.0002708435
+      value: 0.00024414062
       objectReference: {fileID: 0}
     - target: {fileID: 3755635884403132370, guid: b028314870cd5694e961dd423f110c14, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -11384,6 +11466,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1693160208}
   - {fileID: 1928313560}
+  - {fileID: 1940869745}
   - {fileID: 368752732}
   - {fileID: 727662871}
   - {fileID: 1083711921}
