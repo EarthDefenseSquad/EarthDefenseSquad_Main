@@ -39,6 +39,65 @@ public class GameDataManager : MonoBehaviour
     private void Start()
     {
         UpdateCharacterUI();
+        LoadData();  // 저장된 데이터 불러오기
+    }
+
+
+    private void OnApplicationQuit()
+    {
+        SaveData();
+    }
+
+    // 데이터 저장
+    public void SaveData()
+    {
+        PlayerPrefs.SetInt("SelectedCharacter1P", selectedCharacterIndex1P);
+        PlayerPrefs.SetInt("SelectedCharacter2P", selectedCharacterIndex2P);
+        PlayerPrefs.SetInt("SelectedYear", selectedYear);
+        PlayerPrefs.SetInt("SelectedStage", selectedStageIndex);
+        PlayerPrefs.Save();
+        Debug.Log("게임 데이터 저장 완료");
+    }
+
+    // 데이터 불러오기
+    public void LoadData()
+    {
+        selectedCharacterIndex1P = PlayerPrefs.GetInt("SelectedCharacter1P", -1);
+        selectedCharacterIndex2P = PlayerPrefs.GetInt("SelectedCharacter2P", -1);
+        selectedYear = PlayerPrefs.GetInt("SelectedYear", -1);
+        selectedStageIndex = PlayerPrefs.GetInt("SelectedStage", -1);
+        Debug.Log("게임 데이터 불러오기 완료");
+        UpdateCharacterUI();  // UI 갱신
+    }
+
+    // 데이터 초기화
+    public void ResetData()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("게임 데이터 초기화 완료");
+
+        selectedCharacterIndex1P = -1;
+        selectedCharacterIndex2P = -1;
+        selectedYear = -1;
+        selectedStageIndex = -1;
+        for (int i = 0; i < stageUnlocked.Length; i++)
+        {
+            stageUnlocked[i] = false; // 모든 스테이지 잠금
+        }
+    }
+
+    // 스테이지 잠금 초기화
+    public void ResetStageUnlock()
+    {
+        for (int i = 0; i < stageUnlocked.Length; i++)
+        {
+            stageUnlocked[i] = false;
+            PlayerPrefs.SetInt($"Stage{i + 1}Unlocked", 0);
+        }
+
+        PlayerPrefs.Save();
+        Debug.Log("모든 스테이지 잠금 초기화 완료");
     }
 
     public void OnCharacterButtonClicked1P(int characterIndex)

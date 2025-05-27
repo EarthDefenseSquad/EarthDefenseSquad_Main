@@ -26,6 +26,13 @@ public class Intromanager : MonoBehaviour
     }
 
     // Update is called once per frame
+
+    public void GoWaitingScene()
+    {
+        SceneManager.LoadScene("WaitingScene");
+    }
+
+
     public void GoGameScene()
     {
         SceneManager.LoadScene("GameScene");
