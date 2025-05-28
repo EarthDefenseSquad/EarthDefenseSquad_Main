@@ -1,107 +1,312 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
 
 public class PlayerMove : MonoBehaviour
 {
-    
+    public enum PlayerType { Player1, Player2 }
+    public PlayerType playerType;
+
+    public GameManager gameManager;
     public float maxSpeed;
-    public float jumpPower;
+    public float jumpForce;
+    public bool hasAccessPass = false;
+
+    private bool isInvincible = false;
+    private bool doubleJumpActive = false;
+    private bool doubleJumpUsed = false;
+    private bool colorRestoreMode = false;
+    private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
+
 
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
-    CapsuleCollider2D capsulecollider;
-    AudioSource audioSource;
     BoxCollider2D boxCollider;
+    public ItemManager itemManager;
+    AudioSource audioSource;
 
+    public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
     void Awake()
     {
-        rigid = GetComponent<Rigidbody2D>();    
+        rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
-        capsulecollider = GetComponent<CapsuleCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
-    }
 
+        if (playerType == PlayerType.Player2)
+        {
+            jumpForce *= 1.3f;
+            maxSpeed *= 1.3f;
+        }
+
+        Debug.Log($"[PlayerMove] {playerType} - Speed: {maxSpeed}, Jump: {jumpForce}");
+
+    }
 
     void Update()
     {
-        // Jump
-        if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumping"))
+        if (Input.GetButtonDown("Jump"))
         {
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-            anim.SetBool("isJumping", true);
-           
-        }
-            
-        // Stop Speed
-        if (Input.GetButtonUp("Horizontal"))
-        {
-            rigid.velocity = new Vector2 (rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
-            //normalized : 벡터 크기를 1로 만든 상태 (단위벡터)
-        }
-
-        // Direction Sprite 
-        if (Input.GetButton("Horizontal"))
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-
-        // Animation
-        if (Mathf.Abs(rigid.velocity.x) < 0.3)
-            anim.SetBool("isWalking", false);
-        else
-            anim.SetBool("isWalking", true);
-
-    }
-
-    void FixedUpdate()  // 디폴트는 1초에 50번
-    {
-        // Move Speed
-        float h = Input.GetAxisRaw("Horizontal");
-
-        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
-
-        // Max Speed
-        // 방향키를 꾹 눌렀을 때 힘을 계속 더하니까 계속 빨라지겠군 ==> Max speed 를 정하자
-
-        // Velocity : 리지드 바디의 현재 속도
-        if (rigid.velocity.x > maxSpeed)      // Right Max Speed
-            rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
-        else if (rigid.velocity.x < maxSpeed * (-1))    // Left Max Speed
-            rigid.velocity = new Vector2(maxSpeed*(-1), rigid.velocity.y);
-
-        // Lnading Platform
-        if(rigid.velocity.y < 0) {
-            Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
-
-            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
-
-            if (rayHit.collider != null) {
-                //Debug.Log(rayHit.collider.name);
-                //Debug.Log(rayHit.distance); // 거리 0.5076 이렇게나옴
-                if (rayHit.distance < 0.6f)
-                // 플레이어중심(레이시작점)-(레이쏴서맞은)플랫폼 거리가 0.5보다 커서 0.5f로하면 점핑모션 안끝나는 버그가 있었음.
-                // 0.6f로 수정하니 해결..
-                // 바닥에 비비다보면 점핑모션 제대로 끝났는데 그건 왜된거지 -> 가끔 0.4로 찍히는 곳도 있는데 이래서 끝난듯
-                {
-                    anim.SetBool("isJumping", false);
-                }
-
+            if (!anim.GetBool("isJump"))
+            {
+                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                anim.SetBool("isJump", true);
+                doubleJumpUsed = false;
+                PlaySound("Jump");
+            }
+            else if (doubleJumpActive && !doubleJumpUsed)
+            {
+                rigid.velocity = new Vector2(rigid.velocity.x, 0);
+                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                doubleJumpUsed = true;
+                PlaySound("Jump");
             }
         }
+
+        if (Input.GetButtonUp("Horizontal"))
+            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
+
+        if (Input.GetButtonDown("Horizontal"))
+            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+
+        anim.SetBool("isWalk", Mathf.Abs(rigid.velocity.x) >= 0.3f);
+
+        if (gameManager.colorRestoreMode)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
+            foreach (var hit in hits)
+            {
+                if (hit.CompareTag("RestoreArea"))
+                {
+                    GameObject obj = hit.gameObject;
+
+                    if (!restoredObjects.Contains(obj))
+                    {
+                        bool restored = false;
+
+                        // 1. SpriteRenderer 타입인 경우
+                        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+                        if (sr != null)
+                        {
+                            if (ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
+                            {
+                                sr.color = Color.white;
+                                restored = true;
+                            }
+                        }
+
+                        // 2. TilemapRenderer + Tilemap 조합인 경우
+                        UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+                        if (tilemap != null)
+                        {
+                            if (ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
+                            {
+                                tilemap.color = Color.white;
+                                restored = true;
+                            }
+                        }
+
+                        // 3. 복원되었다면 목록에 추가
+                        if (restored)
+                        {
+                            restoredObjects.Add(obj);
+                            Debug.Log($"🎨 복원됨: {obj.name}");
+                        }
+                    }
+                }
+            }
+
+            GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
+            if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
+            {
+                Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
+                gameManager.colorRestoreMode = false;
+
+                if (gameManager.goalObject != null)
+                {
+                    StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
+                }
+            }
+
+
+        }
+
+
+
     }
+
+    void FixedUpdate()
+    {
+        float h = Input.GetAxisRaw("Horizontal");
+        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
+
+        if (rigid.velocity.x > maxSpeed)
+            rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
+        else if (rigid.velocity.x < -maxSpeed)
+            rigid.velocity = new Vector2(-maxSpeed, rigid.velocity.y);
+
+        if (rigid.velocity.y < 0)
+        {
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
+            if (rayHit.collider != null && rayHit.distance < 0.5f)
+                anim.SetBool("isJump", false);
+        }
+    }
+
+    public void EnableInvincibility(bool status)
+    {
+        isInvincible = status;
+        spriteRenderer.color = status ? new Color(1, 1, 1, 0.5f) : Color.white;
+    }
+
+    public void EnableDoubleJump(float duration)
+    {
+        StartCoroutine(ActivateDoubleJump(duration));
+    }
+
+    IEnumerator ActivateDoubleJump(float duration)
+    {
+        doubleJumpActive = true;
+        yield return new WaitForSeconds(duration);
+        doubleJumpActive = false;
+    }
+
+    public void EnableColorRestore(bool enable)
+    {
+        gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
+    }
+
+
+
+    private bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
+    {
+        return Mathf.Abs(a.r - b.r) < threshold &&
+               Mathf.Abs(a.g - b.g) < threshold &&
+               Mathf.Abs(a.b - b.b) < threshold;
+    }
+
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "GameStart"){
-            SceneManager.LoadScene("GameScene");
+        if (collision.CompareTag("Item"))
+        {
+            string name = collision.name;
+
+            bool isCoin =
+                name.Contains("Bronze") ||
+                name.Contains("Sliver") ||
+                name.Contains("Gold");
+
+            // ✅ 코인일 경우: Player1, Player2 모두 점수 획득
+            if (isCoin)
+            {
+                if (name.Contains("Bronze")) gameManager.stagePoint += 50;
+                else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
+                else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+
+                collision.gameObject.SetActive(false);
+                PlaySound("Item");
+                return;
+            }
+
+            // ❌ Player2는 아이템 무시 (먹지도 않고 삭제도 안 함)
+            if (playerType == PlayerType.Player2)
+            {
+                Debug.Log("❌ Player2는 아이템을 사용할 수 없습니다. 아이템 무시됨.");
+                return;
+            }
+
+            // ✅ Player1만 아이템 사용
+            if (name.Contains("Buffering")) itemManager.UseItem(ItemType.BufferingIcon);
+            else if (name.Contains("Invincibility")) itemManager.UseItem(ItemType.Invincibility);
+            else if (name.Contains("DoubleJump")) itemManager.UseItem(ItemType.DoubleJump);
+            else if (name.Contains("AccessPass")) itemManager.UseItem(ItemType.AccessPass);
+            else if (name.Contains("RevealPlatform")) itemManager.UseItem(ItemType.RevealPlatform);
+            else if (name.Contains("ColorRestore")) itemManager.UseItem(ItemType.ColorRestore);
+
+            collision.gameObject.SetActive(false);
+            PlaySound("Item");
+        }
+        else if (collision.CompareTag("Finish"))
+        {
+            gameManager.NextStage();
+            PlaySound("Finish");
         }
     }
 
-    
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (isInvincible) return;
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
+            {
+                OnAttack(collision.transform);
+                PlaySound("Attack");
+            }
+            else
+                OnDamaged(collision.transform.position);
+        }
     }
+
+    void OnAttack(Transform enemy)
+    {
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+        gameManager.stagePoint += 100;
+        enemy.GetComponent<EnemyMove>()?.OnDamaged();
+    }
+
+    void OnDamaged(Vector2 targetPos)
+    {
+        gameManager.HealthDown();
+        gameObject.layer = 11;
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        int dir = transform.position.x - targetPos.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dir, 1) * 7, ForceMode2D.Impulse);
+
+        PlaySound("Damaged");
+        anim.SetTrigger("doDamaged");
+        Invoke("OffDamaged", 3);
+    }
+
+    void OffDamaged()
+    {
+        gameObject.layer = 10;
+        spriteRenderer.color = Color.white;
+    }
+
+    public void OnDie()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        spriteRenderer.flipY = true;
+        boxCollider.enabled = false;
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+        PlaySound("Die");
+    }
+
+    public void VelocityZero()
+    {
+        rigid.velocity = Vector2.zero;
+    }
+
+    void PlaySound(string action)
+    {
+        switch (action)
+        {
+            case "Jump": audioSource.clip = audioJump; break;
+            case "Attack": audioSource.clip = audioAttack; break;
+            case "Damaged": audioSource.clip = audioDamaged; break;
+            case "Item": audioSource.clip = audioItem; break;
+            case "Die": audioSource.clip = audioDie; break;
+            case "Finish": audioSource.clip = audioFinish; break;
+        }
+        audioSource.Play();
+    }
+}
