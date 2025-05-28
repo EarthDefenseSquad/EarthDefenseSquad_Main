@@ -152,7 +152,7 @@ public class PlayerMove : MonoBehaviour
         if (rigid.velocity.y < 0)
         {
             RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
-            if (rayHit.collider != null && rayHit.distance < 0.5f)
+            if (rayHit.collider != null && rayHit.distance < 0.6f)
                 anim.SetBool("isJump", false);
         }
     }
@@ -233,7 +233,10 @@ public class PlayerMove : MonoBehaviour
         }
         else if (collision.CompareTag("Finish"))
         {
-            gameManager.NextStage();
+            //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
+            collision.gameObject.SetActive(false); // 아이템 제거
+            
+            //gameManager.NextStage();
             PlaySound("Finish");
         }
     }

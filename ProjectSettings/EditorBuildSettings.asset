@@ -14,4 +14,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WaitingScene.unity
     guid: 159957c6458076943811eeb6165a1044
+  - enabled: 1
+    path: Assets/Scenes/Practice.unity
+    guid: 004ec423a804c58498ce54841fd56b19
+  - enabled: 1
+    path: Assets/Scenes/GoodEnding.unity
+    guid: 286943bf6046a2141ae20fc537551018
+  - enabled: 1
+    path: Assets/Scenes/BadEnding.unity
+    guid: 94b0471c93720a14498f97dff3a4c89f
   m_configObjects: {}

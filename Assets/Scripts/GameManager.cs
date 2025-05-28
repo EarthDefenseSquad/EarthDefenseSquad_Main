@@ -22,19 +22,39 @@ public class GameManager : MonoBehaviour
     public bool colorRestoreMode = false;
     public GameObject goalObject; // Goal 오브젝트 연결
 
+    // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)
+    public int finishItemCount = 0;
 
-    // int FirstPositionX;
-    // int FirstPositionY;
+    // 총 Finish 아이템의 개수 (엔딩 분기 기준값) - 인스펙터에서 설정 가능
+    public int totalStages = 3;
 
-    // void Start()
-    // {
-    //     FirstPositionX = Player.main.transform.position.x;
-    //     FirstPositionY = Player.main.transform.position.y;
-    // }
+    // Finish 아이템 개수를 화면에 표시할 UI 텍스트 (왼쪽 하단에 위치한 Text 오브젝트)
+    public Text finishItemText;
+
+    // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
+    private const string FinishItemKey = "FinishItemCount";
+
     void Update()
     {
         UIPoint.text = (totalPoint + stagePoint).ToString();
+
+        // 로컬 저장된 아이템 개수를 불러옴
+        LoadFinishItemCount();
+
+        // UI에 현재 수치 표시
+        UpdateFinishItemUI();
+
+    #if UNITY_EDITOR
+    if (Input.GetKeyDown(KeyCode.R))
+    {
+        PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
+        PlayerPrefs.Save();
+        Debug.Log("[개발용] data모은 정도 초기화 완료");
     }
+    #endif
+
+    }
+
     public void NextStage()
     {
         if (stageIndex < Stages.Length - 1)
@@ -48,11 +68,11 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Time.timeScale = 0; // Pause the game
+            //Time.timeScale = 0; // Pause the game
             Debug.Log("모든 스테이지를 클리어했습니다.");
-            Text btnText = RestartButton.GetComponentInChildren<Text>();
-            btnText.text = "Clear!";
-            RestartButton.SetActive(true);
+            //Text btnText = RestartButton.GetComponentInChildren<Text>();
+            //btnText.text = "Clear!";
+            //RestartButton.SetActive(true);
         }
 
         totalPoint += stagePoint;
@@ -104,7 +124,7 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1; // Resume the game
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(3);
     }
 
     public void EnableColorRestoreMode(bool enable)
@@ -116,18 +136,18 @@ public class GameManager : MonoBehaviour
     {
         if (goalObject == null)
         {
-            Debug.LogWarning("⚠ Goal 오브젝트가 비어있습니다.");
+            Debug.LogWarning("Goal 오브젝트가 비어있습니다.");
             yield break;
         }
 
         SpriteRenderer sr = goalObject.GetComponent<SpriteRenderer>();
         if (sr == null)
         {
-            Debug.LogWarning("⚠ Goal 오브젝트에 SpriteRenderer가 없습니다.");
+            Debug.LogWarning("Goal 오브젝트에 SpriteRenderer가 없습니다.");
             yield break;
         }
 
-        goalObject.SetActive(true); // 활성화는 하지만...
+        goalObject.SetActive(true); // 활성화는 하지만
         float blinkInterval = 0.2f;
         int blinkCount = 5;
 
@@ -141,8 +161,65 @@ public class GameManager : MonoBehaviour
 
         // 최종적으로 보이도록 유지
         sr.enabled = true;
-        Debug.Log("🎯 Goal 깜빡임 연출 완료");
+        Debug.Log("Goal 깜빡임 연출 완료");
     }
 
+    // Finish 아이템을 하나 먹었을 때 호출하는 함수
+    public void AddFinishItem()
+    {
+        // 수치 1 증가
+        finishItemCount++;
+
+        // PlayerPrefs에 저장 (로컬 디스크에 저장됨)
+        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
+        PlayerPrefs.Save(); // 강제로 저장
+
+        // UI 업데이트
+        UpdateFinishItemUI();
+    }
+
+    // 로컬 저장된 아이템 개수를 불러오는 함수
+    public void LoadFinishItemCount()
+    {
+        // 만약 저장된 값이 없다면 기본값 0을 반환함
+        finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
+    }
+
+    // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
+    public void ResetFinishItemData()
+    {
+        // PlayerPrefs에서 해당 키 제거
+        PlayerPrefs.DeleteKey(FinishItemKey);
+
+        // 메모리 상의 수치도 0으로 초기화
+        finishItemCount = 0;
+
+        // UI 반영
+        UpdateFinishItemUI();
+    }
+
+    // UI에 Finish 아이템 수치를 업데이트하는 함수
+    public void UpdateFinishItemUI()
+    {
+        // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
+        if (finishItemText != null)
+            finishItemText.text = finishItemCount.ToString();
+    }
+
+    // // 엔딩 NPC와 충돌 시 호출: 엔딩 분기 처리 함수
+    // public void TriggerEnding()
+    // {
+    //     // 설정한 총 아이템 개수만큼 다 모았으면 Good 엔딩
+    //     if (finishItemCount >= totalStages)
+    //     {
+    //         Debug.Log("🎉 모든 Finish 아이템을 수집 → Good Ending");
+    //         SceneManager.LoadScene("GoodEnding");
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("💀 Finish 아이템 부족 → Bad Ending");
+    //         SceneManager.LoadScene("BadEnding");
+    //     }
+    // }
 
 }
