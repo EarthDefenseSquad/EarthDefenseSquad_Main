@@ -6899,6 +6899,7 @@ GameObject:
   - component: {fileID: 1409890534}
   - component: {fileID: 1409890536}
   - component: {fileID: 1409890535}
+  - component: {fileID: 1409890537}
   m_Layer: 0
   m_Name: Goal
   m_TagString: Finish
@@ -7018,6 +7019,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1409890537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1409890533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemID: Stage2_finish
 --- !u!1 &1459343026
 GameObject:
   m_ObjectHideFlags: 0
@@ -8978,6 +8992,7 @@ GameObject:
   - component: {fileID: 1752251081}
   - component: {fileID: 1752251080}
   - component: {fileID: 1752251079}
+  - component: {fileID: 1752251082}
   m_Layer: 0
   m_Name: Goal
   m_TagString: Finish
@@ -9097,6 +9112,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2102439592}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1752251082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752251076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemID: Stage1_finish
 --- !u!1 &1752337338
 GameObject:
   m_ObjectHideFlags: 0
@@ -9108,6 +9136,7 @@ GameObject:
   - component: {fileID: 1752337341}
   - component: {fileID: 1752337340}
   - component: {fileID: 1752337339}
+  - component: {fileID: 1752337342}
   m_Layer: 0
   m_Name: GoalforColorRestore
   m_TagString: Finish
@@ -9227,6 +9256,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2102439592}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1752337342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752337338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemID: Stage1_finish
 --- !u!1 &1771765722
 GameObject:
   m_ObjectHideFlags: 0
@@ -9852,6 +9894,7 @@ GameObject:
   - component: {fileID: 1843114932}
   - component: {fileID: 1843114934}
   - component: {fileID: 1843114933}
+  - component: {fileID: 1843114935}
   m_Layer: 0
   m_Name: Goal
   m_TagString: Finish
@@ -9971,6 +10014,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1843114935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1843114931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemID: Stage3_finish
 --- !u!1 &1887270847
 GameObject:
   m_ObjectHideFlags: 0
