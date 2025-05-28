@@ -5,6 +5,8 @@ using ExitGames.Client.Photon;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
+using Photon.Pun.UtilityScripts;
+using Unity.VisualScripting;
 
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
@@ -12,65 +14,51 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public const byte AUCTION_COMPLETE_EVENT = 3;
     public GameObject CharacterSelect_Panel;
     public GameObject RoomLoadingPanel;
+    public GameObject Start_Panel;
     public Button Button_Start;
-    private bool isGameStartRequested=false;
+    public Button Button_Back;
+    public bool isGameStartRequested = false;
+  
 
-    private void Start()
+    private void Start() //게임 시작 버튼 클릭과 함께 스크립트 활성화.
     {
         PhotonNetwork.ConnectUsingSettings();
-        Button_Start.onClick.AddListener(OnGameStartButtonClicked);
-
-    }
-    
-    public override void OnConnectedToMaster()
-    {
-        Debug.Log("포톤 마스터 서버 연결 성공");
-        PhotonNetwork.JoinLobby();
+        Button_Start.onClick.AddListener(OnStartButtonClicked);
     }
 
-    public override void OnJoinedLobby()
+    public override void OnConnectedToMaster() //연결+로비 진입을 디폴트로 포함.
     {
-        Debug.Log("로비 입장 성공");
+        Debug.Log("포톤 마스터 서버 연결 후 로비 진입 성공");
+
         if (isGameStartRequested)
-            {
-                // 방 입장 시도
-                PhotonNetwork.JoinRandomRoom();
-                // UI 패널 전환
-                RoomLoadingPanel.SetActive(false);
-                CharacterSelect_Panel.SetActive(true);
-                isGameStartRequested = false; // 중복 방지
-            }
-    }
-
-    public void OnGameStartButtonClicked()
-    {
-
-        // 이미 로비에 들어가 있다면 바로 진행
-        if (PhotonNetwork.InLobby)
         {
             PhotonNetwork.JoinRandomRoom();
+            Debug.Log("방 참가를 시도합니다.");
+            // UI 패널 전환
+            Start_Panel.SetActive(false);
             RoomLoadingPanel.SetActive(false);
             CharacterSelect_Panel.SetActive(true);
-        }
-        else
-        {
-            // 아직 로비에 안 들어가 있으면, 콜백에서 처리하도록 플래그만 켜둠
-            isGameStartRequested = true;
+            Debug.Log("CharacterSelect_Panel 활성화", this);
+            Button_Back.onClick.RemoveAllListeners(); // 중복 방지
+            Button_Back.onClick.AddListener(OnBackButtonClicked);
+            isGameStartRequested = false;
         }
     }
 
-     public override void OnJoinRandomFailed(short returnCode, string message)
+    public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        Debug.Log("방 생성 시도");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
+        Debug.Log("방 참가에 실패하였습니다. 방을 새로 만듭니다.");
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 }); //null은 room 이름, 참가자 최대 2명.
     }
-   
+
     public override void OnJoinedRoom()
     {
+        Debug.Log("방 입장 성공");
         Debug.Log($"방 입장: {PhotonNetwork.CurrentRoom.Name}");
         // 예시: 마스터 클라이언트는 0번, 나머지는 1번 위치에 생성
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
         photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+
     }
 
 
@@ -91,12 +79,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         playerObject.transform.SetParent(CharacterSelect_Panel.transform, false);
 
 
-        
+
         Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
 
 
 
-        if (playerObject == null) {
+        if (playerObject == null)
+        {
             Debug.LogError("플레이어 객체 생성 실패!");
             return;
         }
@@ -104,13 +93,88 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("플레이어 생성 완료");
 
         // Camera 세팅
-        if (Camera.main == null) {
+        if (Camera.main == null)
+        {
             Debug.LogError("Main Camera가 없습니다.");
             return;
         }
 
-    
+
         //Camera.main.GetComponent<CameraController>().Initalize(playerObject.transform);
         //PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
     }
-}
+
+    public void OnStartButtonClicked()
+    {
+        StartCoroutine(DelayTime(3.5f));
+        if (isGameStartRequested)
+        {
+            PhotonNetwork.JoinRandomRoom();
+            Debug.Log("방 참가를 시도합니다.");
+            // UI 패널 전환
+            Start_Panel.SetActive(false);
+            RoomLoadingPanel.SetActive(false);
+            CharacterSelect_Panel.SetActive(true);
+            Debug.Log("CharacterSelect_Panel 활성화", this);
+            Button_Back.onClick.RemoveAllListeners(); // 중복 방지
+            Button_Back.onClick.AddListener(OnBackButtonClicked);
+            isGameStartRequested = false;
+        }
+        else
+        {
+            isGameStartRequested = true;
+        }
+    }
+
+    IEnumerator DelayTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+    }
+    public void OnBackButtonClicked()
+    {
+        Debug.Log("방을 나갑니다.");
+        if (PhotonNetwork.InRoom) //내가 방에 있는 게 확실한 경우,
+        {
+            PhotonNetwork.LeaveRoom();
+            //룸을 나가 마스터 서버와 연결만 된 상태로, 다시 룸에 입장하려면 로비에 진입부터 해야 함. 
+            CharacterSelect_Panel.SetActive(false);
+            Debug.Log("CharacterSelect_Panel 비활성화", this);
+            RoomLoadingPanel.SetActive(false);
+            Start_Panel.SetActive(true);
+            Button_Start.onClick.RemoveAllListeners();
+            Button_Start.onClick.AddListener(OnStartButtonClicked);
+        }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer) // 플레이어가 방을 나갔을 때 다른 플레이어들에게 그 결과를 알려주는 콜백함수.
+    {
+        Debug.Log("상대 플레이어가 방을 나갔습니다.");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LeaveRoom();
+            CharacterSelect_Panel.SetActive(false);
+            Debug.Log("CharacterSelect_Panel 비활성화", this);
+            RoomLoadingPanel.SetActive(false);
+            Start_Panel.SetActive(true);
+            Button_Start.onClick.RemoveAllListeners();
+            Button_Start.onClick.AddListener(OnStartButtonClicked);
+        }
+    }
+
+    /*public override void OnLeftRoom()
+    {
+        CharacterSelect_Panel.SetActive(false);
+        Debug.Log("CharacterSelect_Panel 비활성화", this);
+        RoomLoadingPanel.SetActive(false);
+        Start_Panel.SetActive(true);
+        Button_Start.onClick.RemoveAllListeners();
+        Button_Start.onClick.AddListener(OnStartButtonClicked);
+        
+    }*/
+} 
+
+
+//경우의 수
+//내가 나가는데 내가 마스터(내가 마스터면 다 destroy하고 나가기), 내가 일반
+//남이 나가는데 남이 마스터, 남이 일반(내가 destroy하고 나도 나가기)
+//OnPlayerLeftRoom에 콜백이 오면서 자동으로 남아있는 사람은 마스터 클라이언트가 됨.
