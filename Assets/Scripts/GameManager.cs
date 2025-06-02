@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public GameObject RestartButton;
 
     public bool colorRestoreMode = false;
-    public GameObject goalObject; // Goal 오브젝트 연결
+    public GameObject goalObject; // colorrestore Goal 오브젝트 연결
 
     // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)
     public int finishItemCount = 0;
@@ -34,6 +34,21 @@ public class GameManager : MonoBehaviour
     // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
     private const string FinishItemKey = "FinishItemCount";
 
+    [Header("개발용 설정 - 즉사 모드")]
+    public bool isInstantDeathMode;
+
+
+    void Start()
+    {
+        if (isInstantDeathMode)
+        {
+            health = 1;
+            UpdateHealthUI(); // ✅ UI 반영
+        }
+    }
+
+
+
     void Update()
     {
         UIPoint.text = (totalPoint + stagePoint).ToString();
@@ -44,14 +59,14 @@ public class GameManager : MonoBehaviour
         // UI에 현재 수치 표시
         UpdateFinishItemUI();
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     if (Input.GetKeyDown(KeyCode.R))
     {
         PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
         PlayerPrefs.Save();
         Debug.Log("[개발용] data모은 정도 초기화 완료");
     }
-    #endif
+#endif
 
     }
 
@@ -82,24 +97,61 @@ public class GameManager : MonoBehaviour
 
     public void HealthDown()
     {
+        // if (health > 0)
+        // {
+        //     health--;
+        //     UIhealth[health].color = new Color(1, 0, 0, 0.2f);
+        // }
+        // else
+        // {
+        //     UIhealth[0].color = new Color(1, 0, 0, 0.2f);
+
+        //     player.OnDie();
+
+        //     Debug.Log("플레이어가 죽었습니다.");
+
+        //     RestartButton.SetActive(true);
+        // }
+
+        // if (oneHitKill || health <= 1)
+        // {
+        //     // 즉사 또는 체력 1 남은 경우
+        //     health = 0;
+
+        //     if (UIhealth.Length > 0)
+        //         UIhealth[0].color = new Color(1, 0, 0, 0.2f);
+
+        //     player.OnDie();
+        //     Debug.Log("☠️ 즉사 처리됨 또는 체력 소진");
+        //     RestartButton.SetActive(true);
+        // }
+        // else
+        // {
+        //     // 일반 모드에서는 체력 감소
+        //     health--;
+        //     if (UIhealth.Length > health)
+        //         UIhealth[health].color = new Color(1, 0, 0, 0.2f);
+        // }
+
+
+    {
         if (health > 0)
         {
             health--;
-            UIhealth[health].color = new Color(1, 0, 0, 0.2f);
+            UpdateHealthUI(); // ✅ UI 업데이트
         }
-        else
+
+        if (health <= 0)
         {
-            UIhealth[0].color = new Color(1, 0, 0, 0.2f);
-
             player.OnDie();
-
             Debug.Log("플레이어가 죽었습니다.");
-
             RestartButton.SetActive(true);
         }
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+}
+
+void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
@@ -131,6 +183,7 @@ public class GameManager : MonoBehaviour
     {
         colorRestoreMode = enable;
     }
+
 
     public IEnumerator GoalAppearEffect()
     {
@@ -206,20 +259,13 @@ public class GameManager : MonoBehaviour
             finishItemText.text = finishItemCount.ToString();
     }
 
-    // // 엔딩 NPC와 충돌 시 호출: 엔딩 분기 처리 함수
-    // public void TriggerEnding()
-    // {
-    //     // 설정한 총 아이템 개수만큼 다 모았으면 Good 엔딩
-    //     if (finishItemCount >= totalStages)
-    //     {
-    //         Debug.Log("🎉 모든 Finish 아이템을 수집 → Good Ending");
-    //         SceneManager.LoadScene("GoodEnding");
-    //     }
-    //     else
-    //     {
-    //         Debug.Log("💀 Finish 아이템 부족 → Bad Ending");
-    //         SceneManager.LoadScene("BadEnding");
-    //     }
-    // }
+    void UpdateHealthUI()
+    {
+        for (int i = 0; i < UIhealth.Length; i++)
+        {
+            UIhealth[i].gameObject.SetActive(i < health);
+        }
+    }
+
 
 }

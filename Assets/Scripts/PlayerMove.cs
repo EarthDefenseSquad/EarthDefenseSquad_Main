@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -15,10 +16,9 @@ public class PlayerMove : MonoBehaviour
     private bool isInvincible = false;
     private bool doubleJumpActive = false;
     private bool doubleJumpUsed = false;
+
     private bool colorRestoreMode = false;
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
-
-
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
@@ -42,9 +42,6 @@ public class PlayerMove : MonoBehaviour
             jumpForce *= 1.3f;
             maxSpeed *= 1.3f;
         }
-
-        Debug.Log($"[PlayerMove] {playerType} - Speed: {maxSpeed}, Jump: {jumpForce}");
-
     }
 
     void Update()
@@ -75,6 +72,7 @@ public class PlayerMove : MonoBehaviour
 
         anim.SetBool("isWalk", Mathf.Abs(rigid.velocity.x) >= 0.3f);
 
+        // 🎨 복원 로직
         if (gameManager.colorRestoreMode)
         {
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
@@ -88,29 +86,22 @@ public class PlayerMove : MonoBehaviour
                     {
                         bool restored = false;
 
-                        // 1. SpriteRenderer 타입인 경우
+                        // SpriteRenderer
                         SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-                        if (sr != null)
+                        if (sr != null && ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
                         {
-                            if (ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
-                            {
-                                sr.color = Color.white;
-                                restored = true;
-                            }
+                            sr.color = Color.white;
+                            restored = true;
                         }
 
-                        // 2. TilemapRenderer + Tilemap 조합인 경우
-                        UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
-                        if (tilemap != null)
+                        // Tilemap
+                        var tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+                        if (tilemap != null && ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
                         {
-                            if (ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
-                            {
-                                tilemap.color = Color.white;
-                                restored = true;
-                            }
+                            tilemap.color = Color.white;
+                            restored = true;
                         }
 
-                        // 3. 복원되었다면 목록에 추가
                         if (restored)
                         {
                             restoredObjects.Add(obj);
@@ -131,12 +122,7 @@ public class PlayerMove : MonoBehaviour
                     StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
                 }
             }
-
-
         }
-
-
-
     }
 
     void FixedUpdate()
@@ -151,8 +137,8 @@ public class PlayerMove : MonoBehaviour
 
         if (rigid.velocity.y < 0)
         {
-            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
-            if (rayHit.collider != null && rayHit.distance < 0.6f)
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "HiddenPlatform"));
+            if (rayHit.collider != null && rayHit.distance < 0.65f)
                 anim.SetBool("isJump", false);
         }
     }
@@ -175,12 +161,11 @@ public class PlayerMove : MonoBehaviour
         doubleJumpActive = false;
     }
 
+    // ColorRestore가 GameManager를 통해 동작하고, Goal 연출도 GameManager에서 담당
     public void EnableColorRestore(bool enable)
     {
         gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
     }
-
-
 
     private bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
     {
@@ -189,19 +174,14 @@ public class PlayerMove : MonoBehaviour
                Mathf.Abs(a.b - b.b) < threshold;
     }
 
-
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Item"))
         {
             string name = collision.name;
 
-            bool isCoin =
-                name.Contains("Bronze") ||
-                name.Contains("Sliver") ||
-                name.Contains("Gold");
+            bool isCoin = name.Contains("Bronze") || name.Contains("Sliver") || name.Contains("Gold");
 
-            // ✅ 코인일 경우: Player1, Player2 모두 점수 획득
             if (isCoin)
             {
                 if (name.Contains("Bronze")) gameManager.stagePoint += 50;
@@ -213,14 +193,12 @@ public class PlayerMove : MonoBehaviour
                 return;
             }
 
-            // ❌ Player2는 아이템 무시 (먹지도 않고 삭제도 안 함)
             if (playerType == PlayerType.Player2)
             {
-                Debug.Log("❌ Player2는 아이템을 사용할 수 없습니다. 아이템 무시됨.");
+                Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
                 return;
             }
 
-            // ✅ Player1만 아이템 사용
             if (name.Contains("Buffering")) itemManager.UseItem(ItemType.BufferingIcon);
             else if (name.Contains("Invincibility")) itemManager.UseItem(ItemType.Invincibility);
             else if (name.Contains("DoubleJump")) itemManager.UseItem(ItemType.DoubleJump);
@@ -233,14 +211,10 @@ public class PlayerMove : MonoBehaviour
         }
         else if (collision.CompareTag("Finish"))
         {
-            //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
-            collision.gameObject.SetActive(false); // 아이템 제거
-            
-            //gameManager.NextStage();
+            collision.gameObject.SetActive(false);
             PlaySound("Finish");
         }
     }
-
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -254,7 +228,9 @@ public class PlayerMove : MonoBehaviour
                 PlaySound("Attack");
             }
             else
+            {
                 OnDamaged(collision.transform.position);
+            }
         }
     }
 

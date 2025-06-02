@@ -5,6 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - GameStart
+  - Item
+  - RestoreArea
+  - Enemy
+  - Platform
+  - NPC
+  - Obstacle
   layers:
   - Default
   - TransparentFX
@@ -15,7 +21,7 @@ TagManager:
   - 
   - 
   - Platform
-  - 
+  - HiddenPlatform
   - 
   - 
   - 
