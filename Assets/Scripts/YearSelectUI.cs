@@ -10,7 +10,8 @@ public class YearSelectUI : MonoBehaviour
         for (int i = 0; i < yearButtons.Length; i++)
         {
             Button btn = yearButtons[i];
-            bool isUnlocked = (i == 0); // 첫 번째 스테이지만 해금
+
+            bool isUnlocked = (i == 0); // 첫 번째 세대만 해금
 
             btn.interactable = isUnlocked;
 
