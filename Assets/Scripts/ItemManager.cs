@@ -88,7 +88,7 @@ public class ItemManager : MonoBehaviour
                 revealCoroutine = StartCoroutine(ActivateRevealPlatform());
                 break;
             case ItemType.ColorRestore:
-                player.EnableColorRestore(true);
+                ActivateColorRestoreMode();
                 break;
 
             default:
@@ -183,22 +183,29 @@ public class ItemManager : MonoBehaviour
     }
 
 
+
+    public void ActivateColorRestoreMode()
+    {
+        isColorRestoreActive = true;
+        Debug.Log("🎨 ColorRestore 모드 활성화됨");
+    }
+
     public bool IsColorRestoreActive()
     {
         return isColorRestoreActive;
     }
 
-    public void DeactivateColorRestore()
+    public void DisableColorRestore()
     {
         isColorRestoreActive = false;
-        Debug.Log("❎ Color Restore Mode 비활성화");
+        Debug.Log("❎ ColorRestore 모드 비활성화됨");
     }
 
-    private IEnumerator ActivateColorRestore()
-    {
-        Debug.Log("Color Restore Started");
-        player.EnableColorRestore(true);
-        yield return null;
-    }
+    // private IEnumerator ActivateColorRestore()
+    // {
+    //     Debug.Log("Color Restore Started");
+    //     player.EnableColorRestore(true);
+    //     yield return null;
+    // }
 
 }

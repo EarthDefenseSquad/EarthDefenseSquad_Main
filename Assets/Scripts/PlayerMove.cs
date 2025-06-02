@@ -17,8 +17,8 @@ public class PlayerMove : MonoBehaviour
     private bool doubleJumpActive = false;
     private bool doubleJumpUsed = false;
 
-    private bool colorRestoreMode = false;
-    private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
+    // private bool colorRestoreMode = false;
+    // private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
@@ -72,57 +72,57 @@ public class PlayerMove : MonoBehaviour
 
         anim.SetBool("isWalk", Mathf.Abs(rigid.velocity.x) >= 0.3f);
 
-        // 🎨 복원 로직
-        if (gameManager.colorRestoreMode)
-        {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
-            foreach (var hit in hits)
-            {
-                if (hit.CompareTag("RestoreArea"))
-                {
-                    GameObject obj = hit.gameObject;
+        // // 🎨 복원 로직
+        // if (gameManager.colorRestoreMode)
+        // {
+        //     Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
+        //     foreach (var hit in hits)
+        //     {
+        //         if (hit.CompareTag("RestoreArea"))
+        //         {
+        //             GameObject obj = hit.gameObject;
 
-                    if (!restoredObjects.Contains(obj))
-                    {
-                        bool restored = false;
+        //             if (!restoredObjects.Contains(obj))
+        //             {
+        //                 bool restored = false;
 
-                        // SpriteRenderer
-                        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-                        if (sr != null && ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
-                        {
-                            sr.color = Color.white;
-                            restored = true;
-                        }
+        //                 // SpriteRenderer
+        //                 SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+        //                 if (sr != null && ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
+        //                 {
+        //                     sr.color = Color.white;
+        //                     restored = true;
+        //                 }
 
-                        // Tilemap
-                        var tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
-                        if (tilemap != null && ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
-                        {
-                            tilemap.color = Color.white;
-                            restored = true;
-                        }
+        //                 // Tilemap
+        //                 var tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+        //                 if (tilemap != null && ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
+        //                 {
+        //                     tilemap.color = Color.white;
+        //                     restored = true;
+        //                 }
 
-                        if (restored)
-                        {
-                            restoredObjects.Add(obj);
-                            Debug.Log($"🎨 복원됨: {obj.name}");
-                        }
-                    }
-                }
-            }
+        //                 if (restored)
+        //                 {
+        //                     restoredObjects.Add(obj);
+        //                     Debug.Log($"🎨 복원됨: {obj.name}");
+        //                 }
+        //             }
+        //         }
+        //     }
 
-            GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
-            if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
-            {
-                Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
-                gameManager.colorRestoreMode = false;
+        //     GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
+        //     if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
+        //     {
+        //         Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
+        //         gameManager.colorRestoreMode = false;
 
-                if (gameManager.goalObject != null)
-                {
-                    StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
-                }
-            }
-        }
+        //         if (gameManager.goalObject != null)
+        //         {
+        //             StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
+        //         }
+        //     }
+        // }
     }
 
     void FixedUpdate()
@@ -161,11 +161,11 @@ public class PlayerMove : MonoBehaviour
         doubleJumpActive = false;
     }
 
-    // ColorRestore가 GameManager를 통해 동작하고, Goal 연출도 GameManager에서 담당
-    public void EnableColorRestore(bool enable)
-    {
-        gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
-    }
+    // // ColorRestore가 GameManager를 통해 동작하고, Goal 연출도 GameManager에서 담당
+    // public void EnableColorRestore(bool enable)
+    // {
+    //     gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
+    // }
 
     private bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
     {

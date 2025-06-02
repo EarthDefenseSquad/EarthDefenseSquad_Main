@@ -1,55 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class RestoreAreaTrigger : MonoBehaviour
 {
     private bool isRestored = false;
-    private Tilemap tilemap;
 
-    private float checkRadius = 0.5f; // 플레이어와 얼마나 가까워야 복원되는지
-
-    void Start()
-    {
-        tilemap = GetComponent<Tilemap>();
-        if (tilemap == null)
-        {
-            Debug.LogError("❌ RestoreAreaTrigger에 Tilemap이 없습니다!");
-            enabled = false;
-            return;
-        }
-    }
-
-    void Update()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (isRestored) return;
+
+        if (!collision.gameObject.CompareTag("Player")) return;
+
         if (!ItemManager.Instance || !ItemManager.Instance.IsColorRestoreActive()) return;
 
-        // 플레이어 찾기
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null) return;
+        bool restored = false;
 
-        // 거리 검사
-        float distance = Vector2.Distance(transform.position, player.transform.position);
-        if (distance <= checkRadius)
+        // 1. SpriteRenderer가 있는 경우
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        if (sr != null && ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
         {
-            TryRestore();
+            sr.color = Color.white;
+            restored = true;
         }
-    }
 
-    private void TryRestore()
-    {
-        if (isRestored) return;
-
-        Color dimColor = new Color(0.27f, 0.27f, 0.27f);
-        if (ApproximatelyColor(tilemap.color, dimColor))
+        // 2. Tilemap이 있는 경우
+        Tilemap tilemap = GetComponent<Tilemap>();
+        if (tilemap != null && ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
         {
             tilemap.color = Color.white;
+            restored = true;
+        }
+
+        if (restored)
+        {
             isRestored = true;
             Debug.Log($"🎨 복원됨: {gameObject.name}");
-
-            // GoalForColorRestore가 자동으로 복원 완료 상태 체크
+            ColorRestoreManager.Instance.CheckRestoreStatus();
         }
     }
 
