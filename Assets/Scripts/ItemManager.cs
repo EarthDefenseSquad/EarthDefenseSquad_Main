@@ -8,21 +8,20 @@ public class ItemManager : MonoBehaviour
 
     public GameManager gameManager;
     public PlayerMove player;
-
     private Coroutine revealCoroutine;
-    private bool isColorRestoreActive = false;
 
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject); // 중복 방지
-            return;
-        }
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // 씬 전환 시 유지
-    }
+    // private void Awake()
+    // {
+    //     if (Instance != null && Instance != this)
+    //     {
+    //         Destroy(gameObject); // 중복 방지
+    //         return;
+    //     }
+
+    //     Instance = this;
+    //     DontDestroyOnLoad(gameObject); // 씬 전환 시 유지
+    // }
 
     private void Start()
     {
@@ -88,7 +87,7 @@ public class ItemManager : MonoBehaviour
                 revealCoroutine = StartCoroutine(ActivateRevealPlatform());
                 break;
             case ItemType.ColorRestore:
-                ActivateColorRestoreMode();
+                StartCoroutine(ActivateColorRestore());
                 break;
 
             default:
@@ -184,28 +183,19 @@ public class ItemManager : MonoBehaviour
 
 
 
-    public void ActivateColorRestoreMode()
+    private IEnumerator ActivateColorRestore()
     {
-        isColorRestoreActive = true;
-        Debug.Log("🎨 ColorRestore 모드 활성화됨");
-    }
+        Debug.Log("Color Restore Started");
+        player.EnableColorRestore(true);
 
-    public bool IsColorRestoreActive()
-    {
-        return isColorRestoreActive;
-    }
+        // Goal 오브젝트 숨기기
+        if (gameManager.goalObject != null)
+        {
+            gameManager.goalObject.SetActive(false);
+            Debug.Log("🚫 Goal 비활성화");
+        }
 
-    public void DisableColorRestore()
-    {
-        isColorRestoreActive = false;
-        Debug.Log("❎ ColorRestore 모드 비활성화됨");
+        yield return null;
     }
-
-    // private IEnumerator ActivateColorRestore()
-    // {
-    //     Debug.Log("Color Restore Started");
-    //     player.EnableColorRestore(true);
-    //     yield return null;
-    // }
 
 }

@@ -19,8 +19,6 @@ public class GameManager : MonoBehaviour
     public Text UIStage;
     public GameObject RestartButton;
 
-    public bool colorRestoreMode = false;
-    public GameObject goalObject; // colorrestore Goal 오브젝트 연결
 
     // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)
     public int finishItemCount = 0;
@@ -33,6 +31,10 @@ public class GameManager : MonoBehaviour
 
     // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
     private const string FinishItemKey = "FinishItemCount";
+
+    public bool colorRestoreMode = false;
+    public GameObject goalObject; // Goal 오브젝트 연결
+
 
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode;

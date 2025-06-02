@@ -1856,7 +1856,6 @@ GameObject:
   - component: {fileID: 330825229}
   - component: {fileID: 330825228}
   - component: {fileID: 330825227}
-  - component: {fileID: 330825230}
   m_Layer: 8
   m_Name: GoalforColorRestore
   m_TagString: Finish
@@ -1989,20 +1988,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &330825230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330825225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef4759c56e81e294c939d51502b59ad4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  detectionRadius: 5
-  checkInterval: 0.5
 --- !u!1 &408785079
 GameObject:
   m_ObjectHideFlags: 0
@@ -5769,8 +5754,9 @@ MonoBehaviour:
   UIStage: {fileID: 513189472}
   RestartButton: {fileID: 2143437434}
   colorRestoreMode: 0
+  goalObject: {fileID: 330825225}
   finishItemCount: 0
-  totalStages: 3
+  totalStages: 6
   finishItemText: {fileID: 1406260899}
   isInstantDeathMode: 0
 --- !u!4 &1125412621
@@ -11412,7 +11398,7 @@ GameObject:
   - component: {fileID: 1782026789}
   - component: {fileID: 1782026788}
   - component: {fileID: 1782026787}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: NPC
   m_TagString: NPC
   m_Icon: {fileID: 0}
@@ -11428,7 +11414,7 @@ Transform:
   m_GameObject: {fileID: 1782026785}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 41.56, y: -7.09, z: -0.013211386}
+  m_LocalPosition: {x: -10.3, y: -0.98, z: -0.013211386}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11759,9 +11745,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1845594540}
   - {fileID: 1782026786}
   - {fileID: 330825226}
+  - {fileID: 1845594540}
   - {fileID: 2056805394}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
