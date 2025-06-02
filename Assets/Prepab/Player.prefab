@@ -256,11 +256,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 4828525040922323524}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e4f4b785f852974ebce0d2a097eeb5c, type: 3}
+  m_Script: {fileID: 11500000, guid: 7b9dbf3c6b6afcd42b4992d2011083b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 5
-  jumpPower: 20
+  playerType: 0
+  gameManager: {fileID: 0}
+  maxSpeed: 0
+  jumpForce: 0
+  hasAccessPass: 0
+  itemManager: {fileID: 0}
+  audioJump: {fileID: 0}
+  audioAttack: {fileID: 0}
+  audioDamaged: {fileID: 0}
+  audioItem: {fileID: 0}
+  audioDie: {fileID: 0}
+  audioFinish: {fileID: 0}
 --- !u!50 &351059627983231880
 Rigidbody2D:
   serializedVersion: 4
