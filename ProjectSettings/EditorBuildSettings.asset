@@ -10,13 +10,13 @@ EditorBuildSettings:
     guid: 14dc7df91f8568b4fa20525a68123f27
   - enabled: 1
     path: Assets/Scenes/GameScene.unity
-    guid: 7d6aa4aabe6045b4496758081879c78a
+    guid: 5ade52a27a02f2a44ad7f415004754dc
   - enabled: 1
     path: Assets/Scenes/WaitingScene.unity
     guid: 159957c6458076943811eeb6165a1044
   - enabled: 1
-    path: Assets/Scenes/Practice.unity
-    guid: 004ec423a804c58498ce54841fd56b19
+    path: Assets/Scenes/StageScene.unity
+    guid: b82c8bcbd95434e49bbd7cde9bdb646a
   - enabled: 1
     path: Assets/Scenes/GoodEnding.unity
     guid: 286943bf6046a2141ae20fc537551018
