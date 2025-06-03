@@ -1326,50 +1326,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 231725079}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1940869744}
-        m_TargetAssemblyTypeName: PhotonManager, Assembly-CSharp
-<<<<<<< Updated upstream
-        m_MethodName: OnStartButtonClicked
-=======
-        m_MethodName: OnGameStartButtonClicked
->>>>>>> Stashed changes
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-<<<<<<< Updated upstream
-        m_CallState: 2
-      - m_Target: {fileID: 1716634156}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 1339604528}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-=======
->>>>>>> Stashed changes
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &231725079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4073,7 +4030,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 861570435}
-  - component: {fileID: 861570434}
   m_Layer: 0
   m_Name: PanelManager
   m_TagString: Untagged
@@ -4081,20 +4037,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &861570434
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 861570433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa2f5f87ee5d78f4487efce3fd7c26e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CharacterPanel: {fileID: 1695718817}
-  LoadingPanel: {fileID: 1716634156}
 --- !u!4 &861570435
 Transform:
   m_ObjectHideFlags: 0
@@ -8125,61 +8067,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1596493366}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1940869744}
-        m_TargetAssemblyTypeName: PhotonManager, Assembly-CSharp
-        m_MethodName: OnBackButtonClicked
-        m_Mode: 1
-<<<<<<< Updated upstream
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1695718817}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-=======
->>>>>>> Stashed changes
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-<<<<<<< Updated upstream
-      - m_Target: {fileID: 1716634156}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1339604528}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-=======
->>>>>>> Stashed changes
+      m_Calls: []
 --- !u!114 &1596493366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10049,8 +9937,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1940869745}
-  - component: {fileID: 1940869744}
   - component: {fileID: 1940869746}
+  - component: {fileID: 1940869747}
   m_Layer: 0
   m_Name: Photon
   m_TagString: Untagged
@@ -10058,37 +9946,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1940869744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1940869743}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3f742abc2f916e4c8bad40d6be19dda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Start_Panel: {fileID: 1339604528}
-  RoomLoadingPanel: {fileID: 1716634156}
-<<<<<<< Updated upstream
-  Start_Panel: {fileID: 1339604528}
-  Button_Start: {fileID: 231725078}
-  Button_Back: {fileID: 1596493365}
-  isGameStartRequested: 0
-=======
-  CharacterSelect_Panel: {fileID: 1695718817}
-  YearSelectPanel: {fileID: 1145954195}
-  StageSelectPanel: {fileID: 1867478346}
-  Button_Start: {fileID: 231725078}
-  Button_Back: {fileID: 1596493365}
-  Button_OK: {fileID: 2028912937}
-  Button_1960: {fileID: 5611035596062390546}
-  Button_Stage1: {fileID: 565475727}
-  Button_YearBack: {fileID: 275947152}
-  Button_StageBack: {fileID: 219852928}
->>>>>>> Stashed changes
 --- !u!4 &1940869745
 Transform:
   m_ObjectHideFlags: 0
@@ -10126,6 +9983,31 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &1940869747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940869743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3f742abc2f916e4c8bad40d6be19dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Start_Panel: {fileID: 1339604528}
+  RoomLoadingPanel: {fileID: 1716634156}
+  CharacterSelect_Panel: {fileID: 1695718817}
+  YearSelectPanel: {fileID: 1145954195}
+  StageSelectPanel: {fileID: 1867478346}
+  Button_Start: {fileID: 231725078}
+  Button_Back: {fileID: 1596493365}
+  Button_OK: {fileID: 2028912937}
+  Button_1960: {fileID: 5611035596062390546}
+  Button_Stage1: {fileID: 565475727}
+  Button_YearBack: {fileID: 275947152}
+  Button_StageBack: {fileID: 219852928}
+  isGameStartRequested: 0
 --- !u!1 &1943051478
 GameObject:
   m_ObjectHideFlags: 0
@@ -10419,19 +10301,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2028912938}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1940869744}
-        m_TargetAssemblyTypeName: PhotonManager, Assembly-CSharp
-        m_MethodName: OnOKButtonClicked
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2028912938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11298,7 +11168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7451275425725209565, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00007748604
+      value: 0.000091552734
       objectReference: {fileID: 0}
     - target: {fileID: 7451275425725209565, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
