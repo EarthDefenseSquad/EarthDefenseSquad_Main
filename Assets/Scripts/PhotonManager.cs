@@ -12,7 +12,7 @@ using Unity.VisualScripting;
 //게임 시작하자마자 연결-로비 진입 상태
 //start버튼 누르면 룸 진입.
 //플레이어 중 한 명이라도 back버튼 누르면 룸 파괴. - start버튼 누르면 다시 새로운 룸 진입
-//ok버튼 누르면 YearSelectPanel이동-1960년도 선택-StageSelect패널 이동-stage1선택-게임씬 이동
+//ok버튼 누르면 YearSelectPanel이동-1960년도 선택-StageSelect패널 이동-stage1선택-튜토리얼 패널 이동-게임씬 이동
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
     public const byte BID_EVENT = 1;
@@ -22,17 +22,22 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public GameObject CharacterSelect_Panel;
     public GameObject YearSelectPanel;
     public GameObject StageSelectPanel;
+    public GameObject Tutorial_Panel;
     public Button Button_Start;
-    public Button Button_Back;
-    public Button Button_OK;
+    public Button Button_Back, Button_YearBack, Button_StageBack, Button_TutorialBack;
+    public Button Button_OK, Button_TutorialOK;
     public Button Button_1960;
     public Button Button_Stage1;
-    public Button Button_YearBack, Button_StageBack;
+
+    public StageSelectUI stageSelectUI;
     public bool isGameStartRequested = false;
 
     private void Start() //게임 시작 버튼 클릭과 함께 스크립트 활성화.
     {
         PhotonNetwork.ConnectUsingSettings();
+        GameDataManager.Instance.Start_Panel = this.Start_Panel;
+        GameDataManager.Instance.StageSelectPanel = this.StageSelectPanel;
+        GameDataManager.Instance.stageSelectUI = this.stageSelectUI;
         Button_Start.onClick.AddListener(OnGameStartButtonClicked);
     }
     public override void OnConnectedToMaster() //게임 시작하자마자 서버 연결 - 로비 진입 성공 상태시 콜백
@@ -49,7 +54,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Debug.Log("CharacterSelect_Panel 활성화", this);
             Button_Back.onClick.RemoveAllListeners(); // 중복 방지
             Button_Back.onClick.AddListener(OnBackButtonClicked);
-            isGameStartRequested = false;
             Start_Panel.SetActive(false);
             RoomLoadingPanel.SetActive(true);
         }
@@ -84,6 +88,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
         photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+        //SpawnPlayer(playerIndex);
 
     }
 
@@ -137,6 +142,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Debug.Log("방 참가를 시도합니다.");
             Start_Panel.SetActive(false);
             RoomLoadingPanel.SetActive(true);
+            isGameStartRequested = false;
         }
         else
         {
@@ -144,7 +150,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             isGameStartRequested = true;
         }
     }
-    
+
     public void OnBackButtonClicked()
     {
         PhotonNetwork.LeaveRoom();
@@ -195,13 +201,27 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         YearSelectPanel.SetActive(false);
         StageSelectPanel.SetActive(true);
         Button_Stage1.onClick.RemoveAllListeners();
-        Button_Stage1.onClick.AddListener(() => photonView.RPC("MoveTheGameScene", RpcTarget.All));
+        Button_Stage1.onClick.AddListener(() => photonView.RPC("MoveTheTutorialPanel", RpcTarget.All));
         Button_StageBack.onClick.RemoveAllListeners();
         Button_StageBack.onClick.AddListener(() => photonView.RPC("MoveTheYearPanel", RpcTarget.All));
         if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
         {
             Button_StageBack.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
             Button_Stage1.interactable = false;
+        }
+    }
+    [PunRPC]
+    void MoveTheTutorialPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                           //튜토리얼 선택 패널 동기화
+        StageSelectPanel.SetActive(false);
+        Tutorial_Panel.SetActive(true);
+        Button_TutorialBack.onClick.RemoveAllListeners(); //뒤로가기
+        Button_TutorialBack.onClick.AddListener(() => photonView.RPC("MoveTheStageSelectPanel", RpcTarget.All));
+        Button_TutorialOK.onClick.RemoveAllListeners(); //ok버튼
+        Button_TutorialOK.onClick.AddListener(() => photonView.RPC("MoveTheGameScene", RpcTarget.All));
+        if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
+        {
+            Button_TutorialBack.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
         }
     }
     [PunRPC]
@@ -231,4 +251,5 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
         photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
     }
+    
 }

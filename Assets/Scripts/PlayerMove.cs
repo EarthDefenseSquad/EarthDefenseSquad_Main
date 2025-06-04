@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using UnityEngine.UI;
 
 public class PlayerMove : MonoBehaviour
 {
-    
+
     public float maxSpeed;
     public float jumpPower;
 
@@ -14,11 +16,12 @@ public class PlayerMove : MonoBehaviour
     Animator anim;
     CapsuleCollider2D capsulecollider;
     AudioSource audioSource;
+    public int clearedStage = 1;
 
 
     void Awake()
     {
-        rigid = GetComponent<Rigidbody2D>();    
+        rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         capsulecollider = GetComponent<CapsuleCollider2D>();
@@ -33,13 +36,13 @@ public class PlayerMove : MonoBehaviour
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             anim.SetBool("isJumping", true);
-           
+
         }
-            
+
         // Stop Speed
         if (Input.GetButtonUp("Horizontal"))
         {
-            rigid.velocity = new Vector2 (rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
+            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
             //normalized : 벡터 크기를 1로 만든 상태 (단위벡터)
         }
 
@@ -69,15 +72,17 @@ public class PlayerMove : MonoBehaviour
         if (rigid.velocity.x > maxSpeed)      // Right Max Speed
             rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
         else if (rigid.velocity.x < maxSpeed * (-1))    // Left Max Speed
-            rigid.velocity = new Vector2(maxSpeed*(-1), rigid.velocity.y);
+            rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
 
         // Lnading Platform
-        if(rigid.velocity.y < 0) {
+        if (rigid.velocity.y < 0)
+        {
             Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
 
             RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
 
-            if (rayHit.collider != null) {
+            if (rayHit.collider != null)
+            {
                 //Debug.Log(rayHit.collider.name);
                 //Debug.Log(rayHit.distance); // 거리 0.5076 이렇게나옴
                 if (rayHit.distance < 0.6f)
@@ -89,6 +94,26 @@ public class PlayerMove : MonoBehaviour
                 }
 
             }
+        }
+    }
+    
+    private void OnCollisionEnter2D(Collision2D collision) //적과 충돌 시, clearedStage++ -> 해당 패널 활성화, 
+                                                           //StageSelectUI의 언락함수 호출.
+    {
+        Debug.Log("충돌 발생");
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("적과 충돌!");
+            Debug.Log($"스테이지 {clearedStage} 클리어!");
+            clearedStage++;
+            GameObject obj = GameObject.Find("StageSelectUI");
+            StageSelectUI stageSelectUI = obj.GetComponent<StageSelectUI>();
+            stageSelectUI.UnlockStage(clearedStage);
+            GameObject managerobj = GameObject.Find("GameManager");
+            GameManager gameManager = managerobj.GetComponent<GameManager>();
+            gameManager.photonView.RPC("MoveTheClearStageSelectPanel", RpcTarget.AllBuffered);
+
+            
         }
     }
 

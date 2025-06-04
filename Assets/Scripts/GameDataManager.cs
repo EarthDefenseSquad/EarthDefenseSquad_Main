@@ -1,11 +1,19 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UIElements;
 
 public class GameDataManager : MonoBehaviour
 {
-    public static GameDataManager Instance;
+     public static GameDataManager Instance { get; private set; }
 
+    public GameObject Start_Panel;
+    public GameObject StageSelectPanel;
+   
+    public StageSelectUI stageSelectUI;
     public int selectedCharacterIndex1P = -1;
     public int selectedCharacterIndex2P = -1;
 
@@ -20,9 +28,14 @@ public class GameDataManager : MonoBehaviour
     public TextMeshProUGUI selected1PText;
     public TextMeshProUGUI selected2PText;
 
-    private void Awake()
+    private void Awake()//싱글톤 처리.
     {
-        if (Instance == null)
+        if (Instance != null && Instance != this) // 이미 인스턴스가 존재하면 자신을 파괴
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else //인스턴스가 없으면 자신을 할당하고 파괴되지 않게 설정
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
@@ -30,16 +43,15 @@ public class GameDataManager : MonoBehaviour
             stageUnlocked = new bool[10];
             stageUnlocked[0] = true;
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+
     }
+    
 
     private void Start()
     {
         UpdateCharacterUI();
     }
+
 
     public void OnCharacterButtonClicked1P(int characterIndex)
     {
