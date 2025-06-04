@@ -29,7 +29,7 @@ public class Intromanager : MonoBehaviour
 
     public void GoWaitingScene()
     {
-        SceneManager.LoadScene("WaitingScene");
+        SceneManager.LoadScene("StageSelect");
     }
 
 
