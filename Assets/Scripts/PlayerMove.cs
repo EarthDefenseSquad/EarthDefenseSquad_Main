@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class PlayerMove : MonoBehaviour
     SpriteRenderer spriteRenderer;
     Animator anim;
     BoxCollider2D boxCollider;
+    CapsuleCollider2D capsulecollider;
     public ItemManager itemManager;
     AudioSource audioSource;
 
@@ -220,9 +222,16 @@ public class PlayerMove : MonoBehaviour
         }
         else if (collision.CompareTag("Finish"))
         {
-            collision.gameObject.SetActive(false);
+            //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
+            collision.gameObject.SetActive(false); // 아이템 제거
+
+            //gameManager.NextStage();
             PlaySound("Finish");
         }
+
+        if (collision.gameObject.tag == "GameStart"){
+            SceneManager.LoadScene("StageSelect");
+        } // 세대, 스테이지선택씬으로
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -297,5 +306,7 @@ public class PlayerMove : MonoBehaviour
         }
         audioSource.Play();
     }
+    
+    
 }
 
