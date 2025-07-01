@@ -70,5 +70,10 @@ public class StageSelectUI : MonoBehaviour
         SceneManager.LoadScene("StageScene");
     }
 
+    public void GoWaitingScene()
+    {
+        SceneManager.LoadScene("WaitingScene");
+    }
+
 
 }
