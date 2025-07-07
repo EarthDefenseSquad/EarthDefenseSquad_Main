@@ -69,6 +69,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("방 입장 성공");
+        PhotonNetwork.NickName = "Player" + PhotonNetwork.LocalPlayer.ActorNumber;
         Debug.Log($"방 입장: {PhotonNetwork.CurrentRoom.Name}");
         // 예시: 마스터 클라이언트는 0번, 나머지는 1번 위치에 생성
         RoomLoadingPanel.SetActive(false);

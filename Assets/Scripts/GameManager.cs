@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     public GameObject StageSelectPanel;
     public Button Button_StageBack, Button_Stage1, Button_Stage2;
+    public bool gameClear = false;
     void Start()
     {
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
@@ -49,9 +50,32 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
     }
+    public void OnGameClear()
+    {
+        gameClear = true;
+    }
     [PunRPC]
     void MoveTheClearStageSelectPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
     {                                   //튜토리얼 선택 패널 동기화
         StageSelectPanel.SetActive(true);
+    }
+
+    [PunRPC]
+    void DBonGameClear(int clearedStage)
+    {
+        //클리어 기록 관련
+        GameObject obj = GameObject.Find("PlayFabDataManager");
+        Debug.Log(obj);
+        PlayFabDataManager playFabDataManager = obj.GetComponent<PlayFabDataManager>();
+        Debug.Log(playFabDataManager);
+
+        GameObject stageObj = GameObject.Find("StageSelectUI");
+        Debug.Log(stageObj);
+        
+        StageSelectUI StageSelectUI = stageObj.GetComponent<StageSelectUI>();
+        Debug.Log(StageSelectUI);
+
+        playFabDataManager.SaveStageClear(clearedStage, clearedStage =>
+        {StageSelectUI.UnlockStage(clearedStage);});   
     }
 }

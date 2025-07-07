@@ -32,7 +32,7 @@ public class StageSelectUI : MonoBehaviour
     // 특정 스테이지를 해금(잠금 해제)하는 public 메서드
     public void UnlockStage(int stageNumber)
     {
-        int idx = stageNumber - 1;
+        int idx = stageNumber;
         if (idx >= 0 && idx < unlockedStages.Length)
         {
             unlockedStages[idx] = true; //언락됨.
@@ -41,7 +41,7 @@ public class StageSelectUI : MonoBehaviour
     }
 
     // 버튼과 LockIcon UI 상태 갱신
-    private void UpdateStageButton(int i)
+    public void UpdateStageButton(int i)
     {
         Button btn = stageButtons[i];
         bool isUnlocked = unlockedStages[i];

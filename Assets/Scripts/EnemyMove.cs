@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class EnemyMove : MonoBehaviour
+using Photon.Pun;
+using Unity.VisualScripting;
+public class EnemyMove : MonoBehaviourPun
 {
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriterenderer;
     public int nextMove;
+
+    public GameManager gameManager;
 
 
     void Awake()
@@ -22,6 +25,8 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
+
+        if (gameManager.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
         // 이동
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 
@@ -32,11 +37,17 @@ public class EnemyMove : MonoBehaviour
         Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0)); // 레이 그리기
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform")); // 레이히트
 
-        if (rayHit.collider == null) {
+        if (rayHit.collider == null)
+        {
             Turn();
         }
     }
-
+    [PunRPC]
+    public void ClearAfterMove()
+    {
+        gameObject.SetActive(false);
+        Debug.Log("Enemy 비활성화");
+    }
     void Think()
     {
         nextMove = Random.Range(-1, 2); // 왼쪽 -1, 멈춤 0, 오른쪽 1

@@ -4,35 +4,75 @@ using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : MonoBehaviourPunCallbacks
 {
 
     public float maxSpeed;
     public float jumpPower;
-
+    public int roleID = 0; //0: 플레이어1(WASD+Shift), 1:플레이어2(방향키+스페이스)
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
     CapsuleCollider2D capsulecollider;
     AudioSource audioSource;
-    public int clearedStage = 1;
+    public int clearedStage = 0;
 
 
-    void Awake()
+
+
+
+    void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         capsulecollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
+
+        if (photonView.IsMine)
+        {
+            if (Camera.main != null)
+            {
+                Camera.main.GetComponent<CameraFollows>().SetTarget(this.transform);
+            }
+            else
+            {
+                Debug.LogError("Main Camera가 없습니다!");
+            }
+        }
+
+        if (PhotonNetwork.InRoom)
+            roleID = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % 2;
+        //roleID가 actorNumber-1이 짝수이면 나머지0, 홀수이면 나머지1 
     }
 
 
     void Update()
     {
+        if (!photonView.IsMine) return;
+
+        float h = 0;
+        bool jumpPressed = false;
+
+        if (roleID == 0)
+        {
+            // 플레이어1: WASD, Shift
+            h = Input.GetKey(KeyCode.A) ? -1 : Input.GetKey(KeyCode.D) ? 1 : 0;
+            jumpPressed = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
+        }
+        else if (roleID == 1)
+        {
+            // 플레이어2: 방향키, Space
+            h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+            jumpPressed = Input.GetKeyDown(KeyCode.Space);
+        }
+
+
+
+
         // Jump
-        if (Input.GetButtonDown("Jump") && !anim.GetBool("isJumping"))
+        if (jumpPressed && !anim.GetBool("isJumping"))
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             anim.SetBool("isJumping", true);
@@ -40,16 +80,17 @@ public class PlayerMove : MonoBehaviour
         }
 
         // Stop Speed
-        if (Input.GetButtonUp("Horizontal"))
+        if (h == 0)
         {
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
             //normalized : 벡터 크기를 1로 만든 상태 (단위벡터)
         }
 
         // Direction Sprite 
-        if (Input.GetButton("Horizontal"))
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-
+        //if (Input.GetButton("Horizontal"))
+        //    spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+        if (h != 0)
+            spriteRenderer.flipX = h == -1;
         // Animation
         if (Mathf.Abs(rigid.velocity.x) < 0.3)
             anim.SetBool("isWalking", false);
@@ -60,8 +101,21 @@ public class PlayerMove : MonoBehaviour
 
     void FixedUpdate()  // 디폴트는 1초에 50번
     {
+        if (!photonView.IsMine) return;
+
+        float h = 0;
+
         // Move Speed
-        float h = Input.GetAxisRaw("Horizontal");
+        //float h = Input.GetAxisRaw("Horizontal");
+        if (roleID == 0)
+        {
+            h = Input.GetKey(KeyCode.A) ? -1 : Input.GetKey(KeyCode.D) ? 1 : 0;
+        }
+        else if (roleID == 1)
+        {
+            h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+        }
+
 
         rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
@@ -95,28 +149,28 @@ public class PlayerMove : MonoBehaviour
 
             }
         }
+
+
     }
-    
-    private void OnCollisionEnter2D(Collision2D collision) //적과 충돌 시, clearedStage++ -> 해당 패널 활성화, 
-                                                           //StageSelectUI의 언락함수 호출.
+
+    private void OnCollisionEnter2D(Collision2D collision) //적과 충돌 시, clearedStage++ -> 해당 패널 활성화,                                                   //StageSelectUI의 언락함수 호출.
     {
-        Debug.Log("충돌 발생");
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            clearedStage++;
             Debug.Log("적과 충돌!");
             Debug.Log($"스테이지 {clearedStage} 클리어!");
-            clearedStage++;
-            GameObject obj = GameObject.Find("StageSelectUI");
-            StageSelectUI stageSelectUI = obj.GetComponent<StageSelectUI>();
-            stageSelectUI.UnlockStage(clearedStage);
-            GameObject managerobj = GameObject.Find("GameManager");
-            GameManager gameManager = managerobj.GetComponent<GameManager>();
-            gameManager.photonView.RPC("MoveTheClearStageSelectPanel", RpcTarget.AllBuffered);
 
-            
+            //게임 클리어시 맵 동작 멈춤
+            GameObject manageobj = GameObject.Find("GameManager");
+            GameManager gameManager = manageobj.GetComponent<GameManager>();
+            gameManager.OnGameClear();
+             
+            //클리어 기록 관련
+            gameManager.photonView.RPC("DBonGameClear", RpcTarget.AllBuffered, clearedStage);
+            //스테이지 패널 띄우는 것 관련
+            gameManager.photonView.RPC("MoveTheClearStageSelectPanel", RpcTarget.AllBuffered);
         }
     }
 
-    
-
-    }
+}
