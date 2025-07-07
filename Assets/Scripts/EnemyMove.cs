@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class EnemyMove : MonoBehaviour
+using Photon.Pun;
+using Unity.VisualScripting;
+public class EnemyMove : MonoBehaviourPun
 {
     Rigidbody2D rigid;
     Animator anim;
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D capsulecollider;
 
+
     public int nextMove;
+    public GameManager gameManager;
+
 
     void Awake()
     {
@@ -23,7 +27,8 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Move
+        if (gameManager.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
+        // 이동
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 
 
@@ -35,7 +40,12 @@ public class EnemyMove : MonoBehaviour
             Turn();
         }
     }
-
+    [PunRPC]
+    public void ClearAfterMove()
+    {
+        gameObject.SetActive(false);
+        Debug.Log("Enemy 비활성화");
+    }
     void Think()
     {
         nextMove = Random.Range(-1, 2);

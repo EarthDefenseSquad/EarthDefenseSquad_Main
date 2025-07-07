@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPunCallbacks
 {
     public int totalPoint;
     public int stagePoint;
@@ -18,6 +20,10 @@ public class GameManager : MonoBehaviour
     public Text UIPoint;
     public Text UIStage;
     public GameObject RestartButton;
+
+    public GameObject StageSelectPanel;
+    public Button Button_StageBack, Button_Stage1, Button_Stage2;
+    public bool gameClear = false;
 
 
     // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)
@@ -39,6 +45,9 @@ public class GameManager : MonoBehaviour
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode;
 
+    //플레이어들 동기화 스폰
+    //플레이어들 동기화 이동
+    //플레이어들 특정 조건 만족 시 DB로 클리어 기록 전송.(나중에 DB스크립트에서 클리어 기록이 있다면 게임 스테이지 변경)
 
     void Start()
     {
@@ -47,6 +56,10 @@ public class GameManager : MonoBehaviour
             health = 1;
             UpdateHealthUI(); // ✅ UI 반영
         }
+
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        //photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
+        SpawnPlayer(playerIndex);
     }
 
 
@@ -61,15 +74,75 @@ public class GameManager : MonoBehaviour
         // UI에 현재 수치 표시
         UpdateFinishItemUI();
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     if (Input.GetKeyDown(KeyCode.R))
     {
         PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
         PlayerPrefs.Save();
         Debug.Log("[개발용] data모은 정도 초기화 완료");
     }
-#endif
+    #endif
 
+    }
+
+
+    public void SpawnPlayer(int player_index)
+    {
+        var spawnPositions = new Vector3[]
+        {
+        new Vector3(-7.0f, -4.5f, 0.0f),
+        new Vector3(-5.0f, -4.5f, 0.0f)
+        };
+        GameObject playerObject = PhotonNetwork.Instantiate("PlayerPrefab", spawnPositions[player_index], Quaternion.identity);
+        //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
+        //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
+        //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
+        //Instantiate(obj, spawnPosition, Quaternion.identity);
+        //위의 두 줄이 의미하는 게 포톤에서는 PhotonNetwork.Instantiate~~저걸로 리소스에서 "PlayerPrefab"이라는 이름의 프리팹 가져옴.
+
+        Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
+        if (playerObject == null)
+        {
+            Debug.LogError("플레이어 객체 생성 실패!");
+            return;
+        }
+
+        Debug.Log("플레이어 생성 완료");
+
+        // Camera 세팅
+        if (Camera.main == null)
+        {
+            Debug.LogError("Main Camera가 없습니다.");
+            return;
+        }
+    }
+    public void OnGameClear()
+    {
+        gameClear = true;
+    }
+    [PunRPC]
+    void MoveTheClearStageSelectPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                                   //튜토리얼 선택 패널 동기화
+        StageSelectPanel.SetActive(true);
+    }
+
+    [PunRPC]
+    void DBonGameClear(int clearedStage)
+    {
+        //클리어 기록 관련
+        GameObject obj = GameObject.Find("PlayFabDataManager");
+        Debug.Log(obj);
+        PlayFabDataManager playFabDataManager = obj.GetComponent<PlayFabDataManager>();
+        Debug.Log(playFabDataManager);
+
+        GameObject stageObj = GameObject.Find("StageSelectUI");
+        Debug.Log(stageObj);
+        
+        StageSelectUI StageSelectUI = stageObj.GetComponent<StageSelectUI>();
+        Debug.Log(StageSelectUI);
+
+        playFabDataManager.SaveStageClear(clearedStage, clearedStage =>
+        {StageSelectUI.UnlockStage(clearedStage);});   
     }
 
     public void NextStage()
@@ -270,4 +343,5 @@ void OnTriggerEnter2D(Collider2D collision)
     }
 
 
-}
+
+

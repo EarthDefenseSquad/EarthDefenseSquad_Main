@@ -8,28 +8,41 @@ using UnityEngine.UI;
 using Photon.Pun.UtilityScripts;
 using Unity.VisualScripting;
 
+//PhotonManager 스크립트 기능:
+//게임 시작하자마자 연결-로비 진입 상태
+//start버튼 누르면 룸 진입.
+//플레이어 중 한 명이라도 back버튼 누르면 룸 파괴. - start버튼 누르면 다시 새로운 룸 진입
+//ok버튼 누르면 YearSelectPanel이동-1960년도 선택-StageSelect패널 이동-stage1선택-튜토리얼 패널 이동-게임씬 이동
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
     public const byte BID_EVENT = 1;
     public const byte AUCTION_COMPLETE_EVENT = 3;
-    public GameObject CharacterSelect_Panel;
-    public GameObject RoomLoadingPanel;
     public GameObject Start_Panel;
+    public GameObject RoomLoadingPanel;
+    public GameObject CharacterSelect_Panel;
+    public GameObject YearSelectPanel;
+    public GameObject StageSelectPanel;
+    public GameObject Tutorial_Panel;
     public Button Button_Start;
-    public Button Button_Back;
+    public Button Button_Back, Button_YearBack, Button_StageBack, Button_TutorialBack;
+    public Button Button_OK, Button_TutorialOK;
+    public Button Button_1960;
+    public Button Button_Stage1;
+
+    public StageSelectUI stageSelectUI;
     public bool isGameStartRequested = false;
-  
 
     private void Start() //게임 시작 버튼 클릭과 함께 스크립트 활성화.
     {
         PhotonNetwork.ConnectUsingSettings();
-        Button_Start.onClick.AddListener(OnStartButtonClicked);
+        GameDataManager.Instance.Start_Panel = this.Start_Panel;
+        GameDataManager.Instance.StageSelectPanel = this.StageSelectPanel;
+        GameDataManager.Instance.stageSelectUI = this.stageSelectUI;
+        Button_Start.onClick.AddListener(OnGameStartButtonClicked);
     }
-
-    public override void OnConnectedToMaster() //연결+로비 진입을 디폴트로 포함.
+    public override void OnConnectedToMaster() //게임 시작하자마자 서버 연결 - 로비 진입 성공 상태시 콜백
     {
         Debug.Log("포톤 마스터 서버 연결 후 로비 진입 성공");
-
         if (isGameStartRequested)
         {
             PhotonNetwork.JoinRandomRoom();
@@ -41,8 +54,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Debug.Log("CharacterSelect_Panel 활성화", this);
             Button_Back.onClick.RemoveAllListeners(); // 중복 방지
             Button_Back.onClick.AddListener(OnBackButtonClicked);
-            isGameStartRequested = false;
+            Start_Panel.SetActive(false);
+            RoomLoadingPanel.SetActive(true);
         }
+        isGameStartRequested = false;
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -54,10 +69,27 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("방 입장 성공");
+        PhotonNetwork.NickName = "Player" + PhotonNetwork.LocalPlayer.ActorNumber;
         Debug.Log($"방 입장: {PhotonNetwork.CurrentRoom.Name}");
         // 예시: 마스터 클라이언트는 0번, 나머지는 1번 위치에 생성
+        RoomLoadingPanel.SetActive(false);
+        CharacterSelect_Panel.SetActive(true);
+        Button_Back.onClick.RemoveAllListeners(); // 중복 방지
+        Button_Back.onClick.AddListener(OnBackButtonClicked);
+        Button_OK.onClick.RemoveAllListeners(); // 중복 방지
+        Button_OK.onClick.AddListener(() => photonView.RPC("MoveTheYearPanel", RpcTarget.All));
+        // MasterClient만 OK 버튼 활성화
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Button_OK.gameObject.SetActive(true);
+        }
+        else
+        {
+            Button_OK.gameObject.SetActive(false);
+        }
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
         photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+        //SpawnPlayer(playerIndex);
 
     }
 
@@ -103,78 +135,122 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         //Camera.main.GetComponent<CameraController>().Initalize(playerObject.transform);
         //PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
     }
-
-    public void OnStartButtonClicked()
+    public void OnGameStartButtonClicked() //start버튼 눌렀을 때, 로비 진입까지 마친 상태라면 룸 진입
     {
-        StartCoroutine(DelayTime(3.5f));
-        if (isGameStartRequested)
+        if (PhotonNetwork.IsConnectedAndReady) //연결되어 있고 방 진입 준비가 되어 있다면,
         {
             PhotonNetwork.JoinRandomRoom();
             Debug.Log("방 참가를 시도합니다.");
-            // UI 패널 전환
             Start_Panel.SetActive(false);
-            RoomLoadingPanel.SetActive(false);
-            CharacterSelect_Panel.SetActive(true);
-            Debug.Log("CharacterSelect_Panel 활성화", this);
-            Button_Back.onClick.RemoveAllListeners(); // 중복 방지
-            Button_Back.onClick.AddListener(OnBackButtonClicked);
+            RoomLoadingPanel.SetActive(true);
             isGameStartRequested = false;
         }
         else
         {
+            // 아직 로비에 안 들어가 있으면, 콜백에서 처리하도록 플래그만 켜둠
             isGameStartRequested = true;
         }
     }
 
-    IEnumerator DelayTime(float time)
-    {
-        yield return new WaitForSeconds(time);
-    }
     public void OnBackButtonClicked()
     {
-        Debug.Log("방을 나갑니다.");
-        if (PhotonNetwork.InRoom) //내가 방에 있는 게 확실한 경우,
-        {
-            PhotonNetwork.LeaveRoom();
-            //룸을 나가 마스터 서버와 연결만 된 상태로, 다시 룸에 입장하려면 로비에 진입부터 해야 함. 
-            CharacterSelect_Panel.SetActive(false);
-            Debug.Log("CharacterSelect_Panel 비활성화", this);
-            RoomLoadingPanel.SetActive(false);
-            Start_Panel.SetActive(true);
-            Button_Start.onClick.RemoveAllListeners();
-            Button_Start.onClick.AddListener(OnStartButtonClicked);
-        }
+        PhotonNetwork.LeaveRoom();
+        Debug.Log("방에서 나가는 중입니다.");
     }
 
-    public override void OnPlayerLeftRoom(Player otherPlayer) // 플레이어가 방을 나갔을 때 다른 플레이어들에게 그 결과를 알려주는 콜백함수.
+    public override void OnLeftRoom() //내가 룸을 나갔을 때 나에게 오는 콜백함수.
     {
-        Debug.Log("상대 플레이어가 방을 나갔습니다.");
+        Debug.Log("방에서 나왔습니다.");
+        CharacterSelect_Panel.SetActive(false);
+        Start_Panel.SetActive(true);
+        Button_Start.onClick.RemoveAllListeners(); // 중복 방지
+        Button_Start.onClick.AddListener(OnGameStartButtonClicked);
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer) //남이 나갔을 때 나에게 오는 콜백함수.
+    {
+        Debug.Log($"{otherPlayer.NickName} 님이 방을 나갔습니다.");
         if (PhotonNetwork.IsMasterClient)
         {
             PhotonNetwork.LeaveRoom();
-            CharacterSelect_Panel.SetActive(false);
-            Debug.Log("CharacterSelect_Panel 비활성화", this);
-            RoomLoadingPanel.SetActive(false);
-            Start_Panel.SetActive(true);
-            Button_Start.onClick.RemoveAllListeners();
-            Button_Start.onClick.AddListener(OnStartButtonClicked);
+            Debug.Log("방에서 나가는 중입니다.");
+        }
+        else
+        {
+            Debug.Log("방에서 나가기 실패!");
         }
     }
-
-    /*public override void OnLeftRoom()
+    [PunRPC]
+    void MoveTheYearPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 연도 선택 패널 동기화
     {
         CharacterSelect_Panel.SetActive(false);
-        Debug.Log("CharacterSelect_Panel 비활성화", this);
-        RoomLoadingPanel.SetActive(false);
-        Start_Panel.SetActive(true);
-        Button_Start.onClick.RemoveAllListeners();
-        Button_Start.onClick.AddListener(OnStartButtonClicked);
-        
-    }*/
-} 
+        StageSelectPanel.SetActive(false);
+        YearSelectPanel.SetActive(true);
+        Button_1960.onClick.RemoveAllListeners();
+        Button_1960.onClick.AddListener(() => photonView.RPC("MoveTheStageSelectPanel", RpcTarget.All));
+        Button_YearBack.onClick.RemoveAllListeners();
+        Button_YearBack.onClick.AddListener(() => photonView.RPC("MoveThe_CharacterSelectPanel", RpcTarget.All));
+        if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
+        {
+            Button_YearBack.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
+            Button_1960.interactable = false;
+        }
+    }
+    [PunRPC]
+    void MoveTheStageSelectPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                              //스테이지 선택 패널 동기화
+        YearSelectPanel.SetActive(false);
+        StageSelectPanel.SetActive(true);
+        Button_Stage1.onClick.RemoveAllListeners();
+        Button_Stage1.onClick.AddListener(() => photonView.RPC("MoveTheTutorialPanel", RpcTarget.All));
+        Button_StageBack.onClick.RemoveAllListeners();
+        Button_StageBack.onClick.AddListener(() => photonView.RPC("MoveTheYearPanel", RpcTarget.All));
+        if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
+        {
+            Button_StageBack.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
+            Button_Stage1.interactable = false;
+        }
+    }
+    [PunRPC]
+    void MoveTheTutorialPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                           //튜토리얼 선택 패널 동기화
+        StageSelectPanel.SetActive(false);
+        Tutorial_Panel.SetActive(true);
+        Button_TutorialBack.onClick.RemoveAllListeners(); //뒤로가기
+        Button_TutorialBack.onClick.AddListener(() => photonView.RPC("MoveTheStageSelectPanel", RpcTarget.All));
+        Button_TutorialOK.onClick.RemoveAllListeners(); //ok버튼
+        Button_TutorialOK.onClick.AddListener(() => photonView.RPC("MoveTheGameScene", RpcTarget.All));
+        if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
+        {
+            Button_TutorialBack.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
+        }
+    }
+    [PunRPC]
+    void MoveTheGameScene() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                       //게임씬 이동 동기화
+        PhotonNetwork.LoadLevel("GameScene");
+    }
 
-
-//경우의 수
-//내가 나가는데 내가 마스터(내가 마스터면 다 destroy하고 나가기), 내가 일반
-//남이 나가는데 남이 마스터, 남이 일반(내가 destroy하고 나도 나가기)
-//OnPlayerLeftRoom에 콜백이 오면서 자동으로 남아있는 사람은 마스터 클라이언트가 됨.
+    [PunRPC]
+    void MoveThe_CharacterSelectPanel()
+    {
+        YearSelectPanel.SetActive(false);
+        CharacterSelect_Panel.SetActive(true);
+        Button_Back.onClick.RemoveAllListeners(); // 중복 방지
+        Button_Back.onClick.AddListener(OnBackButtonClicked);
+        Button_OK.onClick.RemoveAllListeners(); // 중복 방지
+        Button_OK.onClick.AddListener(() => photonView.RPC("MoveTheYearPanel", RpcTarget.All));
+        // MasterClient만 OK 버튼 활성화
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Button_OK.gameObject.SetActive(true);
+        }
+        else
+        {
+            Button_OK.gameObject.SetActive(false);
+        }
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+    }
+    
+}
