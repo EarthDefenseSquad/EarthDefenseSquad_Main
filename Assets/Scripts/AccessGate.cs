@@ -26,10 +26,10 @@ public class AccessGate : MonoBehaviour
                 return;
             }
 
-            if (player.gameManager.stagePoint >= requiredScore)
+            if (GameManager.Instance.stagePoint >= requiredScore)
             {
-                player.gameManager.stagePoint -= requiredScore;
-                Debug.Log($"✅ {requiredScore}점 차감 후 통과. 남은 점수: {player.gameManager.stagePoint}");
+                GameManager.Instance.stagePoint -= requiredScore;
+                Debug.Log($"✅ {requiredScore}점 차감 후 통과. 남은 점수: {GameManager.Instance.stagePoint}");
 
                 col.enabled = false;
                 if (sr != null) sr.enabled = false; // 시각적 제거
@@ -38,7 +38,7 @@ public class AccessGate : MonoBehaviour
             }
             else
             {
-                Debug.Log($"❌ 점수 부족 ({player.gameManager.stagePoint} / 필요: {requiredScore})");
+                Debug.Log($"❌ 점수 부족 ({GameManager.Instance.stagePoint} / 필요: {requiredScore})");
             }
         }
     }

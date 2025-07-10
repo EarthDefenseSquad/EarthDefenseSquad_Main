@@ -10,6 +10,10 @@ public class EnemyMove : MonoBehaviour
     CapsuleCollider2D capsulecollider;
 
     public int nextMove;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
     void Awake()
     {
@@ -23,7 +27,12 @@ public class EnemyMove : MonoBehaviour
 
     void FixedUpdate()
     {
+<<<<<<< Updated upstream
         //Move
+=======
+        if (GameManager.Instance.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
+        // 이동
+>>>>>>> Stashed changes
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 
 

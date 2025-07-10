@@ -2,13 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+<<<<<<< Updated upstream
+=======
+using Photon.Pun;
+using UnityEngine.UI;
+using JetBrains.Annotations;
+>>>>>>> Stashed changes
 
 public class PlayerMove : MonoBehaviour
 {
     public enum PlayerType { Player1, Player2 }
     public PlayerType playerType;
 
-    public GameManager gameManager;
     public float maxSpeed;
     public float jumpForce;
     public bool hasAccessPass = false;
@@ -31,14 +36,37 @@ public class PlayerMove : MonoBehaviour
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
+<<<<<<< Updated upstream
     void Awake()
+=======
+
+    void Start()
+>>>>>>> Stashed changes
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
+<<<<<<< Updated upstream
 
+=======
+        if (photonView.IsMine)
+        {
+            if (Camera.main != null)
+            {
+                Camera.main.GetComponent<CameraFollows>().SetTarget(this.transform);
+            }
+            else
+            {
+                Debug.LogError("Main Camera가 없습니다!");
+            }
+        }
+
+        if (PhotonNetwork.InRoom)
+            roleID = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % 2;
+        //roleID가 actorNumber-1이 짝수이면 나머지0, 홀수이면 나머지1 
+>>>>>>> Stashed changes
         if (playerType == PlayerType.Player2)
         {
             jumpForce *= 1.3f;
@@ -48,6 +76,8 @@ public class PlayerMove : MonoBehaviour
         Debug.Log($"[PlayerMove] {playerType} - Speed: {maxSpeed}, Jump: {jumpForce}");
 
     }
+
+
 
     void Update()
     {
@@ -69,7 +99,22 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
+<<<<<<< Updated upstream
         if (Input.GetButtonUp("Horizontal"))
+=======
+
+        // Jump
+        if (jumpPressed && !anim.GetBool("isJumping"))
+        {
+            rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            anim.SetBool("isJumping", true);
+
+        }
+
+        // Stop Speed
+        if (h == 0)
+        {
+>>>>>>> Stashed changes
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
 
         if (Input.GetButtonDown("Horizontal"))
@@ -77,7 +122,7 @@ public class PlayerMove : MonoBehaviour
 
         anim.SetBool("isWalk", Mathf.Abs(rigid.velocity.x) >= 0.3f);
 
-        if (gameManager.colorRestoreMode)
+        if (GameManager.Instance.colorRestoreMode)
         {
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
             foreach (var hit in hits)
@@ -126,11 +171,11 @@ public class PlayerMove : MonoBehaviour
             if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
             {
                 Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
-                gameManager.colorRestoreMode = false;
+                GameManager.Instance.colorRestoreMode = false;
 
-                if (gameManager.goalObject != null)
+                if (GameManager.Instance.goalObject != null)
                 {
-                    StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
+                    StartCoroutine(GameManager.Instance.GoalAppearEffect()); // 연출 호출
                 }
             }
 
@@ -153,10 +198,27 @@ public class PlayerMove : MonoBehaviour
 
         if (rigid.velocity.y < 0)
         {
+<<<<<<< Updated upstream
             RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
             if (rayHit.collider != null && rayHit.distance < 0.6f)
                 anim.SetBool("isJump", false);
         }
+=======
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "HiddenPlatform"));
+            if (rayHit.collider != null && rayHit.distance < 0.65f)
+                anim.SetBool("isJumping", false);
+        }
+        if (rigid.velocity.x > maxSpeed)      // Right Max Speed
+            rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
+        else if (rigid.velocity.x < maxSpeed * (-1))    // Left Max Speed
+            rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
+
+        // Lnading Platform
+        if (rigid.velocity.y < 0)
+        {
+            Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
+        }
+>>>>>>> Stashed changes
     }
 
     public void EnableInvincibility(bool status)
@@ -164,6 +226,11 @@ public class PlayerMove : MonoBehaviour
         isInvincible = status;
         spriteRenderer.color = status ? new Color(1, 1, 1, 0.5f) : Color.white;
     }
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 
     public void EnableDoubleJump(float duration)
     {
@@ -179,7 +246,7 @@ public class PlayerMove : MonoBehaviour
 
     public void EnableColorRestore(bool enable)
     {
-        gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
+        GameManager.Instance.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
     }
 
 
@@ -190,10 +257,16 @@ public class PlayerMove : MonoBehaviour
                Mathf.Abs(a.g - b.g) < threshold &&
                Mathf.Abs(a.b - b.b) < threshold;
     }
+<<<<<<< Updated upstream
 
+=======
+    // Velocity : 리지드 바디의 현재 속도
+>>>>>>> Stashed changes
 
     void OnTriggerEnter2D(Collider2D collision)
     {
+        RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector2.right);
+
         if (collision.CompareTag("Item"))
         {
             string name = collision.name;
@@ -203,17 +276,43 @@ public class PlayerMove : MonoBehaviour
                 name.Contains("Sliver") ||
                 name.Contains("Gold");
 
+<<<<<<< Updated upstream
             // ✅ 코인일 경우: Player1, Player2 모두 점수 획득
             if (isCoin)
             {
                 if (name.Contains("Bronze")) gameManager.stagePoint += 50;
                 else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
                 else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+=======
+                if (isCoin)
+                {
+                    if (name.Contains("Bronze")) GameManager.Instance.stagePoint += 50;
+                    else if (name.Contains("Sliver")) GameManager.Instance.stagePoint += 100;
+                    else if (name.Contains("Gold")) GameManager.Instance.stagePoint += 300;
+
+                    collision.gameObject.SetActive(false);
+                    PlaySound("Item");
+                    return;
+                }
+
+                if (playerType == PlayerType.Player2)
+                {
+                    Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
+                    return;
+                }
+
+                if (name.Contains("Buffering")) itemManager.UseItem(ItemType.BufferingIcon);
+                else if (name.Contains("Invincibility")) itemManager.UseItem(ItemType.Invincibility);
+                else if (name.Contains("DoubleJump")) itemManager.UseItem(ItemType.DoubleJump);
+                else if (name.Contains("AccessPass")) itemManager.UseItem(ItemType.AccessPass);
+                else if (name.Contains("RevealPlatform")) itemManager.UseItem(ItemType.RevealPlatform);
+                else if (name.Contains("ColorRestore")) itemManager.UseItem(ItemType.ColorRestore);
+>>>>>>> Stashed changes
 
                 collision.gameObject.SetActive(false);
                 PlaySound("Item");
-                return;
             }
+<<<<<<< Updated upstream
 
             // ❌ Player2는 아이템 무시 (먹지도 않고 삭제도 안 함)
             if (playerType == PlayerType.Player2)
@@ -232,6 +331,8 @@ public class PlayerMove : MonoBehaviour
 
             collision.gameObject.SetActive(false);
             PlaySound("Item");
+=======
+>>>>>>> Stashed changes
         }
         else if (collision.CompareTag("Finish"))
         {
@@ -240,8 +341,10 @@ public class PlayerMove : MonoBehaviour
 
             //gameManager.NextStage();
             PlaySound("Finish");
+            PhotonNetwork.LoadLevel("StageSelect");
         }
 
+<<<<<<< Updated upstream
         if (collision.gameObject.tag == "GameStart"){
             SceneManager.LoadScene("StageSelect");
         } // 세대, 스테이지선택씬으로
@@ -253,9 +356,21 @@ public class PlayerMove : MonoBehaviour
         if (isInvincible) return;
 
         if (collision.gameObject.CompareTag("Enemy"))
+=======
+        if (collision.gameObject.tag == "GameStart")
+>>>>>>> Stashed changes
         {
-            if (rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
+                PhotonNetwork.LoadLevel("StageSelect");
+             // 세대, 스테이지선택씬으로
+        }
+    }
+        void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (isInvincible) return;
+
+            if (collision.gameObject.CompareTag("Enemy"))
             {
+<<<<<<< Updated upstream
                 OnAttack(collision.transform);
                 PlaySound("Attack");
             }
@@ -263,33 +378,48 @@ public class PlayerMove : MonoBehaviour
                 OnDamaged(collision.transform.position);
         }
     }
+=======
+                if (rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
+                {
+                    OnAttack(collision.transform);
+                    PlaySound("Attack");
+                }
+                else
+                {
+                    OnDamaged(collision.transform.position);
+                }
+            }
 
-    void OnAttack(Transform enemy)
-    {
-        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-        gameManager.stagePoint += 100;
-        enemy.GetComponent<EnemyMove>()?.OnDamaged();
-    }
 
-    void OnDamaged(Vector2 targetPos)
-    {
-        gameManager.HealthDown();
-        gameObject.layer = 11;
-        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        }
 
-        int dir = transform.position.x - targetPos.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dir, 1) * 7, ForceMode2D.Impulse);
+        void OnAttack(Transform enemy)
+        {
+            rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+            GameManager.Instance.stagePoint += 100;
+            enemy.GetComponent<EnemyMove>()?.OnDamaged();
+        }
 
-        PlaySound("Damaged");
-        anim.SetTrigger("doDamaged");
-        Invoke("OffDamaged", 3);
-    }
+        void OnDamaged(Vector2 targetPos)
+        {
+            GameManager.Instance.HealthDown();
+            gameObject.layer = 11;
+            spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+>>>>>>> Stashed changes
 
-    void OffDamaged()
-    {
-        gameObject.layer = 10;
-        spriteRenderer.color = Color.white;
-    }
+            int dir = transform.position.x - targetPos.x > 0 ? 1 : -1;
+            rigid.AddForce(new Vector2(dir, 1) * 7, ForceMode2D.Impulse);
+
+            PlaySound("Damaged");
+            anim.SetTrigger("doDamaged");
+            Invoke("OffDamaged", 3);
+        }
+
+        void OffDamaged()
+        {
+            gameObject.layer = 10;
+            spriteRenderer.color = Color.white;
+        }
 
     public void OnDie()
     {
@@ -318,6 +448,9 @@ public class PlayerMove : MonoBehaviour
         }
         audioSource.Play();
     }
-    
-    
 }
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
