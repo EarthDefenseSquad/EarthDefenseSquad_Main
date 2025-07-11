@@ -6,60 +6,87 @@ public class EnemyMove : MonoBehaviour
 {
     Rigidbody2D rigid;
     Animator anim;
-    SpriteRenderer spriterenderer;
-    public int nextMove;
+    SpriteRenderer spriteRenderer;
+    CapsuleCollider2D capsulecollider;
 
+    public int nextMove;
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        spriterenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        capsulecollider = GetComponent<CapsuleCollider2D>();
 
-        Invoke("Think", 5);
+        Invoke("Think",2);
     }
-
 
     void FixedUpdate()
     {
+<<<<<<< Updated upstream
+        //Move
+=======
+        if (GameManager.Instance.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
         // 이동
+>>>>>>> Stashed changes
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 
-        // 낭떠러지 체크
 
-        Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.5f, rigid.position.y); // 레이시작위치
-
-        Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0)); // 레이 그리기
-        RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform")); // 레이히트
-
-        if (rayHit.collider == null) {
+        //Platform Check
+        Vector2 frontVec = new Vector2(rigid.position.x + nextMove*0.2f, rigid.position.y);
+        Debug.DrawRay(frontVec, Vector3.down, new Color(0,1,0));
+        RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform"));
+        if (rayHit.collider == null){
             Turn();
         }
     }
 
     void Think()
     {
-        nextMove = Random.Range(-1, 2); // 왼쪽 -1, 멈춤 0, 오른쪽 1
-
-        // 애니메이션 전환
+        nextMove = Random.Range(-1, 2);
+        
+        //Animation
         anim.SetInteger("WalkSpeed", nextMove);
-
-        // 방향전환
+        
+        //Flip Sprite
         if (nextMove != 0)
-            spriterenderer.flipX = nextMove == 1;
+            spriteRenderer.flipX = nextMove == 1;
 
-        float nextThinkTime = Random.Range(2f, 5f); // 인보크 시간 랜덤지정
+
+        //재귀함수
+        float nextThinkTime = Random.Range(2f, 5f);
         Invoke("Think", nextThinkTime);
+
     }
 
     void Turn()
     {
-        // Debug.Log("낭떠러지~");
-
-        nextMove *= -1; // nextMove = nextMove * -1;
-        spriterenderer.flipX = nextMove == 1;
-
+        nextMove *= -1;
+        spriteRenderer.flipX = nextMove == 1;
+        //Platform 낭떠러지
         CancelInvoke();
         Invoke("Think", 2);
+    }
+
+    public void OnDamaged()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f); //Red
+
+        spriteRenderer.flipY = true; //Flip Sprite
+
+        capsulecollider.enabled = false; //Disable Collider
+
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse); //Jump force
+
+        Invoke("DeActive", 5);
+    }
+
+    void DeActive()
+    {
+        gameObject.SetActive(false); //Disable GameObject
     }
 }

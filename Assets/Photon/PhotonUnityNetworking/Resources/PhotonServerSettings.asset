@@ -40,6 +40,21 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - SpawnPlayer
+<<<<<<< Updated upstream
+=======
+  - DestroyTheRoom
+  - MoveTheGameScene
+  - MoveTheStageSelectPanel
+  - MoveTheYearPanel
+  - MoveThe_CharacterSelectPanel
+  - MoveTheTutorialPanel
+  - MoveTheClearStageSelectPanel
+  - DBonGameClear
+  - SaveStageClear
+  - ClearAfterMove
+  - MoveTheWaitingScene
+  - MoveTheStageScene
+>>>>>>> Stashed changes
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
