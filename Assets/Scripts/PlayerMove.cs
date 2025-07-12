@@ -62,22 +62,20 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         if (PhotonNetwork.InRoom)
             roleID = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % 2;
         //roleID가 actorNumber-1이 짝수이면 나머지0, 홀수이면 나머지1 
-    }
 
         if (playerType == PlayerType.Player2)
         {
             jumpForce *= 1.3f;
             maxSpeed *= 1.3f;
         }
-
         Debug.Log($"[PlayerMove] {playerType} - Speed: {maxSpeed}, Jump: {jumpForce}");
-    }
+    }//start 끝
 
     void Update()
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
 
-        float h = 0;
+        float h = 0; //좌우 움직임
         bool jumpPressed = false;
 
         if (roleID == 0)
@@ -92,18 +90,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
             jumpPressed = Input.GetKeyDown(KeyCode.Space);
         }
-
-
-
-
         // Jump
         if (jumpPressed && !anim.GetBool("isJumping"))
         {
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             anim.SetBool("isJumping", true);
-
         }
-
         // Stop Speed
         if (h == 0)
         {
@@ -180,7 +172,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
 
         }
-    }
+    } //update끝
 
         void FixedUpdate()
         {
@@ -196,7 +188,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             {
                 RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "HiddenPlatform"));
                 if (rayHit.collider != null && rayHit.distance < 0.65f)
-                    anim.SetBool("isJump", false);
+                    anim.SetBool("isJumping", false);
             }
         }
 
@@ -205,22 +197,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         isInvincible = status;
         spriteRenderer.color = status ? new Color(1, 1, 1, 0.5f) : Color.white;
     }
-        if (!photonView.IsMine) return;
-
-        float h = 0;
-
-        // Move Speed
-        //float h = Input.GetAxisRaw("Horizontal");
-        if (roleID == 0)
-        {
-            h = Input.GetKey(KeyCode.A) ? -1 : Input.GetKey(KeyCode.D) ? 1 : 0;
-        }
-        else if (roleID == 1)
-        {
-            h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
-        }
-
-
+    
     public void EnableDoubleJump(float duration)
     {
         StartCoroutine(ActivateDoubleJump(duration));
@@ -239,30 +216,21 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
     }
 
-    private bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
+    bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
     {
         return Mathf.Abs(a.r - b.r) < threshold &&
                Mathf.Abs(a.g - b.g) < threshold &&
                Mathf.Abs(a.b - b.b) < threshold;
     }
-        // Velocity : 리지드 바디의 현재 속도
-        if (rigid.velocity.x > maxSpeed)      // Right Max Speed
-            rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
-        else if (rigid.velocity.x < maxSpeed * (-1))    // Left Max Speed
-            rigid.velocity = new Vector2(maxSpeed * (-1), rigid.velocity.y);
-
-        // Lnading Platform
-        if (rigid.velocity.y < 0)
-        {
-            Debug.DrawRay(rigid.position, Vector3.down, new Color(0, 1, 0));
-
     void OnTriggerEnter2D(Collider2D collision)
     {
+        RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector2.down, 1f, LayerMask.GetMask("Platform"));
         if (collision.CompareTag("Item"))
         {
             string name = collision.name;
 
             bool isCoin = name.Contains("Bronze") || name.Contains("Sliver") || name.Contains("Gold");
+
             if (rayHit.collider != null)
             {
                 //Debug.Log(rayHit.collider.name);
@@ -275,32 +243,33 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                     anim.SetBool("isJumping", false);
                 }
 
-            if (isCoin)
-            {
-                if (name.Contains("Bronze")) gameManager.stagePoint += 50;
-                else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
-                else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+                if (isCoin)
+                {
+                    if (name.Contains("Bronze")) gameManager.stagePoint += 50;
+                    else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
+                    else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+
+                    collision.gameObject.SetActive(false);
+                    PlaySound("Item");
+                    return;
+                }
+
+                if (playerType == PlayerType.Player2)
+                {
+                    Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
+                    return;
+                }
+
+                if (name.Contains("Buffering")) itemManager.UseItem(ItemType.BufferingIcon);
+                else if (name.Contains("Invincibility")) itemManager.UseItem(ItemType.Invincibility);
+                else if (name.Contains("DoubleJump")) itemManager.UseItem(ItemType.DoubleJump);
+                else if (name.Contains("AccessPass")) itemManager.UseItem(ItemType.AccessPass);
+                else if (name.Contains("RevealPlatform")) itemManager.UseItem(ItemType.RevealPlatform);
+                else if (name.Contains("ColorRestore")) itemManager.UseItem(ItemType.ColorRestore);
 
                 collision.gameObject.SetActive(false);
                 PlaySound("Item");
-                return;
             }
-
-            if (playerType == PlayerType.Player2)
-            {
-                Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
-                return;
-            }
-
-            if (name.Contains("Buffering")) itemManager.UseItem(ItemType.BufferingIcon);
-            else if (name.Contains("Invincibility")) itemManager.UseItem(ItemType.Invincibility);
-            else if (name.Contains("DoubleJump")) itemManager.UseItem(ItemType.DoubleJump);
-            else if (name.Contains("AccessPass")) itemManager.UseItem(ItemType.AccessPass);
-            else if (name.Contains("RevealPlatform")) itemManager.UseItem(ItemType.RevealPlatform);
-            else if (name.Contains("ColorRestore")) itemManager.UseItem(ItemType.ColorRestore);
-
-            collision.gameObject.SetActive(false);
-            PlaySound("Item");
         }
         else if (collision.CompareTag("Finish"))
         {
@@ -316,7 +285,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         } // 세대, 스테이지선택씬으로
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+
+    void OnCollisionEnter2D(Collision2D collision) //충돌
     {
         if (isInvincible) return;
 
@@ -332,8 +302,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 OnDamaged(collision.transform.position);
             }
         }
-
-
     }
 
     void OnAttack(Transform enemy)
@@ -390,28 +358,4 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         }
         audioSource.Play();
     }
-    
-    
-}
-
-    private void OnCollisionEnter2D(Collision2D collision) //적과 충돌 시, clearedStage++ -> 해당 패널 활성화,                                                   //StageSelectUI의 언락함수 호출.
-    {
-        if (collision.gameObject.CompareTag("Enemy"))
-        {
-            clearedStage++;
-            Debug.Log("적과 충돌!");
-            Debug.Log($"스테이지 {clearedStage} 클리어!");
-
-            //게임 클리어시 맵 동작 멈춤
-            GameObject manageobj = GameObject.Find("GameManager");
-            GameManager gameManager = manageobj.GetComponent<GameManager>();
-            gameManager.OnGameClear();
-             
-            //클리어 기록 관련
-            gameManager.photonView.RPC("DBonGameClear", RpcTarget.AllBuffered, clearedStage);
-            //스테이지 패널 띄우는 것 관련
-            gameManager.photonView.RPC("MoveTheClearStageSelectPanel", RpcTarget.AllBuffered);
-        }
-    }
-
 }

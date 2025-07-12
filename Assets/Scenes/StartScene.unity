@@ -3025,6 +3025,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageButtons1960: []
+  stageNumber: 0
 --- !u!4 &1083711921
 Transform:
   m_ObjectHideFlags: 0
@@ -5548,6 +5549,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe0a73d0d312ec4aac8d8f3f9578083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Start_Panel: {fileID: 0}
+  StageSelectPanel: {fileID: 0}
+  stageSelectUI: {fileID: 0}
   selectedCharacterIndex1P: -1
   selectedCharacterIndex2P: -1
   selectedYear: -1
@@ -6174,11 +6178,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f742abc2f916e4c8bad40d6be19dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CharacterSelect_Panel: {fileID: 1695718817}
-  RoomLoadingPanel: {fileID: 1716634156}
   Start_Panel: {fileID: 1339604528}
+  RoomLoadingPanel: {fileID: 1716634156}
+  CharacterSelect_Panel: {fileID: 1695718817}
+  YearSelectPanel: {fileID: 0}
+  StageSelectPanel: {fileID: 0}
+  Tutorial_Panel: {fileID: 0}
   Button_Start: {fileID: 231725078}
   Button_Back: {fileID: 1596493365}
+  Button_YearBack: {fileID: 0}
+  Button_StageBack: {fileID: 0}
+  Button_TutorialBack: {fileID: 0}
+  Button_OK: {fileID: 0}
+  Button_TutorialOK: {fileID: 0}
+  Button_1960: {fileID: 0}
+  Button_Stage1: {fileID: 0}
+  stageSelectUI: {fileID: 0}
   isGameStartRequested: 0
 --- !u!4 &1940869745
 Transform:

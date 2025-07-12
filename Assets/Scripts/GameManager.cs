@@ -13,7 +13,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int stagePoint;
     public int stageIndex;
     public int health;
+    public GameObject playerObj;
     public PlayerMove player;
+
     public GameObject[] Stages;
 
     public Image[] UIhealth;
@@ -48,9 +50,26 @@ public class GameManager : MonoBehaviourPunCallbacks
     //플레이어들 동기화 스폰
     //플레이어들 동기화 이동
     //플레이어들 특정 조건 만족 시 DB로 클리어 기록 전송.(나중에 DB스크립트에서 클리어 기록이 있다면 게임 스테이지 변경)
-
+    
+    public static GameManager Instance;
+    void Awake()
+    {
+        // 인스턴스가 없으면 자신을 할당
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 씬이 바뀌어도 파괴되지 않게
+        }
+        else
+        {
+            Destroy(gameObject); // 중복 방지
+        }
+        playerObj = GameObject.FindWithTag("Player");
+        player = playerObj.GetComponent<PlayerMove>();
+    }
     void Start()
     {
+
         if (isInstantDeathMode)
         {
             health = 1;
@@ -74,14 +93,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         // UI에 현재 수치 표시
         UpdateFinishItemUI();
 
-    #if UNITY_EDITOR
-    if (Input.GetKeyDown(KeyCode.R))
-    {
-        PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
-        PlayerPrefs.Save();
-        Debug.Log("[개발용] data모은 정도 초기화 완료");
-    }
-    #endif
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
+            PlayerPrefs.Save();
+            Debug.Log("[개발용] data모은 정도 초기화 완료");
+        }
+#endif
 
     }
 
@@ -137,12 +156,12 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         GameObject stageObj = GameObject.Find("StageSelectUI");
         Debug.Log(stageObj);
-        
+
         StageSelectUI StageSelectUI = stageObj.GetComponent<StageSelectUI>();
         Debug.Log(StageSelectUI);
 
         playFabDataManager.SaveStageClear(clearedStage, clearedStage =>
-        {StageSelectUI.UnlockStage(clearedStage);});   
+        { StageSelectUI.UnlockStage(clearedStage); });
     }
 
     public void NextStage()
@@ -208,25 +227,25 @@ public class GameManager : MonoBehaviourPunCallbacks
         //         UIhealth[health].color = new Color(1, 0, 0, 0.2f);
         // }
 
-
-    {
-        if (health > 0)
+        
         {
-            health--;
-            UpdateHealthUI(); // ✅ UI 업데이트
+            if (health > 0)
+            {
+                health--;
+                UpdateHealthUI(); // ✅ UI 업데이트
+            }
+
+            if (health <= 0)
+            {
+                player.OnDie();
+                Debug.Log("플레이어가 죽었습니다.");
+                RestartButton.SetActive(true);
+            }
         }
 
-        if (health <= 0)
-        {
-            player.OnDie();
-            Debug.Log("플레이어가 죽었습니다.");
-            RestartButton.SetActive(true);
-        }
     }
 
-}
-
-void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
@@ -341,6 +360,7 @@ void OnTriggerEnter2D(Collider2D collision)
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }
+}
 
 
 
