@@ -11,7 +11,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     public enum PlayerType { Player1, Player2 }
     public PlayerType playerType;
 
-    public GameManager gameManager;
     public float maxSpeed;
     public float jumpForce;
     public bool hasAccessPass = false;
@@ -114,7 +113,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         else
             anim.SetBool("isWalking", true);
 
-        if (gameManager.colorRestoreMode)
+        if (GameManager.Instance.colorRestoreMode)
         {
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
             foreach (var hit in hits)
@@ -163,11 +162,11 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
             {
                 Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
-                gameManager.colorRestoreMode = false;
+                GameManager.Instance.colorRestoreMode = false;
 
-                if (gameManager.goalObject != null)
+                if (GameManager.Instance.goalObject != null)
                 {
-                    StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
+                    StartCoroutine(GameManager.Instance.GoalAppearEffect()); // 연출 호출
                 }
             }
 
@@ -213,7 +212,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     // ColorRestore가 GameManager를 통해 동작하고, Goal 연출도 GameManager에서 담당
     public void EnableColorRestore(bool enable)
     {
-        gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
+        GameManager.Instance.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
     }
 
     bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
@@ -245,9 +244,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
                 if (isCoin)
                 {
-                    if (name.Contains("Bronze")) gameManager.stagePoint += 50;
-                    else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
-                    else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+                    if (name.Contains("Bronze")) GameManager.Instance.stagePoint += 50;
+                    else if (name.Contains("Sliver")) GameManager.Instance.stagePoint += 100;
+                    else if (name.Contains("Gold")) GameManager.Instance.stagePoint += 300;
 
                     collision.gameObject.SetActive(false);
                     PlaySound("Item");
@@ -279,10 +278,25 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             //gameManager.NextStage();
             PlaySound("Finish");
         }
-
-        if (collision.gameObject.tag == "GameStart"){
-            SceneManager.LoadScene("StageSelect");
+        else if (collision.CompareTag("GameStart"))
+        {
+            Debug.Log("충돌. 스테이지 선택씬으로 이동.");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.LoadLevel("StageSelect");
+            }
+            else
+            {
+                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
+            }
         } // 세대, 스테이지선택씬으로
+    }
+
+    [PunRPC]
+    void ReqeustLoadLeveltoStageSelect(string sceneName)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        PhotonNetwork.LoadLevel(sceneName);
     }
 
 
@@ -307,13 +321,13 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     void OnAttack(Transform enemy)
     {
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-        gameManager.stagePoint += 100;
+        GameManager.Instance.stagePoint += 100;
         enemy.GetComponent<EnemyMove>()?.OnDamaged();
     }
 
     void OnDamaged(Vector2 targetPos)
     {
-        gameManager.HealthDown();
+        GameManager.Instance.HealthDown();
         gameObject.layer = 11;
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 

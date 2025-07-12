@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6261512243428422708}
-  - component: {fileID: 5816550712846270895}
+  - component: {fileID: 1868766068584371148}
   - component: {fileID: 8882919765454923455}
   - component: {fileID: 8666129619859235601}
   - component: {fileID: 1350943767417210527}
@@ -38,7 +38,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5816550712846270895
+--- !u!114 &1868766068584371148
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,13 +47,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 2004198639662460005}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e4f4b785f852974ebce0d2a097eeb5c, type: 3}
+  m_Script: {fileID: 11500000, guid: 7b9dbf3c6b6afcd42b4992d2011083b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 5
-  jumpPower: 20
+  playerType: 0
+  maxSpeed: 10
+  jumpForce: 10
+  hasAccessPass: 0
   roleID: 0
+  itemManager: {fileID: 0}
   clearedStage: 0
+  audioJump: {fileID: 0}
+  audioAttack: {fileID: 0}
+  audioDamaged: {fileID: 0}
+  audioItem: {fileID: 0}
+  audioDie: {fileID: 0}
+  audioFinish: {fileID: 0}
 --- !u!212 &8882919765454923455
 SpriteRenderer:
   m_ObjectHideFlags: 0

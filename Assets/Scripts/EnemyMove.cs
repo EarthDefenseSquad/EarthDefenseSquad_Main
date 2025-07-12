@@ -12,7 +12,6 @@ public class EnemyMove : MonoBehaviourPun
 
 
     public int nextMove;
-    public GameManager gameManager;
 
 
     void Awake()
@@ -27,7 +26,7 @@ public class EnemyMove : MonoBehaviourPun
 
     void FixedUpdate()
     {
-        if (gameManager.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
+        if (GameManager.Instance.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
         // 이동
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 

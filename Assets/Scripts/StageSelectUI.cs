@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 public class StageSelectUI : MonoBehaviour
 {
@@ -33,37 +34,41 @@ public class StageSelectUI : MonoBehaviour
 
     public void Go1960Scene()
     {
-        SceneManager.LoadScene("StageScene");
+        PhotonNetwork.LoadLevel("StageScene");
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        GameManager.Instance.SpawnPlayer(playerIndex);
     }
 
     public void Go1970Scene()
     {
-        SceneManager.LoadScene("StageScene");
+        PhotonNetwork.LoadLevel("StageScene");
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        GameManager.Instance.SpawnPlayer(playerIndex);
     }
 
     public void Go1980Scene()
     {
-        SceneManager.LoadScene("StageScene");
+        PhotonNetwork.LoadLevel("StageScene");
     }
 
     public void Go1990Scene()
     {
-        SceneManager.LoadScene("StageScene");
+        PhotonNetwork.LoadLevel("StageScene");
     }
 
     public void Go2000Scene()
     {
-        SceneManager.LoadScene("StageScene");
+        PhotonNetwork.LoadLevel("StageScene");
     }
 
     public void Go2010Scene()
     {
-        SceneManager.LoadScene("StageScene");
+        PhotonNetwork.LoadLevel("StageScene");
     }
 
     public void GoWaitingScene()
     {
-        SceneManager.LoadScene("WaitingScene");
+        PhotonNetwork.LoadLevel("WaitingScene");
     }
 
 

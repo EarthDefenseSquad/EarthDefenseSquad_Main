@@ -9,8 +9,8 @@ using Photon.Realtime;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public int totalPoint;
-    public int stagePoint;
+    public int totalPoint=0;
+    public int stagePoint=0;
     public int stageIndex;
     public int health;
     public GameObject playerObj;
@@ -59,34 +59,55 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             Instance = this;
             DontDestroyOnLoad(gameObject); // 씬이 바뀌어도 파괴되지 않게
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
             Destroy(gameObject); // 중복 방지
         }
-        playerObj = GameObject.FindWithTag("Player");
-        player = playerObj.GetComponent<PlayerMove>();
+
     }
-    void Start()
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-
-        if (isInstantDeathMode)
+        if (scene.name == "WaitingScene"|| scene.name == "StageScene")
         {
-            health = 1;
-            UpdateHealthUI(); // ✅ UI 반영
-        }
+            if (isInstantDeathMode)
+            {
+                health = 1;
+                UpdateHealthUI(); // ✅ UI 반영
+            }  
+            // 씬 전환마다 실행하고 싶은 초기화 코드를 여기에 작성 즉 start역할
+            Debug.Log("씬이 바뀜: " + scene.name);
 
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        //photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
-        SpawnPlayer(playerIndex);
+            if (isInstantDeathMode)
+            {
+                health = 1;
+                UpdateHealthUI(); // ✅ UI 반영
+            }
+            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+            //photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
+            SpawnPlayer(playerIndex); 
+        }
     }
+
+    void OnDestroy()
+    {
+        // 씬 로드 이벤트에서 함수 등록 해제
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    /*void Start()
+    {
+        
+    }*/
 
 
 
     void Update()
     {
-        UIPoint.text = (totalPoint + stagePoint).ToString();
-
+        if (totalPoint != 0 && stagePoint != 0)
+        {
+          UIPoint.text = (totalPoint + stagePoint).ToString();   
+        }
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
 
@@ -101,6 +122,15 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
 #endif
+        if (playerObj == null)
+        {
+            playerObj = GameObject.FindWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.GetComponent<PlayerMove>();
+                // 필요한 초기화 코드 추가
+            }
+        }
 
     }
 
@@ -109,8 +139,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         var spawnPositions = new Vector3[]
         {
-        new Vector3(-7.0f, -4.5f, 0.0f),
-        new Vector3(-5.0f, -4.5f, 0.0f)
+        new Vector3(-1.0f, -0.5f, 0.0f),
+        new Vector3(0.0f, -0.5f, 0.0f)
         };
         GameObject playerObject = PhotonNetwork.Instantiate("PlayerPrefab", spawnPositions[player_index], Quaternion.identity);
         //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
@@ -227,7 +257,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         //         UIhealth[health].color = new Color(1, 0, 0, 0.2f);
         // }
 
-        
+
         {
             if (health > 0)
             {
@@ -270,7 +300,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void RestartGame()
     {
         Time.timeScale = 1; // Resume the game
-        SceneManager.LoadScene(3);
+        PhotonNetwork.LoadLevel(3);
     }
 
     public void EnableColorRestoreMode(bool enable)
