@@ -2,9 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-using TMPro; 
+using TMPro;
 using System.Linq;
-public class ChatManager : MonoBehaviourPunCallbacks
+using UnityEngine.EventSystems;
+public class ChatManager : MonoBehaviourPunCallbacks,  IPointerClickHandler
 {
     public TMP_InputField MessageInput;   // 메시지 입력 필드
     
@@ -17,14 +18,20 @@ public class ChatManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        Debug.Log("챗 매니저 시작");
         pv = GetComponent<PhotonView>();
         PhotonNetwork.IsMessageQueueRunning = true;
         sendBtn.onClick.AddListener(SendButtonOnClicked);
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        MessageInput.ActivateInputField();
+    }
     // 메시지 전송 버튼 클릭 시 호출
     public void SendButtonOnClicked()
     {
+        Debug.Log("send button clicked");
         if (string.IsNullOrEmpty(MessageInput.text)) return;
 
         string msg = $"[{PhotonNetwork.NickName}]: {MessageInput.text}";

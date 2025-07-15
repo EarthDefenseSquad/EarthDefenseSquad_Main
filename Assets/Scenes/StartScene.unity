@@ -7485,7 +7485,7 @@ GameObject:
   - component: {fileID: 1447701014}
   - component: {fileID: 1447701013}
   m_Layer: 5
-  m_Name: InputField
+  m_Name: MessageInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9471,7 +9471,7 @@ GameObject:
   - component: {fileID: 1835761104}
   - component: {fileID: 1835761103}
   m_Layer: 5
-  m_Name: ScrollView
+  m_Name: ChatScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10634,7 +10634,7 @@ GameObject:
   - component: {fileID: 2112184266}
   - component: {fileID: 2112184265}
   m_Layer: 5
-  m_Name: Button - Filled - Green Soft
+  m_Name: SendBtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10887,7 +10887,7 @@ GameObject:
   - component: {fileID: 2143603375}
   - component: {fileID: 2143603374}
   m_Layer: 5
-  m_Name: Text
+  m_Name: ChatLog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10909,7 +10909,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2143603374
