@@ -14,7 +14,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     public float maxSpeed;
     public float jumpForce;
     public bool hasAccessPass = false;
-
     private bool isInvincible = false;
     private bool doubleJumpActive = false;
     private bool doubleJumpUsed = false;
@@ -38,8 +37,10 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
 
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return null;
+
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
