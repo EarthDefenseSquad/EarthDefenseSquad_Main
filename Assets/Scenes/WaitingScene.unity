@@ -28690,7 +28690,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 20.010036}
+  m_AnchoredPosition: {x: 0, y: -2.000001}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1303064859
@@ -28994,8 +28994,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 691188648}
   m_HandleRect: {fileID: 691188647}
   m_Direction: 2
-  m_Value: -1996.9071
-  m_Size: 0.9994995
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -29408,8 +29408,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c62db99776697e49b5254128aeddd8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactionUI: {fileID: 0}
-  outlineObject: {fileID: 0}
+  interactionUI: {fileID: 1519885860}
+  outlineObject: {fileID: 1439048760}
 --- !u!61 &1519885862
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -30972,7 +30972,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 099898ed2b32c02418315d3f893ed71f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 6261512243428422708, guid: 38adb012983cc2a46a65bc1348771aba, type: 3}
+  target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
 --- !u!1 &2002165850
 GameObject:
   m_ObjectHideFlags: 0

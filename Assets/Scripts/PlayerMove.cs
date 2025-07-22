@@ -35,10 +35,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
 
 
-    IEnumerator Start()
+    void Start()
     {
-        yield return null;
-
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
@@ -72,8 +70,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         float h = 0; //좌우 움직임
         bool jumpPressed = false;
 
-       
-        // 방향키, Space
+        // 플레이어: 방향키, Space
         h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
         jumpPressed = Input.GetKeyDown(KeyCode.Space);
     
