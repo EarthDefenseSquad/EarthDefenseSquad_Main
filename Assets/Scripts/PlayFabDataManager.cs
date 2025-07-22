@@ -38,9 +38,9 @@ public class PlayFabDataManager : MonoBehaviour
         var request = new UpdateUserDataRequest
         {
             Data = new Dictionary<string, string>
-        {
-            { key, "Clear" }
-        }
+            {
+                { key, "Clear" }
+            }
         };
         PlayFabClientAPI.UpdateUserData(request,
             result =>
