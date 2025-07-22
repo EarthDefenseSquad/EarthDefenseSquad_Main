@@ -4,14 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPunCallbacks
 {
-    public int totalPoint;
-    public int stagePoint;
+    public int totalPoint=0;
+    public int stagePoint=0;
     public int stageIndex;
     public int health;
+    public GameObject playerObj;
     public PlayerMove player;
+
     public GameObject[] Stages;
 
     public Image[] UIhealth;
@@ -19,8 +23,10 @@ public class GameManager : MonoBehaviour
     public Text UIStage;
     public GameObject RestartButton;
 
-    public bool colorRestoreMode = false;
-    public GameObject goalObject; // Goal 오브젝트 연결
+    public GameObject StageSelectPanel;
+    public Button Button_StageBack, Button_Stage1, Button_Stage2;
+    public bool gameClear = false;
+
 
     // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)
     public int finishItemCount = 0;
@@ -34,25 +40,158 @@ public class GameManager : MonoBehaviour
     // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
     private const string FinishItemKey = "FinishItemCount";
 
+    public bool colorRestoreMode = false;
+    public GameObject goalObject; // Goal 오브젝트 연결
+
+
+    [Header("개발용 설정 - 즉사 모드")]
+    public bool isInstantDeathMode;
+
+    //플레이어들 동기화 스폰
+    //플레이어들 동기화 이동
+    //플레이어들 특정 조건 만족 시 DB로 클리어 기록 전송.(나중에 DB스크립트에서 클리어 기록이 있다면 게임 스테이지 변경)
+    
+    public static GameManager Instance;
+    void Awake()
+    {
+        // 인스턴스가 없으면 자신을 할당
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 씬이 바뀌어도 파괴되지 않게
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else
+        {
+            Destroy(gameObject); // 중복 방지
+        }
+
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "WaitingScene"|| scene.name == "StageScene")
+        {
+            if (isInstantDeathMode)
+            {
+                health = 1;
+                UpdateHealthUI(); // ✅ UI 반영
+            }  
+            // 씬 전환마다 실행하고 싶은 초기화 코드를 여기에 작성 즉 start역할
+            Debug.Log("씬이 바뀜: " + scene.name);
+
+            if (isInstantDeathMode)
+            {
+                health = 1;
+                UpdateHealthUI(); // ✅ UI 반영
+            }
+            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+            //photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
+            SpawnPlayer(playerIndex); 
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 씬 로드 이벤트에서 함수 등록 해제
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    /*void Start()
+    {
+        
+    }*/
+
+
+
     void Update()
     {
-        UIPoint.text = (totalPoint + stagePoint).ToString();
-
+        if (totalPoint != 0 && stagePoint != 0)
+        {
+          UIPoint.text = (totalPoint + stagePoint).ToString();   
+        }
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
 
         // UI에 현재 수치 표시
         UpdateFinishItemUI();
 
-    #if UNITY_EDITOR
-    if (Input.GetKeyDown(KeyCode.R))
-    {
-        PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
-        PlayerPrefs.Save();
-        Debug.Log("[개발용] data모은 정도 초기화 완료");
-    }
-    #endif
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
+            PlayerPrefs.Save();
+            Debug.Log("[개발용] data모은 정도 초기화 완료");
+        }
+#endif
+        if (playerObj == null)
+        {
+            playerObj = GameObject.FindWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.GetComponent<PlayerMove>();
+                // 필요한 초기화 코드 추가
+            }
+        }
 
+    }
+
+
+    public void SpawnPlayer(int player_index)
+    {
+        var spawnPositions = new Vector3[]
+        {
+        new Vector3(-1.0f, -0.5f, 0.0f),
+        new Vector3(0.0f, -0.5f, 0.0f)
+        };
+        GameObject playerObject = PhotonNetwork.Instantiate("PlayerPrefab", spawnPositions[player_index], Quaternion.identity);
+        //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
+        //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
+        //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
+        //Instantiate(obj, spawnPosition, Quaternion.identity);
+        //위의 두 줄이 의미하는 게 포톤에서는 PhotonNetwork.Instantiate~~저걸로 리소스에서 "PlayerPrefab"이라는 이름의 프리팹 가져옴.
+
+        Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
+        if (playerObject == null)
+        {
+            Debug.LogError("플레이어 객체 생성 실패!");
+            return;
+        }
+
+        Debug.Log("플레이어 생성 완료");
+
+        // Camera 세팅
+        if (Camera.main == null)
+        {
+            Debug.LogError("Main Camera가 없습니다.");
+            return;
+        }
+    }
+    public void OnGameClear()
+    {
+        gameClear = true;
+    }
+    [PunRPC]
+    void MoveTheClearStageSelectPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                                   //튜토리얼 선택 패널 동기화
+        StageSelectPanel.SetActive(true);
+    }
+
+    [PunRPC]
+    void DBonGameClear(int clearedStage)
+    {
+        //클리어 기록 관련
+        GameObject obj = GameObject.Find("PlayFabDataManager");
+        Debug.Log(obj);
+        PlayFabDataManager playFabDataManager = obj.GetComponent<PlayFabDataManager>();
+        Debug.Log(playFabDataManager);
+
+        GameObject stageObj = GameObject.Find("StageSelectUI");
+        Debug.Log(stageObj);
+
+        StageSelectUI StageSelectUI = stageObj.GetComponent<StageSelectUI>();
+        Debug.Log(StageSelectUI);
+
+        playFabDataManager.SaveStageClear(clearedStage, clearedStage =>
+        { StageSelectUI.UnlockStage(clearedStage); });
     }
 
     public void NextStage()
@@ -82,21 +221,58 @@ public class GameManager : MonoBehaviour
 
     public void HealthDown()
     {
-        if (health > 0)
+        // if (health > 0)
+        // {
+        //     health--;
+        //     UIhealth[health].color = new Color(1, 0, 0, 0.2f);
+        // }
+        // else
+        // {
+        //     UIhealth[0].color = new Color(1, 0, 0, 0.2f);
+
+        //     player.OnDie();
+
+        //     Debug.Log("플레이어가 죽었습니다.");
+
+        //     RestartButton.SetActive(true);
+        // }
+
+        // if (oneHitKill || health <= 1)
+        // {
+        //     // 즉사 또는 체력 1 남은 경우
+        //     health = 0;
+
+        //     if (UIhealth.Length > 0)
+        //         UIhealth[0].color = new Color(1, 0, 0, 0.2f);
+
+        //     player.OnDie();
+        //     Debug.Log("☠️ 즉사 처리됨 또는 체력 소진");
+        //     RestartButton.SetActive(true);
+        // }
+        // else
+        // {
+        //     // 일반 모드에서는 체력 감소
+        //     health--;
+        //     if (UIhealth.Length > health)
+        //         UIhealth[health].color = new Color(1, 0, 0, 0.2f);
+        // }
+
+
         {
-            health--;
-            UIhealth[health].color = new Color(1, 0, 0, 0.2f);
+            if (health > 0)
+            {
+                health--;
+                UpdateHealthUI(); // ✅ UI 업데이트
+            }
+
+            if (health <= 0)
+            {
+                player.OnDie();
+                Debug.Log("플레이어가 죽었습니다.");
+                RestartButton.SetActive(true);
+            }
         }
-        else
-        {
-            UIhealth[0].color = new Color(1, 0, 0, 0.2f);
 
-            player.OnDie();
-
-            Debug.Log("플레이어가 죽었습니다.");
-
-            RestartButton.SetActive(true);
-        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -124,13 +300,14 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1; // Resume the game
-        SceneManager.LoadScene(3);
+        PhotonNetwork.LoadLevel(3);
     }
 
     public void EnableColorRestoreMode(bool enable)
     {
         colorRestoreMode = enable;
     }
+
 
     public IEnumerator GoalAppearEffect()
     {
@@ -206,20 +383,15 @@ public class GameManager : MonoBehaviour
             finishItemText.text = finishItemCount.ToString();
     }
 
-    // // 엔딩 NPC와 충돌 시 호출: 엔딩 분기 처리 함수
-    // public void TriggerEnding()
-    // {
-    //     // 설정한 총 아이템 개수만큼 다 모았으면 Good 엔딩
-    //     if (finishItemCount >= totalStages)
-    //     {
-    //         Debug.Log("🎉 모든 Finish 아이템을 수집 → Good Ending");
-    //         SceneManager.LoadScene("GoodEnding");
-    //     }
-    //     else
-    //     {
-    //         Debug.Log("💀 Finish 아이템 부족 → Bad Ending");
-    //         SceneManager.LoadScene("BadEnding");
-    //     }
-    // }
-
+    void UpdateHealthUI()
+    {
+        for (int i = 0; i < UIhealth.Length; i++)
+        {
+            UIhealth[i].gameObject.SetActive(i < health);
+        }
+    }
 }
+
+
+
+

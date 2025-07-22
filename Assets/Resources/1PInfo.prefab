@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 7284089409942211788}
   - component: {fileID: 8420581284630862914}
   - component: {fileID: 2863516873595340155}
-  - component: {fileID: 931181441953410236}
+  - component: {fileID: 3764213730433559268}
   m_Layer: 5
   m_Name: 1PInfo
   m_TagString: Untagged
@@ -349,7 +349,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &931181441953410236
+--- !u!114 &3764213730433559268
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

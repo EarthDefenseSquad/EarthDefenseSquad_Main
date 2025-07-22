@@ -5,75 +5,85 @@ using ExitGames.Client.Photon;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.UI;
+using Photon.Pun.UtilityScripts;
+using Unity.VisualScripting;
 
+//PhotonManager 스크립트 기능:
+//게임 시작하자마자 연결-로비 진입 상태
+//start버튼 누르면 룸 로딩 패널 - 캐릭터 선택 패널로 룸 진입.
+//플레이어 중 한 명이라도 back버튼 누르면 룸 파괴. - start버튼 누르면 다시 새로운 룸 진입
+//캐릭터 선택 패널에서 ok버튼 누르면 튜토리얼 패널 이동-웨이팅씬-게임씬 이동
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
     public const byte BID_EVENT = 1;
     public const byte AUCTION_COMPLETE_EVENT = 3;
-    public GameObject CharacterSelect_Panel;
+    public GameObject Start_Panel;
     public GameObject RoomLoadingPanel;
+    public GameObject CharacterSelect_Panel;
+    public GameObject Tutorial_Panel;
     public Button Button_Start;
-    private bool isGameStartRequested=false;
+    public Button Button_CharacterSelect_Back, Button_Tutorial_Back;
+    public Button Button_CharacterSelect_OK, Button_Tutorial_OK;
+    public bool isGameStartRequested = false;
 
-    private void Start()
+    private void Start() //게임 시작 버튼 클릭과 함께 스크립트 활성화.
     {
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
+        GameDataManager.Instance.Start_Panel = this.Start_Panel;
         Button_Start.onClick.AddListener(OnGameStartButtonClicked);
-
     }
-    
-    public override void OnConnectedToMaster()
+    public override void OnConnectedToMaster() //게임 시작하자마자 서버 연결 - 로비 진입 성공 상태시 콜백
     {
-        Debug.Log("포톤 마스터 서버 연결 성공");
-        PhotonNetwork.JoinLobby();
-    }
-
-    public override void OnJoinedLobby()
-    {
-        Debug.Log("로비 입장 성공");
+        Debug.Log("포톤 마스터 서버 연결 후 로비 진입 성공");
         if (isGameStartRequested)
-            {
-                // 방 입장 시도
-                PhotonNetwork.JoinRandomRoom();
-                // UI 패널 전환
-                RoomLoadingPanel.SetActive(false);
-                CharacterSelect_Panel.SetActive(true);
-                isGameStartRequested = false; // 중복 방지
-            }
-    }
-
-    public void OnGameStartButtonClicked()
-    {
-
-        // 이미 로비에 들어가 있다면 바로 진행
-        if (PhotonNetwork.InLobby)
         {
             PhotonNetwork.JoinRandomRoom();
+            Debug.Log("방 참가를 시도합니다.");
+            // UI 패널 전환
+            Start_Panel.SetActive(false);
             RoomLoadingPanel.SetActive(false);
             CharacterSelect_Panel.SetActive(true);
+            Debug.Log("CharacterSelect_Panel 활성화", this);
+            Button_CharacterSelect_Back.onClick.RemoveAllListeners(); // 중복 방지
+            Button_CharacterSelect_Back.onClick.AddListener(OnCharacterSelect_BackButtonClicked);
+            Start_Panel.SetActive(false);
+            RoomLoadingPanel.SetActive(true);
+        }
+        isGameStartRequested = false;
+    }
+
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        Debug.Log("방 참가에 실패하였습니다. 방을 새로 만듭니다.");
+        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 }); //null은 room 이름, 참가자 최대 2명.
+    }
+
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("방 입장 성공");
+        PhotonNetwork.NickName = "Player" + PhotonNetwork.LocalPlayer.ActorNumber; //닉네임 설정
+        Debug.Log($"방 입장: {PhotonNetwork.CurrentRoom.Name}");
+        // 예시: 마스터 클라이언트는 0번, 나머지는 1번 위치에 생성
+        RoomLoadingPanel.SetActive(false);
+        CharacterSelect_Panel.SetActive(true);
+        Button_CharacterSelect_Back.onClick.RemoveAllListeners(); // 중복 방지
+        Button_CharacterSelect_Back.onClick.AddListener(OnCharacterSelect_BackButtonClicked);
+        Button_CharacterSelect_OK.onClick.RemoveAllListeners(); // 중복 방지
+        Button_CharacterSelect_OK.onClick.AddListener(() => photonView.RPC("MoveTheTutorialPanel", RpcTarget.All));
+        // MasterClient만 OK 버튼 활성화
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Button_CharacterSelect_OK.gameObject.SetActive(true); //방장만 게임 시작 가능.
         }
         else
         {
-            // 아직 로비에 안 들어가 있으면, 콜백에서 처리하도록 플래그만 켜둠
-            isGameStartRequested = true;
+            Button_CharacterSelect_OK.gameObject.SetActive(false);
         }
-    }
-
-     public override void OnJoinRandomFailed(short returnCode, string message)
-    {
-        Debug.Log("방 생성 시도");
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 });
-    }
-   
-    public override void OnJoinedRoom()
-    {
-        Debug.Log($"방 입장: {PhotonNetwork.CurrentRoom.Name}");
-        // 예시: 마스터 클라이언트는 0번, 나머지는 1번 위치에 생성
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
         photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+        //SpawnPlayer(playerIndex);
     }
-
-
     [PunRPC]
     void SpawnPlayer(int player_index)
     {
@@ -91,12 +101,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         playerObject.transform.SetParent(CharacterSelect_Panel.transform, false);
 
 
-        
+
         Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
 
 
 
-        if (playerObject == null) {
+        if (playerObject == null)
+        {
             Debug.LogError("플레이어 객체 생성 실패!");
             return;
         }
@@ -104,13 +115,103 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Debug.Log("플레이어 생성 완료");
 
         // Camera 세팅
-        if (Camera.main == null) {
+        if (Camera.main == null)
+        {
             Debug.LogError("Main Camera가 없습니다.");
             return;
         }
 
-    
+
         //Camera.main.GetComponent<CameraController>().Initalize(playerObject.transform);
         //PhotonNetwork.NetworkingClient.EventReceived += OnEvent;
     }
+    public void OnGameStartButtonClicked() //start버튼 눌렀을 때, 로비 진입까지 마친 상태라면 룸 진입
+    {
+        if (PhotonNetwork.IsConnectedAndReady) //연결되어 있고 방 진입 준비가 되어 있다면,
+        {
+            PhotonNetwork.JoinRandomRoom();
+            Debug.Log("방 참가를 시도합니다.");
+            Start_Panel.SetActive(false);
+            RoomLoadingPanel.SetActive(true);
+            isGameStartRequested = false;
+        }
+        else
+        {
+            // 아직 로비에 안 들어가 있으면, 콜백에서 처리하도록 플래그만 켜둠
+            isGameStartRequested = true;
+        }
+    }
+
+    public void OnCharacterSelect_BackButtonClicked()
+    {
+        PhotonNetwork.LeaveRoom();
+        Debug.Log("방에서 나가는 중입니다.");
+    }
+
+    public override void OnLeftRoom() //내가 룸을 나갔을 때 나에게 오는 콜백함수.
+    {
+        Debug.Log("방에서 나왔습니다.");
+        CharacterSelect_Panel.SetActive(false);
+        Start_Panel.SetActive(true);
+        Button_Start.onClick.RemoveAllListeners(); // 중복 방지
+        Button_Start.onClick.AddListener(OnGameStartButtonClicked);
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer) //남이 나갔을 때 나에게 오는 콜백함수.
+    {
+        Debug.Log($"{otherPlayer.NickName} 님이 방을 나갔습니다.");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LeaveRoom();
+            Debug.Log("방에서 나가는 중입니다.");
+        }
+        else
+        {
+            Debug.Log("방에서 나가기 실패!");
+        }
+    }
+
+   
+    [PunRPC]
+    void MoveTheTutorialPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                           //튜토리얼 선택 패널 동기화
+        CharacterSelect_Panel.SetActive(false);
+        Tutorial_Panel.SetActive(true);
+        Button_Tutorial_Back.onClick.RemoveAllListeners(); //뒤로가기
+        Button_Tutorial_Back.onClick.AddListener(() => photonView.RPC("MoveThe_CharacterSelectPanel", RpcTarget.All));
+        Button_Tutorial_OK.onClick.RemoveAllListeners(); //ok버튼
+        Button_Tutorial_OK.onClick.AddListener(() => photonView.RPC("MoveTheWaitingScene", RpcTarget.All));
+        if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
+        {
+            Button_Tutorial_Back.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
+        }
+    }
+    [PunRPC]
+    void MoveTheWaitingScene() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
+    {                       //게임씬 이동 동기화
+        PhotonNetwork.LoadLevel("WaitingScene");
+    }
+
+    [PunRPC]
+    void MoveThe_CharacterSelectPanel()
+    {
+        Tutorial_Panel.SetActive(false);
+        CharacterSelect_Panel.SetActive(true);
+        Button_CharacterSelect_Back.onClick.RemoveAllListeners(); // 중복 방지
+        Button_CharacterSelect_Back.onClick.AddListener(OnCharacterSelect_BackButtonClicked);
+        Button_CharacterSelect_OK.onClick.RemoveAllListeners(); // 중복 방지
+        Button_CharacterSelect_OK.onClick.AddListener(() => photonView.RPC("MoveTheTutorialPanel", RpcTarget.All));
+        // MasterClient만 OK 버튼 활성화
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Button_CharacterSelect_OK.gameObject.SetActive(true);
+        }
+        else
+        {
+            Button_CharacterSelect_OK.gameObject.SetActive(false);
+        }
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+    }
+    
 }
