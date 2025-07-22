@@ -1281,7 +1281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!58 &269710186
 CircleCollider2D:
@@ -2356,7 +2356,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!58 &311552493
 CircleCollider2D:
@@ -2529,7 +2529,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!58 &319318931
 CircleCollider2D:
@@ -5365,7 +5365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!58 &811999081
 CircleCollider2D:
@@ -8248,7 +8248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!58 &1066121264
 CircleCollider2D:
@@ -8624,150 +8624,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1111505497}
   m_CullTransparentMesh: 0
---- !u!1 &1125412619
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1125412621}
-  - component: {fileID: 1125412620}
-  - component: {fileID: 1125412622}
-  - component: {fileID: 1125412623}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1125412620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125412619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a5eee080dc02c8479dc656090562a46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  totalPoint: 0
-  stagePoint: 0
-  stageIndex: 0
-  health: 3
-  playerObj: {fileID: 0}
-  player: {fileID: 0}
-  Stages:
-  - {fileID: 2102439591}
-  - {fileID: 270555057}
-  - {fileID: 2098616210}
-  - {fileID: 318312072}
-  - {fileID: 725685103}
-  - {fileID: 1812960797}
-  UIhealth:
-  - {fileID: 1024635323}
-  - {fileID: 609141886}
-  - {fileID: 1240633004}
-  UIPoint: {fileID: 2053556402}
-  UIStage: {fileID: 513189472}
-  RestartButton: {fileID: 2143437434}
-  StageSelectPanel: {fileID: 0}
-  Button_StageBack: {fileID: 0}
-  Button_Stage1: {fileID: 0}
-  Button_Stage2: {fileID: 0}
-  gameClear: 0
-  finishItemCount: 0
-  totalStages: 6
-  finishItemText: {fileID: 1406260899}
-  colorRestoreMode: 0
-  goalObject: {fileID: 330825225}
-  isInstantDeathMode: 0
---- !u!4 &1125412621
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125412619}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.6425805, y: -0.14615363, z: 0.055097517}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &1125412622
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125412619}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -12}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 10000, y: 1}
-  m_EdgeRadius: 0
---- !u!114 &1125412623
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1125412619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 1
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!1 &1139302736
 GameObject:
   m_ObjectHideFlags: 0
@@ -13025,7 +12881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!4 &1504869699
 Transform:
@@ -13730,7 +13586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!212 &1590405739
 SpriteRenderer:
@@ -16106,7 +15962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12955b2551af0c846b69858f42fc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 1125412620}
+  gameManager: {fileID: 0}
   player: {fileID: 0}
 --- !u!58 &1845594542
 CircleCollider2D:
@@ -18807,7 +18663,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.56, y: 2.56}
+    oldSize: {x: 1.4628571, y: 1.4628571}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -18989,7 +18845,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1125412620}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: RestartGame
         m_Mode: 1
@@ -19044,7 +18900,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 906749665}
-  - {fileID: 1125412621}
   - {fileID: 2102439592}
   - {fileID: 270555058}
   - {fileID: 2098616211}

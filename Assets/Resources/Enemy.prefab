@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4816959560962558}
   - component: {fileID: 8186291862740980531}
   m_Layer: 0
-  m_Name: Enermy
+  m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

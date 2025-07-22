@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             if (photonView.IsMine)
             {   
                 int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-                SpawnPlayer(playerIndex);    
+                 photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex); 
             }
         }
     }
@@ -137,6 +137,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
 
+    [PunRPC]
     public void SpawnPlayer(int player_index)
     {
         var spawnPositions = new Vector3[]
@@ -144,7 +145,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         new Vector3(-1.0f, -0.5f, 0.0f),
         new Vector3(0.0f, -0.5f, 0.0f)
         };
-        GameObject playerObject = PhotonNetwork.Instantiate("PlayerPrefab", spawnPositions[player_index], Quaternion.identity);
+        GameObject playerObject = PhotonNetwork.Instantiate("Player", spawnPositions[player_index], Quaternion.identity);
         //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
         //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
         //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
