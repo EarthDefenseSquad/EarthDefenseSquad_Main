@@ -18375,10 +18375,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -28690,7 +28690,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -2.000001}
+  m_AnchoredPosition: {x: 0, y: 39978.156}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1303064859
@@ -28994,8 +28994,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 691188648}
   m_HandleRect: {fileID: 691188647}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: -3412024
+  m_Size: 0.9994145
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -30467,7 +30467,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1794176392}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 4f7aa3cf36ab14569b9449cc289f90aa, type: 2}
   m_CullingMode: 0
