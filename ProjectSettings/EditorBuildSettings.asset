@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/GameScene.unity
     guid: 5ade52a27a02f2a44ad7f415004754dc
   - enabled: 1
-    path: Assets/Scenes/WaitingScene.unity
+    path: Assets/Scenes/WaitingScene_New.unity
     guid: 159957c6458076943811eeb6165a1044
   - enabled: 1
     path: Assets/Scenes/StageScene.unity
