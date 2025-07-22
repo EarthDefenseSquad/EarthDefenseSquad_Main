@@ -257,6 +257,14 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 collision.gameObject.SetActive(false);
                 PlaySound("Item");
             }
+            if (name.Contains("BossItem"))
+            {
+                itemManager.UseItem(ItemType.BossSpecialAttack);
+                collision.gameObject.SetActive(false);
+                PlaySound("Item");
+                return;
+            }
+
         }
         else if (collision.CompareTag("Finish"))
         {

@@ -89,10 +89,23 @@ public class ItemManager : MonoBehaviour
             case ItemType.ColorRestore:
                 StartCoroutine(ActivateColorRestore());
                 break;
+            case ItemType.BossSpecialAttack:
+                ActivateBossSpecialAttack();
+                break;
 
             default:
                 Debug.LogWarning("❓ Unknown item type");
                 break;
+        }
+    }
+
+    private void ActivateBossSpecialAttack()
+    {
+        Debug.Log("💥 보스 전용 아이템 발동!");
+        GameObject boss = GameObject.FindWithTag("Boss");
+        if (boss != null)
+        {
+            boss.GetComponent<BossController>()?.TakeSpecialDamage();
         }
     }
 
