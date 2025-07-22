@@ -24636,8 +24636,8 @@ MonoBehaviour:
   stagePoint: 0
   stageIndex: 0
   health: 0
-  playerObj: {fileID: 2004198639662460005, guid: 38adb012983cc2a46a65bc1348771aba, type: 3}
-  player: {fileID: 1868766068584371148, guid: 38adb012983cc2a46a65bc1348771aba, type: 3}
+  playerObj: {fileID: 4828525040922323524, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
+  player: {fileID: 1265464301027977866, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
   Stages: []
   UIhealth: []
   UIPoint: {fileID: 0}
@@ -28713,7 +28713,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -10.000001}
+  m_AnchoredPosition: {x: 0, y: 20.010021}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1303064859
@@ -29017,8 +29017,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 691188648}
   m_HandleRect: {fileID: 691188647}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: -1996.9054
+  m_Size: 0.9994995
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
