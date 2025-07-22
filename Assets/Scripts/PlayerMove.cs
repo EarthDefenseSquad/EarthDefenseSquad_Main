@@ -21,8 +21,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool colorRestoreMode = false;
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
 
-    public int roleID = 0; //0: 플레이어1(WASD+Shift), 1:플레이어2(방향키+스페이스)
-
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
@@ -59,10 +57,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
         }
 
-        if (PhotonNetwork.InRoom)
-            roleID = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % 2;
-        //roleID가 actorNumber-1이 짝수이면 나머지0, 홀수이면 나머지1 
-
         if (playerType == PlayerType.Player2)
         {
             jumpForce *= 1.3f;
@@ -78,18 +72,11 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         float h = 0; //좌우 움직임
         bool jumpPressed = false;
 
-        if (roleID == 0)
-        {
-            // 플레이어1: WASD, Shift
-            h = Input.GetKey(KeyCode.A) ? -1 : Input.GetKey(KeyCode.D) ? 1 : 0;
-            jumpPressed = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
-        }
-        else if (roleID == 1)
-        {
-            // 플레이어2: 방향키, Space
-            h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
-            jumpPressed = Input.GetKeyDown(KeyCode.Space);
-        }
+       
+        // 방향키, Space
+        h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+        jumpPressed = Input.GetKeyDown(KeyCode.Space);
+    
         // Jump
         if (jumpPressed && !anim.GetBool("isJumping"))
         {
