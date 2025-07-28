@@ -39,6 +39,14 @@ public class GameManager : MonoBehaviour
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode;
 
+    public static GameManager Instance; // ✅ 싱글턴 인스턴스
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
 
     void Start()
     {

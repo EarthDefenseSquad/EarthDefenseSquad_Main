@@ -204,6 +204,13 @@ public class PlayerMove : MonoBehaviour
                 return;
             }
 
+            if (name.Contains("BossItem"))
+            {
+                itemManager.UseItem(ItemType.BossSpecialAttack);
+                collision.gameObject.SetActive(false);
+                return;
+            }
+
             if (playerType == PlayerType.Player2)
             {
                 Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
