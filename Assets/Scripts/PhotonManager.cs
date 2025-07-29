@@ -28,7 +28,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     private void Start() //게임 시작 버튼 클릭과 함께 스크립트 활성화.
     {
-        PhotonNetwork.AutomaticallySyncScene = true;
+        //PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
         GameDataManager.Instance.Start_Panel = this.Start_Panel;
         Button_Start.onClick.AddListener(OnGameStartButtonClicked);
@@ -81,11 +81,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Button_CharacterSelect_OK.gameObject.SetActive(false);
         }
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
-        photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+        photonView.RPC("SpawnRoomPlayer", RpcTarget.All, playerIndex);
         //SpawnPlayer(playerIndex);
     }
     [PunRPC]
-    void SpawnPlayer(int player_index)
+    void SpawnRoomPlayer(int player_index)
     {
         var spawnPositions = new Vector3[]
         {
@@ -211,7 +211,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Button_CharacterSelect_OK.gameObject.SetActive(false);
         }
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+        photonView.RPC("SpawnRoomPlayer", RpcTarget.All, playerIndex);
     }
     
 }

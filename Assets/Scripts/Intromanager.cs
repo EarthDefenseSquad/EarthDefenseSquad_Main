@@ -26,7 +26,7 @@ public class Intromanager : MonoBehaviour
     }
 
     // Update is called once per frame
-
+/*    
     public void GoWaitingScene()
     {
         SceneManager.LoadScene("WaitingScene");
@@ -66,5 +66,5 @@ public class Intromanager : MonoBehaviour
         Time.timeScale = 1f;  // 게임 재개
         Optionpanel.SetActive(false);  // 메뉴 숨기기
         //isPaused = false;
-    }
+    }*/
 }
