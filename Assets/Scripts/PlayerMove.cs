@@ -73,7 +73,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
+        //if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
 
         float h = 0; //좌우 움직임
         bool jumpPressed = false;
