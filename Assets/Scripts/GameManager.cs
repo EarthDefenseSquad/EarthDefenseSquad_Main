@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
     public bool colorRestoreMode = false;
     public GameObject goalObject; // Goal 오브젝트 연결
 
+    public GameObject finalBossPortal;  // 최최종 보스 진입 포탈
+
 
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode;
@@ -71,6 +73,13 @@ public class GameManager : MonoBehaviour
 
         // UI에 현재 수치 표시
         UpdateFinishItemUI();
+
+        // 최최종 보스 등장 조건 확인
+        if (finishItemCount >= 36 && finalBossPortal != null && !finalBossPortal.activeSelf)
+        {
+            finalBossPortal.SetActive(true); // 최최종 보스 포탈 활성화
+            Debug.Log("🌀 최종 포탈 활성화됨: 모든 데이터를 모음!");
+        }
 
 #if UNITY_EDITOR
     if (Input.GetKeyDown(KeyCode.R))

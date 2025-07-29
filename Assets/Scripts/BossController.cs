@@ -17,7 +17,7 @@ public class BossController : MonoBehaviour
 
         if (bossUIGroup != null)
             bossUIGroup.SetActive(true); // 전투 시작 시 전체 UI 보이기
-            
+
         StartCoroutine(BossAttackCycle());
     }
 
@@ -66,6 +66,11 @@ public class BossController : MonoBehaviour
 
             GameManager.Instance.isBossActive = false;
 
+            if (!isFinalBoss && bossFinishItemPrefab != null && itemSpawnPoint != null)
+            {
+                StartCoroutine(SpawnBlinkingFinishItem());
+            }
+
             if (CutsceneManager.Instance != null)
                 StartCoroutine(CutsceneManager.Instance.PlayEndingCutscene());
             else
@@ -73,7 +78,7 @@ public class BossController : MonoBehaviour
 
             Destroy(gameObject);
         }
-    }   
+    }
 
     void UpdateBossHealthUI()
     {
@@ -82,4 +87,21 @@ public class BossController : MonoBehaviour
             bossHealthUI[i].SetActive(i < bossHealth);
         }
     }
-}
+
+    IEnumerator SpawnBlinkingFinishItem()
+    {
+        GameObject item = Instantiate(bossFinishItemPrefab, itemSpawnPoint.position, Quaternion.identity);
+        SpriteRenderer sr = item.GetComponent<SpriteRenderer>();
+
+        if (sr != null)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                sr.enabled = false;
+                yield return new WaitForSeconds(0.2f);
+                sr.enabled = true;
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+    }
+    }
