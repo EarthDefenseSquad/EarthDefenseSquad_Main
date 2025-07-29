@@ -2766,9 +2766,9 @@ MonoBehaviour:
   bossHealth: 3
   attackInterval: 5
   bossHealthUI:
-  - {fileID: 1948699247}
-  - {fileID: 1093864261}
   - {fileID: 54572103}
+  - {fileID: 1093864261}
+  - {fileID: 1948699247}
 --- !u!50 &678361267
 Rigidbody2D:
   serializedVersion: 4
@@ -4196,6 +4196,7 @@ MonoBehaviour:
   UIPoint: {fileID: 2053556402}
   UIStage: {fileID: 513189472}
   RestartButton: {fileID: 2143437434}
+  isBossActive: 0
   finishItemCount: 0
   totalStages: 3
   finishItemText: {fileID: 1406260899}
