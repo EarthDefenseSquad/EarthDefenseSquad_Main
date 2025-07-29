@@ -23,7 +23,7 @@ public class CutsceneManager : MonoBehaviour
 
     public void PlayCutscene(Action onComplete)
     {
-        StartCoroutine(CutsceneSequence("Now" + "The REVENGE Begins", onComplete));
+        StartCoroutine(CutsceneSequence("Now \n The REVENGE Begins", onComplete));
     }
 
     IEnumerator CutsceneSequence(string message, Action onComplete)

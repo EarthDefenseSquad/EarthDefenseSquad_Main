@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public Text UIPoint;
     public Text UIStage;
     public GameObject RestartButton;
+    public bool isBossActive = false; // 보스 활성화 여부
 
 
     // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)

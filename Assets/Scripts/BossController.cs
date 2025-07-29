@@ -59,6 +59,8 @@ public class BossController : MonoBehaviour
             isDead = true;
             Debug.Log("💥 보스 패배 시퀀스 시작");
 
+            GameManager.Instance.isBossActive = false;
+
             if (CutsceneManager.Instance != null)
                 StartCoroutine(CutsceneManager.Instance.PlayEndingCutscene());
             else

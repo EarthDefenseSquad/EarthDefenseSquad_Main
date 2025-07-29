@@ -211,12 +211,12 @@ public class PlayerMove : MonoBehaviour
                 return;
             }
 
-            if (playerType == PlayerType.Player2)
+            if (playerType == PlayerType.Player2 && !gameManager.isBossActive)
             {
-                Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
+                Debug.Log("Player2는 보스 전투 외에는 아이템을 사용할 수 없습니다.");
                 return;
             }
-
+            
             if (name.Contains("Buffering")) itemManager.UseItem(ItemType.BufferingIcon);
             else if (name.Contains("Invincibility")) itemManager.UseItem(ItemType.Invincibility);
             else if (name.Contains("DoubleJump")) itemManager.UseItem(ItemType.DoubleJump);
