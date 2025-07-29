@@ -20340,7 +20340,7 @@ GameObject:
   - component: {fileID: 873765436}
   - component: {fileID: 873765435}
   m_Layer: 0
-  m_Name: Invincibility
+  m_Name: TypingKeyItem
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
