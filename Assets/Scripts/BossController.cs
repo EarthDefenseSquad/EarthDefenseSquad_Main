@@ -9,10 +9,15 @@ public class BossController : MonoBehaviour
     private bool isDead = false;
 
     public GameObject[] bossHealthUI; // 보스 체력 UI 오브젝트 3개
+    public GameObject bossUIGroup;    // 🆕 보스 관련 전체 UI 그룹 오브젝트
 
     void Start()
     {
         UpdateBossHealthUI();
+
+        if (bossUIGroup != null)
+            bossUIGroup.SetActive(true); // 전투 시작 시 전체 UI 보이기
+            
         StartCoroutine(BossAttackCycle());
     }
 
