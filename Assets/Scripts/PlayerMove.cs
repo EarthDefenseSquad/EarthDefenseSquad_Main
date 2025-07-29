@@ -32,7 +32,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
-
+    float h = 0; // 좌우 입력값
+    bool jumpPressed = false;
 
 
     void Start()
@@ -66,19 +67,95 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     void Update()
     {
         if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
-
-        float h = 0; //좌우 움직임
-        bool jumpPressed = false;
-
+        
         // 플레이어: 방향키, Space
         h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
-        jumpPressed = Input.GetKeyDown(KeyCode.Space);
-    
+        if (Input.GetKeyDown(KeyCode.Space))
+            jumpPressed = true;
+
+        if (GameManager.Instance.colorRestoreMode)
+            {
+                Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
+                foreach (var hit in hits)
+                {
+                    if (hit.CompareTag("RestoreArea"))
+                    {
+                        GameObject obj = hit.gameObject;
+
+                        if (!restoredObjects.Contains(obj))
+                        {
+                            bool restored = false;
+
+                            // 1. SpriteRenderer 타입인 경우
+                            SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+                            if (sr != null)
+                            {
+                                if (ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
+                                {
+                                    sr.color = Color.white;
+                                    restored = true;
+                                }
+                            }
+
+                            // 2. TilemapRenderer + Tilemap 조합인 경우
+                            UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+                            if (tilemap != null)
+                            {
+                                if (ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
+                                {
+                                    tilemap.color = Color.white;
+                                    restored = true;
+                                }
+                            }
+
+                            // 3. 복원되었다면 목록에 추가
+                            if (restored)
+                            {
+                                restoredObjects.Add(obj);
+                                Debug.Log($"🎨 복원됨: {obj.name}");
+                            }
+                        }
+                    }
+                }
+
+                GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
+                if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
+                {
+                    Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
+                    GameManager.Instance.colorRestoreMode = false;
+
+                    if (GameManager.Instance.goalObject != null)
+                    {
+                        StartCoroutine(GameManager.Instance.GoalAppearEffect()); // 연출 호출
+                    }
+                }
+
+            }
+    } //update끝
+
+    void FixedUpdate()
+    {
+        if (!photonView.IsMine) return;
+       
+        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
+
+        if (rigid.velocity.x > maxSpeed)
+            rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
+        else if (rigid.velocity.x < -maxSpeed)
+            rigid.velocity = new Vector2(-maxSpeed, rigid.velocity.y);
+
+        if (rigid.velocity.y < 0)
+        {
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "HiddenPlatform"));
+            if (rayHit.collider != null && rayHit.distance < 0.65f)
+                anim.SetBool("isJumping", false);
+        }
         // Jump
         if (jumpPressed && !anim.GetBool("isJumping"))
         {
             rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             anim.SetBool("isJumping", true);
+            jumpPressed = false;
         }
         // Stop Speed
         if (h == 0)
@@ -97,84 +174,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             anim.SetBool("isWalking", false);
         else
             anim.SetBool("isWalking", true);
-
-        if (GameManager.Instance.colorRestoreMode)
-        {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
-            foreach (var hit in hits)
-            {
-                if (hit.CompareTag("RestoreArea"))
-                {
-                    GameObject obj = hit.gameObject;
-
-                    if (!restoredObjects.Contains(obj))
-                    {
-                        bool restored = false;
-
-                        // 1. SpriteRenderer 타입인 경우
-                        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-                        if (sr != null)
-                        {
-                            if (ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
-                            {
-                                sr.color = Color.white;
-                                restored = true;
-                            }
-                        }
-
-                        // 2. TilemapRenderer + Tilemap 조합인 경우
-                        UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
-                        if (tilemap != null)
-                        {
-                            if (ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
-                            {
-                                tilemap.color = Color.white;
-                                restored = true;
-                            }
-                        }
-
-                        // 3. 복원되었다면 목록에 추가
-                        if (restored)
-                        {
-                            restoredObjects.Add(obj);
-                            Debug.Log($"🎨 복원됨: {obj.name}");
-                        }
-                    }
-                }
-            }
-
-            GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
-            if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
-            {
-                Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
-                GameManager.Instance.colorRestoreMode = false;
-
-                if (GameManager.Instance.goalObject != null)
-                {
-                    StartCoroutine(GameManager.Instance.GoalAppearEffect()); // 연출 호출
-                }
-            }
-
-        }
-    } //update끝
-
-        void FixedUpdate()
-        {
-            float h = Input.GetAxisRaw("Horizontal");
-            rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
-
-            if (rigid.velocity.x > maxSpeed)
-                rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
-            else if (rigid.velocity.x < -maxSpeed)
-                rigid.velocity = new Vector2(-maxSpeed, rigid.velocity.y);
-
-            if (rigid.velocity.y < 0)
-            {
-                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "HiddenPlatform"));
-                if (rayHit.collider != null && rayHit.distance < 0.65f)
-                    anim.SetBool("isJumping", false);
-            }
-        }
+    }
 
     public void EnableInvincibility(bool status)
     {
