@@ -90,6 +90,7 @@ public class ItemManager : MonoBehaviour
                 StartCoroutine(ActivateColorRestore());
                 break;
             case ItemType.BossSpecialAttack:
+                Debug.Log("⚡ Boss Special Attack 아이템 사용됨");
                 var boss = FindObjectOfType<BossController>();
                 if (boss != null)
                 {

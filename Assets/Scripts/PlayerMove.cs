@@ -204,7 +204,7 @@ public class PlayerMove : MonoBehaviour
                 return;
             }
 
-            if (name.Contains("BossItem"))
+            if (name.Contains("BossSpecialAttack"))
             {
                 itemManager.UseItem(ItemType.BossSpecialAttack);
                 collision.gameObject.SetActive(false);

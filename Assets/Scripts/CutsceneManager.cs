@@ -5,31 +5,34 @@ using TMPro;
 
 public class CutsceneManager : MonoBehaviour
 {
-    public CanvasGroup cutsceneCanvas;
-
     public static CutsceneManager Instance;
 
-    public GameObject CutScenePanel;
+    [Header("컷씬 UI 구성요소")]
+    public CanvasGroup cutsceneCanvas;
     public TextMeshProUGUI cutsceneText;
-
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+
+        // 시작 시 캔버스 비활성화
+        cutsceneCanvas.alpha = 0;
+        cutsceneCanvas.blocksRaycasts = false;
     }
 
     public void PlayCutscene(Action onComplete)
     {
-        StartCoroutine(CutsceneSequence(onComplete));
+        StartCoroutine(CutsceneSequence("Now" + "The REVENGE Begins", onComplete));
     }
 
-    IEnumerator CutsceneSequence(Action onComplete)
+    IEnumerator CutsceneSequence(string message, Action onComplete)
     {
+        cutsceneText.text = message;
         cutsceneCanvas.alpha = 1;
         cutsceneCanvas.blocksRaycasts = true;
 
-        yield return new WaitForSeconds(3f); // 컷씬 길이
+        yield return new WaitForSeconds(3f);
 
         cutsceneCanvas.alpha = 0;
         cutsceneCanvas.blocksRaycasts = false;
@@ -39,10 +42,13 @@ public class CutsceneManager : MonoBehaviour
 
     public IEnumerator PlayEndingCutscene()
     {
-        CutScenePanel.SetActive(true);
-        cutsceneText.text = "크윽… 분하다… 다음 기회를…";
+        cutsceneText.text = "Next Time... The Final Battle!";
+        cutsceneCanvas.alpha = 1;
+        cutsceneCanvas.blocksRaycasts = true;
+
         yield return new WaitForSeconds(3f);
-        CutScenePanel.SetActive(false);
-        // 엔딩 처리 or 스테이지 클리어
+
+        cutsceneCanvas.alpha = 0;
+        cutsceneCanvas.blocksRaycasts = false;
     }
 }

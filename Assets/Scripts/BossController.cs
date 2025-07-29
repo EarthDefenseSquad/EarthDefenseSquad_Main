@@ -45,19 +45,28 @@ public class BossController : MonoBehaviour
 
     public void OnBossHit()
     {
-        isVulnerable = true; // 다음 공격 무효화
+        Debug.Log("✅ OnBossHit() 호출됨");
+
+        isVulnerable = true;
 
         bossHealth--;
+        Debug.Log($"📉 보스 체력 감소됨: {bossHealth}");
+
         UpdateBossHealthUI();
 
         if (bossHealth <= 0)
         {
             isDead = true;
-            Debug.Log("💥 보스 패배!");
-            StartCoroutine(CutsceneManager.Instance.PlayEndingCutscene());
-            Destroy(gameObject); // 또는 비활성화
+            Debug.Log("💥 보스 패배 시퀀스 시작");
+
+            if (CutsceneManager.Instance != null)
+                StartCoroutine(CutsceneManager.Instance.PlayEndingCutscene());
+            else
+                Debug.LogWarning("❗ CutsceneManager.Instance가 null입니다!");
+
+            Destroy(gameObject);
         }
-    }
+    }   
 
     void UpdateBossHealthUI()
     {
