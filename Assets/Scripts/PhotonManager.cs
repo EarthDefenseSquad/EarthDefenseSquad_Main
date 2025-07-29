@@ -28,7 +28,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     private void Start() //게임 시작 버튼 클릭과 함께 스크립트 활성화.
     {
-        //PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
         GameDataManager.Instance.Start_Panel = this.Start_Panel;
         Button_Start.onClick.AddListener(OnGameStartButtonClicked);
@@ -184,11 +184,12 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
         {
             Button_Tutorial_Back.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
+            Button_Tutorial_OK.gameObject.SetActive(false); //다음 버튼은 안보이도록.
         }
     }
     [PunRPC]
     void MoveTheWaitingScene() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
-    {                       //게임씬 이동 동기화
+    {                          //게임씬 이동 동기화
         PhotonNetwork.LoadLevel("WaitingScene");
     }
 
