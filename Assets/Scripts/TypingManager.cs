@@ -1,52 +1,56 @@
-using UnityEngine;
-using TMPro;
-using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering.LookDev;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class TypingManager : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public CameraShake_tmp cameraShake;
+    public CameraShake_tmp cameraShake; // CameraShake 스크립트 참조
 
-    private Dictionary<string, GameObject> activeTargetMap = new Dictionary<string, GameObject>();
-    private string currentKeyword = "";
-    private GameObject currentTarget;
+    [System.Serializable]
+    public class KeywordObjectPair
+    {
+        public string keyword;
+        public GameObject targetObject;
+    }
+
+    public List<KeywordObjectPair> keywordObjectPairs;
+    private Dictionary<string, GameObject> keywordToObject = new Dictionary<string, GameObject>();
 
     private void Start()
     {
-        inputField.gameObject.SetActive(false); // 처음엔 비활성화
+        foreach (var pair in keywordObjectPairs)
+        {
+            string keyword = pair.keyword.Trim().ToLower();
+            if (!keywordToObject.ContainsKey(keyword))
+                keywordToObject.Add(keyword, pair.targetObject);
+        }
+
         inputField.onEndEdit.AddListener(CheckInput);
     }
 
-    public void ActivateTyping(string keyword, GameObject target)
+    private void CheckInput(string userInput)
     {
-        currentKeyword = keyword.Trim().ToLower();
-        currentTarget = target;
-        inputField.text = "";
-        inputField.gameObject.SetActive(true);
-        inputField.ActivateInputField();
-    }
+        userInput = userInput.Trim().ToLower();
 
-    private void CheckInput(string input)
-    {
-        string userInput = input.Trim().ToLower();
-
-        if (userInput == currentKeyword)
+        if (keywordToObject.ContainsKey(userInput))
         {
-            if (currentTarget != null)
+            GameObject target = keywordToObject[userInput];
+            if (target != null && target.activeSelf)
             {
-                currentTarget.SetActive(false);
-                Debug.Log("정답 입력: 오브젝트 비활성화");
+                target.SetActive(false);
+                Debug.Log($"'{userInput}' 입력으로 오브젝트 비활성화됨");
             }
-
-            inputField.gameObject.SetActive(false);
         }
         else
         {
-            Debug.Log("오답 입력: 화면 흔들림");
-            StartCoroutine(cameraShake.Shake(0.3f, 0.2f));
-            inputField.text = "";
-            inputField.ActivateInputField();
+            Debug.Log($"'{userInput}' 은/는 오답입니다.");
+            StartCoroutine(cameraShake.Shake(0.3f, 0.2f)); // 흔들기 호출
         }
+
+        inputField.text = "";
+        inputField.ActivateInputField();
     }
 }

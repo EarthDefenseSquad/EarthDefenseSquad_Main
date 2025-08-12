@@ -14,7 +14,7 @@ public class TypingTrigger : MonoBehaviour
             TypingManager manager = FindObjectOfType<TypingManager>();
             if (manager != null)
             {
-                manager.ActivateTyping(keyword, gameObject);
+                //manager.ActivateTyping(keyword, gameObject);
                 isUsed = true;
             }
         }
