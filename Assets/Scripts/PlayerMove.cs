@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using UnityEngine.UI;
+using Photon.Realtime;
 
 public class PlayerMove : MonoBehaviourPunCallbacks
 {
@@ -21,10 +22,10 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool colorRestoreMode = false;
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
 
+    
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
-    BoxCollider2D boxCollider;
     CapsuleCollider2D capsulecollider;
     public ItemManager itemManager;
     AudioSource audioSource;
@@ -41,7 +42,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        capsulecollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
 
         if (photonView.IsMine)
@@ -67,6 +68,13 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     void Update()
     {
         if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
+
+        // y값이 -20보다 작아지면 추락으로 간주
+        if (transform.position.y <= -20f)
+        {
+            if (GameManager.Instance != null)
+                GameManager.Instance.HealthDown();
+        }
         
         // 플레이어: 방향키, Space
         h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
@@ -74,69 +82,73 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             jumpPressed = true;
 
         if (GameManager.Instance.colorRestoreMode)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
+            foreach (var hit in hits)
             {
-                Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
-                foreach (var hit in hits)
+                if (hit.CompareTag("RestoreArea"))
                 {
-                    if (hit.CompareTag("RestoreArea"))
+                    GameObject obj = hit.gameObject;
+
+                    if (!restoredObjects.Contains(obj))
                     {
-                        GameObject obj = hit.gameObject;
+                        bool restored = false;
 
-                        if (!restoredObjects.Contains(obj))
+                        // 1. SpriteRenderer 타입인 경우
+                        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+                        if (sr != null)
                         {
-                            bool restored = false;
-
-                            // 1. SpriteRenderer 타입인 경우
-                            SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-                            if (sr != null)
+                            if (ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
                             {
-                                if (ApproximatelyColor(sr.color, new Color(0.27f, 0.27f, 0.27f)))
-                                {
-                                    sr.color = Color.white;
-                                    restored = true;
-                                }
+                                sr.color = Color.white;
+                                restored = true;
                             }
+                        }
 
-                            // 2. TilemapRenderer + Tilemap 조합인 경우
-                            UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
-                            if (tilemap != null)
+                        // 2. TilemapRenderer + Tilemap 조합인 경우
+                        UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+                        if (tilemap != null)
+                        {
+                            if (ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
                             {
-                                if (ApproximatelyColor(tilemap.color, new Color(0.27f, 0.27f, 0.27f)))
-                                {
-                                    tilemap.color = Color.white;
-                                    restored = true;
-                                }
+                                tilemap.color = Color.white;
+                                restored = true;
                             }
+                        }
 
-                            // 3. 복원되었다면 목록에 추가
-                            if (restored)
-                            {
-                                restoredObjects.Add(obj);
-                                Debug.Log($"🎨 복원됨: {obj.name}");
-                            }
+                        // 3. 복원되었다면 목록에 추가
+                        if (restored)
+                        {
+                            restoredObjects.Add(obj);
+                            Debug.Log($"🎨 복원됨: {obj.name}");
                         }
                     }
                 }
-
-                GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
-                if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
-                {
-                    Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
-                    GameManager.Instance.colorRestoreMode = false;
-
-                    if (GameManager.Instance.goalObject != null)
-                    {
-                        StartCoroutine(GameManager.Instance.GoalAppearEffect()); // 연출 호출
-                    }
-                }
-
             }
+
+            GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
+            if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
+            {
+                Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
+                GameManager.Instance.colorRestoreMode = false;
+
+                if (GameManager.Instance.goalObject != null)
+                {
+                    StartCoroutine(GameManager.Instance.GoalAppearEffect()); // 연출 호출
+                }
+            }
+
+        }
+    
     } //update끝
 
     void FixedUpdate()
     {
+
         if (!photonView.IsMine) return;
-       
+        if (!ChatManager.isChatInputActive && Input.GetKeyDown(KeyCode.Space))
+{           jumpPressed = true;
+}
         rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
         if (rigid.velocity.x > maxSpeed)
@@ -174,6 +186,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             anim.SetBool("isWalking", false);
         else
             anim.SetBool("isWalking", true);
+            
+        
     }
 
     public void EnableInvincibility(bool status)
@@ -206,7 +220,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                Mathf.Abs(a.g - b.g) < threshold &&
                Mathf.Abs(a.b - b.b) < threshold;
     }
-    void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌돌
     {
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector2.down, 1f, LayerMask.GetMask("Platform"));
         if (collision.CompareTag("Item"))
@@ -263,27 +277,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             //gameManager.NextStage();
             PlaySound("Finish");
         }
-        else if (collision.CompareTag("GameStart"))
-        {
-            Debug.Log("충돌. 스테이지 선택씬으로 이동.");
-            if (PhotonNetwork.IsMasterClient)
-            {
-                PhotonNetwork.LoadLevel("StageSelect");
-            }
-            else
-            {
-                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
-            }
-        } // 세대, 스테이지선택씬으로
-    }
 
-    [PunRPC]
-    void ReqeustLoadLeveltoStageSelect(string sceneName)
-    {
-        if (PhotonNetwork.IsMasterClient)
-        PhotonNetwork.LoadLevel(sceneName);
     }
-
 
     void OnCollisionEnter2D(Collision2D collision) //충돌
     {
@@ -301,6 +296,24 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 OnDamaged(collision.transform.position);
             }
         }
+        else if (collision.gameObject.CompareTag("Doctor"))
+        {
+             if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.LoadLevel("StageSelect");
+            }
+            else
+            {
+                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
+            }
+        }
+    }
+
+    [PunRPC]
+    void ReqeustLoadLeveltoStageSelect(string sceneName)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        PhotonNetwork.LoadLevel(sceneName);
     }
 
     void OnAttack(Transform enemy)
@@ -324,19 +337,20 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         Invoke("OffDamaged", 3);
     }
 
-    void OffDamaged()
+    void OffDamaged() //데미지 받으면 잠깐 투명해짐 그게 원상복구 되는 함수.
     {
         gameObject.layer = 10;
         spriteRenderer.color = Color.white;
     }
+    
 
     public void OnDie()
     {
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
         spriteRenderer.flipY = true;
-        boxCollider.enabled = false;
+        capsulecollider.enabled = false;
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-        PlaySound("Die");
+        //PlaySound("Die");
     }
 
     public void VelocityZero()

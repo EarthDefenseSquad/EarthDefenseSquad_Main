@@ -52,7 +52,7 @@ public class DebugEditorWindow : EditorWindow
         GameDataManager.Instance.selectedStageIndex = -1;
 
         // 스테이지 잠금 초기화
-        GameDataManager.Instance.ResetStageUnlock();
+        GameDataManager.Instance.ResetStageUnlockPlayFab();
 
         Debug.Log("게임 데이터가 초기화되었습니다.");
     }

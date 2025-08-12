@@ -327,7 +327,10 @@ MonoBehaviour:
   playerObj: {fileID: 4828525040922323524, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
   player: {fileID: 1265464301027977866, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
   Stages: []
-  UIhealth: []
+  UIhealth:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   UIPoint: {fileID: 0}
   UIStage: {fileID: 0}
   RestartButton: {fileID: 0}
@@ -28713,7 +28716,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -147845.22}
+  m_AnchoredPosition: {x: 0, y: -159802.27}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1303064859
@@ -29017,7 +29020,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 691188648}
   m_HandleRect: {fileID: 691188647}
   m_Direction: 2
-  m_Value: 9463249
+  m_Value: 10228595
   m_Size: 0.9992195
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -29414,7 +29417,7 @@ GameObject:
   - component: {fileID: 1519885861}
   m_Layer: 0
   m_Name: Doctor
-  m_TagString: Untagged
+  m_TagString: Doctor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29462,7 +29465,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -29476,7 +29479,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.4628571, y: 1.4628571}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!212 &1519885863
 SpriteRenderer:

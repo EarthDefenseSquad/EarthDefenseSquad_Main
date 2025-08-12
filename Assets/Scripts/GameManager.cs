@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     [Header("개발용 설정 - 즉사 모드")]
-    public bool isInstantDeathMode;
+    public bool isInstantDeathMode=false;
 
     //플레이어들 동기화 스폰
     //플레이어들 동기화 이동
@@ -75,15 +75,14 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 health = 1;
                 UpdateHealthUI(); // ✅ UI 반영
-            }  
+            }
+            else
+            {
+                health = 3;
+            }
             // 씬 전환마다 실행하고 싶은 초기화 코드를 여기에 작성 즉 start역할
             Debug.Log("씬이 바뀜: " + scene.name);
 
-            if (isInstantDeathMode)
-            {
-                health = 1;
-                UpdateHealthUI(); // ✅ UI 반영
-            }
             if (photonView.IsMine)
             {   
                 int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
@@ -146,6 +145,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         new Vector3(0.0f, -0.5f, 0.0f)
         };
         GameObject playerObject = PhotonNetwork.Instantiate("Player", spawnPositions[player_index], Quaternion.identity);
+        player = playerObject.GetComponent<PlayerMove>();
         //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
         //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
         //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
@@ -204,7 +204,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Stages[stageIndex].SetActive(false);
             stageIndex++;
             Stages[stageIndex].SetActive(true);
-            PlayerReposion();
+            PlayerReposition();
 
             UIStage.text = "STAGE " + (stageIndex + 1);
         }
@@ -265,14 +265,16 @@ public class GameManager : MonoBehaviourPunCallbacks
             if (health > 0)
             {
                 health--;
+                Debug.Log("생명 감소");
                 UpdateHealthUI(); // ✅ UI 업데이트
+                photonView.RPC("PlayerReposition", RpcTarget.All);
             }
 
             if (health <= 0)
             {
                 player.OnDie();
                 Debug.Log("플레이어가 죽었습니다.");
-                RestartButton.SetActive(true);
+                //RestartButton.SetActive(true);
             }
         }
 
@@ -285,7 +287,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             if (health > 1)
             {
-                PlayerReposion();
+                PlayerReposition();
             }
 
 
@@ -293,10 +295,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    void PlayerReposion()
+    [PunRPC]
+    void PlayerReposition()
     {
-        player.transform.position = new Vector3(0, 0, -1); // Reset player position
-        player.VelocityZero();
+        if (player != null)
+        {
+            player.transform.position = new Vector3(-1.0f, -0.5f, 0);
+            //player.VelocityZero();
+        }
     }
 
 
