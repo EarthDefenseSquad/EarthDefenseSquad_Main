@@ -308,6 +308,7 @@ GameObject:
   m_Component:
   - component: {fileID: 10830404}
   - component: {fileID: 10830405}
+  - component: {fileID: 10830406}
   m_Layer: 0
   m_Name: TypingManager
   m_TagString: Untagged
@@ -337,7 +338,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 10830402}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 390a67110d1bb487993c7ea93511fb31, type: 3}
   m_Name: 
@@ -349,6 +350,20 @@ MonoBehaviour:
     targetObject: {fileID: 2055325967}
   - keyword: bb
     targetObject: {fileID: 593924857}
+--- !u!114 &10830406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10830402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf6f47bda86b23479cd5b33b1c48786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 2176261}
+  cameraShake: {fileID: 955661632}
 --- !u!1 &38315999
 GameObject:
   m_ObjectHideFlags: 0
@@ -11934,6 +11949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa3509e7cf6cf4b229d31275cea22b5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetObject: {fileID: 593924857}
   keyword: bb
 --- !u!114 &680117267
 MonoBehaviour:
@@ -15635,6 +15651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa3509e7cf6cf4b229d31275cea22b5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetObject: {fileID: 2055325967}
   keyword: aa
 --- !u!1 &882331782
 GameObject:
@@ -22321,6 +22338,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4828525040922323524, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4828525040922323524, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -1,56 +1,51 @@
-using System.Collections.Generic;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class TypingManager : MonoBehaviour
 {
     public TMP_InputField inputField;
-    public CameraShake_tmp cameraShake; // CameraShake ìŠ¤í¬ë¦½íŠ¸ ì°¸ì¡°
+    public CameraShake_tmp cameraShake;
 
-    [System.Serializable]
-    public class KeywordObjectPair
-    {
-        public string keyword;
-        public GameObject targetObject;
-    }
-
-    public List<KeywordObjectPair> keywordObjectPairs;
-    private Dictionary<string, GameObject> keywordToObject = new Dictionary<string, GameObject>();
+    private GameObject currentTarget; // B ¿ÀºêÁ§Æ®
+    private string correctKeyword;
 
     private void Start()
     {
-        foreach (var pair in keywordObjectPairs)
-        {
-            string keyword = pair.keyword.Trim().ToLower();
-            if (!keywordToObject.ContainsKey(keyword))
-                keywordToObject.Add(keyword, pair.targetObject);
-        }
-
-        inputField.onEndEdit.AddListener(CheckInput);
+        inputField.gameObject.SetActive(false);
+        inputField.onSubmit.AddListener(CheckInput); // Enter ÀÔ·Â °¨Áö
     }
 
-    private void CheckInput(string userInput)
+    public void ShowInputField(GameObject targetObject, string keyword)
     {
-        userInput = userInput.Trim().ToLower();
+        currentTarget = targetObject;
+        correctKeyword = keyword.Trim().ToLower();
 
-        if (keywordToObject.ContainsKey(userInput))
+        inputField.text = "";
+        inputField.gameObject.SetActive(true);
+        inputField.ActivateInputField();
+    }
+
+    private void CheckInput(string input)
+    {
+        input = input.Trim().ToLower();
+
+        if (input == correctKeyword)
         {
-            GameObject target = keywordToObject[userInput];
-            if (target != null && target.activeSelf)
+            if (currentTarget != null)
             {
-                target.SetActive(false);
-                Debug.Log($"'{userInput}' ì…ë ¥ìœ¼ë¡œ ì˜¤ë¸Œì íŠ¸ ë¹„í™œì„±í™”ë¨");
+                currentTarget.SetActive(false); // B ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
+                Debug.Log("Á¤´ä ÀÔ·ÂµÊ, ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­");
             }
+
+            inputField.gameObject.SetActive(false); // ÀÔ·ÂÃ¢ ´İ±â
         }
         else
         {
-            Debug.Log($"'{userInput}' ì€/ëŠ” ì˜¤ë‹µì…ë‹ˆë‹¤.");
-            StartCoroutine(cameraShake.Shake(0.3f, 0.2f)); // í”ë“¤ê¸° í˜¸ì¶œ
+            Debug.Log("¿À´ä!");
+            StartCoroutine(cameraShake.Shake(0.3f, 0.2f));
+            inputField.text = "";
+            inputField.ActivateInputField();
         }
-
-        inputField.text = "";
-        inputField.ActivateInputField();
     }
 }
