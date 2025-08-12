@@ -11,6 +11,10 @@ public class BossController : MonoBehaviour
     public GameObject[] bossHealthUI; // 보스 체력 UI 오브젝트 3개
     public GameObject bossUIGroup;    // 🆕 보스 관련 전체 UI 그룹 오브젝트
 
+    public GameObject bossFinishItemPrefab;  // 프리팹 연결
+    public Transform itemSpawnPoint;         // 생성 위치
+    public bool isFinalBoss = false;         // 최최종 보스 여부 설정
+
     void Start()
     {
         UpdateBossHealthUI();
@@ -50,33 +54,35 @@ public class BossController : MonoBehaviour
 
     public void OnBossHit()
     {
-        Debug.Log("✅ OnBossHit() 호출됨");
+        Debug.Log("OnBossHit() 호출됨");
 
         isVulnerable = true;
 
         bossHealth--;
-        Debug.Log($"📉 보스 체력 감소됨: {bossHealth}");
+        Debug.Log($"보스 체력 감소됨: {bossHealth}");
 
         UpdateBossHealthUI();
 
         if (bossHealth <= 0)
         {
             isDead = true;
-            Debug.Log("💥 보스 패배 시퀀스 시작");
+            Debug.Log("보스 패배 시퀀스 시작");
 
-            GameManager.Instance.isBossActive = false;
+            // GameManager.Instance.isBossActive = false;
 
-            if (!isFinalBoss && bossFinishItemPrefab != null && itemSpawnPoint != null)
-            {
-                StartCoroutine(SpawnBlinkingFinishItem());
-            }
+            // if (!isFinalBoss && bossFinishItemPrefab != null && itemSpawnPoint != null)
+            // {
+            //     StartCoroutine(SpawnBlinkingFinishItem());
+            // }
 
-            if (CutsceneManager.Instance != null)
-                StartCoroutine(CutsceneManager.Instance.PlayEndingCutscene());
-            else
-                Debug.LogWarning("❗ CutsceneManager.Instance가 null입니다!");
+            // if (CutsceneManager.Instance != null)
+            //     StartCoroutine(CutsceneManager.Instance.PlayEndingCutscene());
+            // else
+            //     Debug.LogWarning("CutsceneManager.Instance가 null입니다!");
 
-            Destroy(gameObject);
+            // Destroy(gameObject);
+
+            StartCoroutine(DefeatFlow());
         }
     }
 
@@ -104,4 +110,23 @@ public class BossController : MonoBehaviour
             }
         }
     }
+
+    // (추가) 보스 처치 흐름 전용 코루틴
+    IEnumerator DefeatFlow()
+    {
+
+        GameManager.Instance.isBossActive = false;
+
+        // 1) 엔딩 컷씬 완료 대기
+        if (CutsceneManager.Instance != null)
+            yield return CutsceneManager.Instance.PlayEndingCutscene(); // :contentReference[oaicite:4]{index=4}
+
+        // 2) 드랍 연출 완료 대기
+        if (!isFinalBoss && bossFinishItemPrefab != null && itemSpawnPoint != null)
+            yield return StartCoroutine(SpawnBlinkingFinishItem());      // :contentReference[oaicite:5]{index=5}
+
+        // 3) 보스 제거
+        Destroy(gameObject);
     }
+
+}
