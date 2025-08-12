@@ -18,12 +18,14 @@ public class BossController : MonoBehaviour
     void Start()
     {
         UpdateBossHealthUI();
-
-        if (bossUIGroup != null)
-            bossUIGroup.SetActive(true); // 전투 시작 시 전체 UI 보이기
-
         StartCoroutine(BossAttackCycle());
     }
+
+    void OnEnable()
+    {
+        GameManager.Instance?.SetBossActive(true); // 보스 오브젝트가 켜졌다면 보스전 On
+    }
+
 
     IEnumerator BossAttackCycle()
     {
@@ -126,6 +128,7 @@ public class BossController : MonoBehaviour
             yield return StartCoroutine(SpawnBlinkingFinishItem());      // :contentReference[oaicite:5]{index=5}
 
         // 3) 보스 제거
+        GameManager.Instance.SetBossActive(false);
         Destroy(gameObject);
     }
 

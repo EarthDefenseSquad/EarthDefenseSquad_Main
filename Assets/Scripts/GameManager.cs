@@ -18,10 +18,6 @@ public class GameManager : MonoBehaviour
     public Text UIPoint;
     public Text UIStage;
     public GameObject RestartButton;
-    public bool isBossActive = false; // 보스 활성화 여부
-
-
-
 
     // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)
     public int finishItemCount = 0;
@@ -40,6 +36,16 @@ public class GameManager : MonoBehaviour
 
     public GameObject finalBossPortal;  // 최최종 보스 진입 포탈
 
+    [Header("Boss Mode")]
+    public GameObject bossUIRoot;     // 보스 체력 UI 그룹(3칸 UI의 부모 오브젝트)
+    public GameObject bossBackdrop;   // 보스전 배경 스프라이트/패널 오브젝트
+    public bool isBossActive = false; // 보스 활성화 여부
+
+    [Header("Health Config")]
+    [SerializeField] int normalHealth = 1; // 일반 스테이지 플레이어 목숨
+    [SerializeField] int bossHealth = 3;   // 보스전 플레이어 목숨
+
+
 
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode;
@@ -55,6 +61,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        SetBossActive(false);
+
         if (isInstantDeathMode)
         {
             health = 1;
@@ -116,6 +124,18 @@ public class GameManager : MonoBehaviour
 
         stagePoint = 0;
     }
+    public void SetBossActive(bool active)
+    {
+        isBossActive = active;
+
+        // ② 플레이어 목숨 전환
+        health = active ? bossHealth : normalHealth;
+        UpdateHealthUI(); // 기존 UI 갱신 함수 호출
+
+        // ③ 보스 UI/배경 토글
+        if (bossUIRoot != null) bossUIRoot.SetActive(active);
+        if (bossBackdrop != null) bossBackdrop.SetActive(active);
+    }
 
     public void HealthDown()
     {
@@ -156,24 +176,24 @@ public class GameManager : MonoBehaviour
         // }
 
 
-    {
-        if (health > 0)
         {
-            health--;
-            UpdateHealthUI(); // ✅ UI 업데이트
+            if (health > 0)
+            {
+                health--;
+                UpdateHealthUI(); // ✅ UI 업데이트
+            }
+
+            if (health <= 0)
+            {
+                player.OnDie();
+                Debug.Log("플레이어가 죽었습니다.");
+                RestartButton.SetActive(true);
+            }
         }
 
-        if (health <= 0)
-        {
-            player.OnDie();
-            Debug.Log("플레이어가 죽었습니다.");
-            RestartButton.SetActive(true);
-        }
     }
 
-}
-
-void OnTriggerEnter2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
@@ -288,6 +308,8 @@ void OnTriggerEnter2D(Collider2D collision)
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }
+    
+    
 
 
 }

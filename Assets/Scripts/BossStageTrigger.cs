@@ -12,7 +12,7 @@ public class BossStageTrigger : MonoBehaviour
             cutsceneManager.PlayCutscene(() =>
             {
                 boss.SetActive(true); // 컷씬 후 보스 등장
-                GameManager.Instance.isBossActive = true; // 보스 활성화 상태 설정
+                GameManager.Instance.SetBossActive(true); // 보스 활성화 상태 설정
             });
             gameObject.SetActive(false); // 트리거 꺼주기
         }
