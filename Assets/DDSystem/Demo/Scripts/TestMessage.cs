@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Doublsb.Dialog;
+
 
 public class TestMessage : MonoBehaviour
 {
@@ -16,14 +18,14 @@ public class TestMessage : MonoBehaviour
         dialogTexts.Add(new DialogData("/size:up/Hi, /size:init/my name is Li.", "Li"));
 
         dialogTexts.Add(new DialogData("I am Sa. Popped out to let you know Asset can show other characters.", "Sa"));
-        
+
         dialogTexts.Add(new DialogData("This Asset, The D'Dialog System has many features.", "Li"));
 
         dialogTexts.Add(new DialogData("You can easily change text /color:red/color, /color:white/and /size:up//size:up/size/size:init/ like this.", "Li", () => Show_Example(0)));
 
         dialogTexts.Add(new DialogData("Just put the command in the string!", "Li", () => Show_Example(1)));
 
-        dialogTexts.Add(new DialogData("You can also change the character's sprite /emote:Sad/like this, /click//emote:Happy/Smile.", "Li",  () => Show_Example(2)));
+        dialogTexts.Add(new DialogData("You can also change the character's sprite /emote:Sad/like this, /click//emote:Happy/Smile.", "Li", () => Show_Example(2)));
 
         dialogTexts.Add(new DialogData("If you need an emphasis effect, /wait:0.5/wait... /click/or click command.", "Li", () => Show_Example(3)));
 
@@ -38,10 +40,14 @@ public class TestMessage : MonoBehaviour
         dialogTexts.Add(new DialogData("That's it! Please check the documents. Good luck to you.", "Sa"));
 
         DialogManager.Show(dialogTexts);
+
     }
 
     private void Show_Example(int index)
     {
         Example[index].SetActive(true);
     }
+
+
+
 }
