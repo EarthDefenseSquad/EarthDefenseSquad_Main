@@ -33,6 +33,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
+    public StageSelectUI stageSelectUI;
+
     float h = 0; // 좌우 입력값
     bool jumpPressed = false;
 
@@ -220,7 +222,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                Mathf.Abs(a.g - b.g) < threshold &&
                Mathf.Abs(a.b - b.b) < threshold;
     }
-    void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌돌
+    void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌들
     {
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector2.down, 1f, LayerMask.GetMask("Platform"));
         if (collision.CompareTag("Item"))
@@ -275,7 +277,16 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             collision.gameObject.SetActive(false); // 아이템 제거
 
             //gameManager.NextStage();
-            PlaySound("Finish");
+            //PlaySound("Finish");
+            if (PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.LoadLevel("StageSelect");
+                
+            }
+            else
+            {
+                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
+            }
         }
 
     }
@@ -313,7 +324,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     void ReqeustLoadLeveltoStageSelect(string sceneName)
     {
         if (PhotonNetwork.IsMasterClient)
-        PhotonNetwork.LoadLevel(sceneName);
+            PhotonNetwork.LoadLevel(sceneName);
+            stageSelectUI.UnlockStage(stageSelectUI.stageNumber);
+        
     }
 
     void OnAttack(Transform enemy)

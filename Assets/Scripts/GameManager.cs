@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int totalPoint=0;
     public int stagePoint=0;
     public int stageIndex;
-    public int health;
+    public int health=3;
     public GameObject playerObj;
     public PlayerMove player;
 
@@ -123,15 +123,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
 #endif
-        if (playerObj == null)
-        {
-            playerObj = GameObject.FindWithTag("Player");
-            if (playerObj != null)
-            {
-                player = playerObj.GetComponent<PlayerMove>();
-                // 필요한 초기화 코드 추가
-            }
-        }
+       
 
     }
 
@@ -266,12 +258,14 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 health--;
                 Debug.Log("생명 감소");
+                Debug.Log(health);
                 UpdateHealthUI(); // ✅ UI 업데이트
                 photonView.RPC("PlayerReposition", RpcTarget.All);
             }
 
             if (health <= 0)
-            {
+            {   
+                Debug.Log(health);
                 player.OnDie();
                 Debug.Log("플레이어가 죽었습니다.");
                 //RestartButton.SetActive(true);
@@ -303,6 +297,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             player.transform.position = new Vector3(-1.0f, -0.5f, 0);
             //player.VelocityZero();
         }
+         
     }
 
 
@@ -394,8 +389,19 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void UpdateHealthUI()
     {
+        if (UIhealth == null)
+        {
+            Debug.LogError("UIhealth 배열이 null입니다!");
+            return;
+        }
+
         for (int i = 0; i < UIhealth.Length; i++)
         {
+            if (UIhealth[i] == null)
+            {
+                Debug.LogError($"UIhealth[{i}]가 null입니다!");
+                continue;
+            }
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }

@@ -10,7 +10,7 @@ public class StageSelectUI : MonoBehaviour
 
     // 각 스테이지의 해금 상태를 저장
     private bool[] unlockedStages;
-    public int stageNumber;
+    public int stageNumber=2;
     void Start()
     {
         unlockedStages = new bool[stageButtons1960.Length]; //해금 상태를 스테이지 버튼의 길이만큼 1(언락)과 0(락)으로 저장.
@@ -73,14 +73,15 @@ public class StageSelectUI : MonoBehaviour
 
 
     // 특정 스테이지를 해금(잠금 해제)하는 public 메서드
-    public void UnlockStage(int stageNumber)
+    public void UnlockStage(int stageNum)
     {
-        int idx = stageNumber;
+        int idx = stageNum;
         if (idx >= 0 && idx < unlockedStages.Length)
         {
             unlockedStages[idx] = true; //언락됨.
             UpdateStageButton(idx); //보여지는 상태도 같이 업데이트.
         }
+        stageNumber++;
     }
 
     // 버튼과 LockIcon UI 상태 갱신
