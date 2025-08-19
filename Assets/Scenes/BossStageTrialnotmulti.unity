@@ -11468,12 +11468,12 @@ GameObject:
   - component: {fileID: 1861678502}
   - component: {fileID: 1861678503}
   m_Layer: 0
-  m_Name: 000
+  m_Name: BossBG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1861678502
 Transform:
   m_ObjectHideFlags: 0
@@ -11483,8 +11483,8 @@ Transform:
   m_GameObject: {fileID: 1861678501}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -585.45996, y: -362.49, z: 0}
-  m_LocalScale: {x: 1.8363291, y: 1.6573566, z: 1}
+  m_LocalPosition: {x: -584.86, y: -361.6, z: 0}
+  m_LocalScale: {x: 5.5374293, y: 5.1722517, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 743471510}
@@ -11530,8 +11530,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -10
-  m_Sprite: {fileID: 21300000, guid: e39c6fe35f89de24dbbd8da387621ce2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 93ba0f29772cbfd46b1ddd7f1459de10, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.44313726}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
