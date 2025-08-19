@@ -70,6 +70,9 @@ public class BossController : MonoBehaviour
             isDead = true;
             Debug.Log("보스 패배 시퀀스 시작");
 
+            // ✅ 보스 패널 즉시 숨김 (컷씬/드랍 기다리지 않음)
+            GameManager.Instance?.HideBossPanel();
+
             // GameManager.Instance.isBossActive = false;
 
             // if (!isFinalBoss && bossFinishItemPrefab != null && itemSpawnPoint != null)

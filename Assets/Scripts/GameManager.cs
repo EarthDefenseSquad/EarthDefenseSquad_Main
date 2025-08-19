@@ -308,8 +308,11 @@ public class GameManager : MonoBehaviour
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }
-    
-    
 
+    public void HideBossPanel()
+    {
+        if (bossUIRoot != null) bossUIRoot.SetActive(false);
+        if (bossBackdrop != null) bossBackdrop.SetActive(false);
+    }
 
 }
