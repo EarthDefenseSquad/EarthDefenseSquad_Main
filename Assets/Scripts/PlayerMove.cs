@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using UnityEngine.UI;
 using Photon.Realtime;
+using Unity.VisualScripting;
 
 public class PlayerMove : MonoBehaviourPunCallbacks
 {
@@ -33,11 +34,16 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
-    public StageSelectUI stageSelectUI;
+    
 
     float h = 0; // 좌우 입력값
     bool jumpPressed = false;
 
+    private bool waitToSelect = false;
+    private bool stageToSelect = false;
+
+    
+    
 
     void Start()
     {
@@ -46,7 +52,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         anim = GetComponent<Animator>();
         capsulecollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
-
+        
         if (photonView.IsMine)
         {
             if (Camera.main != null)
@@ -250,7 +256,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                     else if (name.Contains("Gold")) GameManager.Instance.stagePoint += 300;
 
                     collision.gameObject.SetActive(false);
-                    PlaySound("Item");
+                    //PlaySound("Item");
                     return;
                 }
 
@@ -275,17 +281,23 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         {
             //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
             collision.gameObject.SetActive(false); // 아이템 제거
-
-            //gameManager.NextStage();
-            //PlaySound("Finish");
+                                                   //gameManager.NextStage();
+                                                   //PlaySound("Finish");
             if (PhotonNetwork.IsMasterClient)
             {
-                PhotonNetwork.LoadLevel("StageSelect");
-                
+                if (!stageToSelect)
+                {
+                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
+                    stageToSelect = true;
+                }
             }
             else
             {
-                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
+                if (!stageToSelect)
+                {
+                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
+                    stageToSelect = true;
+                }
             }
         }
 
@@ -300,7 +312,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
             {
                 OnAttack(collision.transform);
-                PlaySound("Attack");
+                //PlaySound("Attack");
             }
             else
             {
@@ -309,24 +321,34 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         }
         else if (collision.gameObject.CompareTag("Doctor"))
         {
-             if (PhotonNetwork.IsMasterClient)
+            Debug.Log("충돌");
+            // Doctor 오브젝트 비활성화
+            //collision.gameObject.SetActive(false);
+            collision.gameObject.GetComponent<Collider2D>().enabled = false;
+            if (PhotonNetwork.IsMasterClient)
             {
-                PhotonNetwork.LoadLevel("StageSelect");
+                if (!waitToSelect)
+                {
+                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
+                }
             }
             else
             {
-                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
+                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
             }
         }
     }
 
+
     [PunRPC]
-    void ReqeustLoadLeveltoStageSelect(string sceneName)
+    void ReqeustLoadLeveltoStage(string sceneName)
     {
-        if (PhotonNetwork.IsMasterClient)
-            PhotonNetwork.LoadLevel(sceneName);
-            stageSelectUI.UnlockStage(stageSelectUI.stageNumber);
-        
+        if (PhotonNetwork.IsMasterClient && waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
+        {
+            GameManager.Instance.stageIndex++;
+        }
+        PhotonNetwork.LoadLevel(sceneName);
+        waitToSelect = true;
     }
 
     void OnAttack(Transform enemy)
