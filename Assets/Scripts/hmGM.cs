@@ -51,6 +51,12 @@ public class hmGM : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f; // 반드시 시간 되돌리기
+        SceneManager.LoadScene("StageScene");
+    }
+
+    public void GoMain()
+    {
+        Time.timeScale = 1f; // 반드시 시간 되돌리기
         SceneManager.LoadScene("StartScene");
     }
 

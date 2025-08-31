@@ -5,8 +5,6 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using UnityEngine.UI;
-using Photon.Realtime;
-using Unity.VisualScripting;
 
 public class PlayerMove : MonoBehaviourPunCallbacks
 {
@@ -23,10 +21,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool colorRestoreMode = false;
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
 
-    
+    public int roleID = 0; //0: 플레이어1(WASD+Shift), 1:플레이어2(방향키+스페이스)
+
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
+    BoxCollider2D boxCollider;
     CapsuleCollider2D capsulecollider;
     public ItemManager itemManager;
     AudioSource audioSource;
@@ -34,25 +34,19 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
-    
 
-    float h = 0; // 좌우 입력값
-    bool jumpPressed = false;
 
-    private bool waitToSelect = false;
-    private bool stageToSelect = false;
 
-    
-    
-
-    void Start()
+    IEnumerator Start()
     {
+        yield return null;
+
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
-        capsulecollider = GetComponent<CapsuleCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
-        
+
         if (photonView.IsMine)
         {
             if (Camera.main != null)
@@ -65,6 +59,10 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
         }
 
+        if (PhotonNetwork.InRoom)
+            roleID = (PhotonNetwork.LocalPlayer.ActorNumber - 1) % 2;
+        //roleID가 actorNumber-1이 짝수이면 나머지0, 홀수이면 나머지1 
+
         if (playerType == PlayerType.Player2)
         {
             jumpForce *= 1.3f;
@@ -75,19 +73,46 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
+        //if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
 
-        // y값이 -20보다 작아지면 추락으로 간주
-        if (transform.position.y <= -20f)
+        float h = 0; //좌우 움직임
+        bool jumpPressed = false;
+
+        if (roleID == 0)
         {
-            if (GameManager.Instance != null)
-                GameManager.Instance.HealthDown();
+            // 플레이어1: WASD, Shift
+            h = Input.GetKey(KeyCode.A) ? -1 : Input.GetKey(KeyCode.D) ? 1 : 0;
+            jumpPressed = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
         }
-        
-        // 플레이어: 방향키, Space
-        h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
-        if (Input.GetKeyDown(KeyCode.Space))
-            jumpPressed = true;
+        else if (roleID == 1)
+        {
+            // 플레이어2: 방향키, Space
+            h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+            jumpPressed = Input.GetKeyDown(KeyCode.Space);
+        }
+        // Jump
+        if (jumpPressed && !anim.GetBool("isJumping"))
+        {
+            rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            anim.SetBool("isJumping", true);
+        }
+        // Stop Speed
+        if (h == 0)
+        {
+            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
+            //normalized : 벡터 크기를 1로 만든 상태 (단위벡터)
+        }
+
+        // Direction Sprite 
+        //if (Input.GetButton("Horizontal"))
+        //    spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+        if (h != 0)
+            spriteRenderer.flipX = h == -1;
+        // Animation
+        if (Mathf.Abs(rigid.velocity.x) < 0.3)
+            anim.SetBool("isWalking", false);
+        else
+            anim.SetBool("isWalking", true);
 
         if (GameManager.Instance.colorRestoreMode)
         {
@@ -147,56 +172,25 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
 
         }
-    
     } //update끝
 
-    void FixedUpdate()
-    {
-
-        if (!photonView.IsMine) return;
-        if (!ChatManager.isChatInputActive && Input.GetKeyDown(KeyCode.Space))
-{           jumpPressed = true;
-}
-        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
-
-        if (rigid.velocity.x > maxSpeed)
-            rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
-        else if (rigid.velocity.x < -maxSpeed)
-            rigid.velocity = new Vector2(-maxSpeed, rigid.velocity.y);
-
-        if (rigid.velocity.y < 0)
+        void FixedUpdate()
         {
-            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "HiddenPlatform"));
-            if (rayHit.collider != null && rayHit.distance < 0.65f)
-                anim.SetBool("isJumping", false);
-        }
-        // Jump
-        if (jumpPressed && !anim.GetBool("isJumping"))
-        {
-            rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            anim.SetBool("isJumping", true);
-            jumpPressed = false;
-        }
-        // Stop Speed
-        if (h == 0)
-        {
-            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
-            //normalized : 벡터 크기를 1로 만든 상태 (단위벡터)
-        }
+            float h = Input.GetAxisRaw("Horizontal");
+            rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
-        // Direction Sprite 
-        //if (Input.GetButton("Horizontal"))
-        //    spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-        if (h != 0)
-            spriteRenderer.flipX = h == -1;
-        // Animation
-        if (Mathf.Abs(rigid.velocity.x) < 0.3)
-            anim.SetBool("isWalking", false);
-        else
-            anim.SetBool("isWalking", true);
-            
-        
-    }
+            if (rigid.velocity.x > maxSpeed)
+                rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);
+            else if (rigid.velocity.x < -maxSpeed)
+                rigid.velocity = new Vector2(-maxSpeed, rigid.velocity.y);
+
+            if (rigid.velocity.y < 0)
+            {
+                RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform", "HiddenPlatform"));
+                if (rayHit.collider != null && rayHit.distance < 0.65f)
+                    anim.SetBool("isJumping", false);
+            }
+        }
 
     public void EnableInvincibility(bool status)
     {
@@ -228,7 +222,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                Mathf.Abs(a.g - b.g) < threshold &&
                Mathf.Abs(a.b - b.b) < threshold;
     }
-    void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌들
+    void OnTriggerEnter2D(Collider2D collision)
     {
         RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector2.down, 1f, LayerMask.GetMask("Platform"));
         if (collision.CompareTag("Item"))
@@ -256,7 +250,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                     else if (name.Contains("Gold")) GameManager.Instance.stagePoint += 300;
 
                     collision.gameObject.SetActive(false);
-                    //PlaySound("Item");
+                    PlaySound("Item");
                     return;
                 }
 
@@ -281,27 +275,31 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         {
             //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
             collision.gameObject.SetActive(false); // 아이템 제거
-                                                   //gameManager.NextStage();
-                                                   //PlaySound("Finish");
+
+            //gameManager.NextStage();
+            PlaySound("Finish");
+        }
+        else if (collision.CompareTag("GameStart"))
+        {
+            Debug.Log("충돌. 스테이지 선택씬으로 이동.");
             if (PhotonNetwork.IsMasterClient)
             {
-                if (!stageToSelect)
-                {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
-                    stageToSelect = true;
-                }
+                PhotonNetwork.LoadLevel("StageSelect");
             }
             else
             {
-                if (!stageToSelect)
-                {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
-                    stageToSelect = true;
-                }
+                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
             }
-        }
-
+        } // 세대, 스테이지선택씬으로
     }
+
+    [PunRPC]
+    void ReqeustLoadLeveltoStageSelect(string sceneName)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        PhotonNetwork.LoadLevel(sceneName);
+    }
+
 
     void OnCollisionEnter2D(Collision2D collision) //충돌
     {
@@ -312,43 +310,13 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
             {
                 OnAttack(collision.transform);
-                //PlaySound("Attack");
+                PlaySound("Attack");
             }
             else
             {
                 OnDamaged(collision.transform.position);
             }
         }
-        else if (collision.gameObject.CompareTag("Doctor"))
-        {
-            Debug.Log("충돌");
-            // Doctor 오브젝트 비활성화
-            //collision.gameObject.SetActive(false);
-            collision.gameObject.GetComponent<Collider2D>().enabled = false;
-            if (PhotonNetwork.IsMasterClient)
-            {
-                if (!waitToSelect)
-                {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
-                }
-            }
-            else
-            {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
-            }
-        }
-    }
-
-
-    [PunRPC]
-    void ReqeustLoadLeveltoStage(string sceneName)
-    {
-        if (PhotonNetwork.IsMasterClient && waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
-        {
-            GameManager.Instance.stageIndex++;
-        }
-        PhotonNetwork.LoadLevel(sceneName);
-        waitToSelect = true;
     }
 
     void OnAttack(Transform enemy)
@@ -372,20 +340,19 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         Invoke("OffDamaged", 3);
     }
 
-    void OffDamaged() //데미지 받으면 잠깐 투명해짐 그게 원상복구 되는 함수.
+    void OffDamaged()
     {
         gameObject.layer = 10;
         spriteRenderer.color = Color.white;
     }
-    
 
     public void OnDie()
     {
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
         spriteRenderer.flipY = true;
-        capsulecollider.enabled = false;
+        boxCollider.enabled = false;
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-        //PlaySound("Die");
+        PlaySound("Die");
     }
 
     public void VelocityZero()

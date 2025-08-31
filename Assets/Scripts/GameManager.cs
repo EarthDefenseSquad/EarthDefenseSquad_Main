@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     public int totalPoint=0;
     public int stagePoint=0;
-    public int stageIndex=-1;
-    public int health=3;
+    public int stageIndex;
+    public int health;
     public GameObject playerObj;
     public PlayerMove player;
 
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     [Header("개발용 설정 - 즉사 모드")]
-    public bool isInstantDeathMode=false;
+    public bool isInstantDeathMode;
 
     //플레이어들 동기화 스폰
     //플레이어들 동기화 이동
@@ -75,19 +75,18 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 health = 1;
                 UpdateHealthUI(); // ✅ UI 반영
-            }
-            else
-            {
-                health = 3;
-            }
+            }  
             // 씬 전환마다 실행하고 싶은 초기화 코드를 여기에 작성 즉 start역할
             Debug.Log("씬이 바뀜: " + scene.name);
 
-            if (photonView.IsMine)
-            {   
-                int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-                 photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex); 
+            if (isInstantDeathMode)
+            {
+                health = 1;
+                UpdateHealthUI(); // ✅ UI 반영
             }
+            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+            //photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
+            SpawnPlayer(playerIndex); 
         }
     }
 
@@ -123,12 +122,19 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
 #endif
-       
+        if (playerObj == null)
+        {
+            playerObj = GameObject.FindWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.GetComponent<PlayerMove>();
+                // 필요한 초기화 코드 추가
+            }
+        }
 
     }
 
 
-    [PunRPC]
     public void SpawnPlayer(int player_index)
     {
         var spawnPositions = new Vector3[]
@@ -136,8 +142,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         new Vector3(-1.0f, -0.5f, 0.0f),
         new Vector3(0.0f, -0.5f, 0.0f)
         };
-        GameObject playerObject = PhotonNetwork.Instantiate("Player", spawnPositions[player_index], Quaternion.identity);
-        player = playerObject.GetComponent<PlayerMove>();
+        GameObject playerObject = PhotonNetwork.Instantiate("PlayerPrefab", spawnPositions[player_index], Quaternion.identity);
         //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
         //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
         //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
@@ -196,7 +201,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Stages[stageIndex].SetActive(false);
             stageIndex++;
             Stages[stageIndex].SetActive(true);
-            PlayerReposition();
+            PlayerReposion();
 
             UIStage.text = "STAGE " + (stageIndex + 1);
         }
@@ -257,18 +262,14 @@ public class GameManager : MonoBehaviourPunCallbacks
             if (health > 0)
             {
                 health--;
-                Debug.Log("생명 감소");
-                Debug.Log(health);
                 UpdateHealthUI(); // ✅ UI 업데이트
-                photonView.RPC("PlayerReposition", RpcTarget.All);
             }
 
             if (health <= 0)
-            {   
-                Debug.Log(health);
+            {
                 player.OnDie();
                 Debug.Log("플레이어가 죽었습니다.");
-                //RestartButton.SetActive(true);
+                RestartButton.SetActive(true);
             }
         }
 
@@ -281,7 +282,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
             if (health > 1)
             {
-                PlayerReposition();
+                PlayerReposion();
             }
 
 
@@ -289,15 +290,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    void PlayerReposition()
+    void PlayerReposion()
     {
-        if (player != null)
-        {
-            player.transform.position = new Vector3(-1.0f, -0.5f, 0);
-            //player.VelocityZero();
-        }
-         
+        player.transform.position = new Vector3(0, 0, -1); // Reset player position
+        player.VelocityZero();
     }
 
 
@@ -389,19 +385,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void UpdateHealthUI()
     {
-        if (UIhealth == null)
-        {
-            Debug.LogError("UIhealth 배열이 null입니다!");
-            return;
-        }
-
         for (int i = 0; i < UIhealth.Length; i++)
         {
-            if (UIhealth[i] == null)
-            {
-                Debug.LogError($"UIhealth[{i}]가 null입니다!");
-                continue;
-            }
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }

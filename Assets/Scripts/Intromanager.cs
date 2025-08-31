@@ -11,10 +11,27 @@ public class Intromanager : MonoBehaviour
     public GameObject Optionpanel;
 
     // Start is called before the first frame update
+
+    private static bool hasShownMessage = false;
+
+
     void Start()
     {
-        StartCoroutine(DelayTime(3.5f));
+
+        if (!hasShownMessage)
+        {
+            hasShownMessage = true;
+            StartCoroutine(DelayTime(3.5f));
+            Optionpanel.SetActive(false);
+        }
+
+        else
+    {
+        IntroPanel.SetActive(false);
         Optionpanel.SetActive(false);
+        StartPanel.SetActive(true);
+    }
+
     }
 
     IEnumerator DelayTime(float time)
@@ -26,7 +43,8 @@ public class Intromanager : MonoBehaviour
     }
 
     // Update is called once per frame
-/*    
+
+
     public void GoWaitingScene()
     {
         SceneManager.LoadScene("WaitingScene");
@@ -36,6 +54,11 @@ public class Intromanager : MonoBehaviour
     public void GoGameScene()
     {
         SceneManager.LoadScene("GameScene");
+    }
+
+    public void GoStageScene()
+    {
+        SceneManager.LoadScene("StageScene");
     }
 
     public void Quit()
@@ -66,5 +89,5 @@ public class Intromanager : MonoBehaviour
         Time.timeScale = 1f;  // 게임 재개
         Optionpanel.SetActive(false);  // 메뉴 숨기기
         //isPaused = false;
-    }*/
+    }
 }
