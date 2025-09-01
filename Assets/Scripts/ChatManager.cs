@@ -13,7 +13,6 @@ public class ChatManager : MonoBehaviourPunCallbacks,  IPointerClickHandler
     public Button sendBtn;        // 메시지 전송 버튼
 
     public ScrollRect chatScrollRect;
-    public static bool isChatInputActive = false;
     const int maxLines = 10;
     PhotonView pv;
 
@@ -47,8 +46,6 @@ public class ChatManager : MonoBehaviourPunCallbacks,  IPointerClickHandler
         {
             SendButtonOnClicked();
         }
-        MessageInput.onSelect.AddListener(delegate { isChatInputActive = true; });
-        MessageInput.onDeselect.AddListener(delegate { isChatInputActive = false; });
     }
 
     // RPC로 메시지 수신
