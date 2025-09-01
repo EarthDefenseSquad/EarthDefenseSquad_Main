@@ -13,9 +13,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject bossUIRoot;
     public GameObject bossBackdrop;
     public bool isBossActive = false;
-    [Header("Health Config")]
-    [SerializeField] int normalHealth = 1;
-    [SerializeField] int bossHealth = 3;
     public int totalPoint = 0;
     public int stagePoint=0;
     public int stageIndex=-1;
@@ -142,20 +139,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     }
 
-    public void SetBossActive(bool active)
-    {
-    isBossActive = active;
-    health = active ? bossHealth : normalHealth;
-    UpdateHealthUI();
-    if (bossUIRoot != null) bossUIRoot.SetActive(active);
-    if (bossBackdrop != null) bossBackdrop.SetActive(active);
-    }
 
-    public void HideBossPanel()
-    {
-    if (bossUIRoot != null) bossUIRoot.SetActive(false);
-    if (bossBackdrop != null) bossBackdrop.SetActive(false);
-    }
     public void SpawnPlayer(int player_index)
     {
         var spawnPositions = new Vector3[]
@@ -186,7 +170,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             return;
         }
     }
-
     public void OnGameClear()
     {
         gameClear = true;
