@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int totalPoint=0;
     public int stagePoint=0;
     public int stageIndex=-1;
-    public int health=3;
+    public int year = 0;
+    public int health = 3;
     public GameObject playerObj;
     public PlayerMove player;
 

@@ -58,6 +58,12 @@ MonoBehaviour:
   - SpawnRoomPlayer
   - PlayerReposition
   - ReqeustLoadLeveltoStage
+  - ClickStage
+  - ClickYear
+  - OnYearButtonClicked
+  - ReqeustStagetoSelect
+  - ReqeustWaitingtoSelect
+  - LoadStageScene
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

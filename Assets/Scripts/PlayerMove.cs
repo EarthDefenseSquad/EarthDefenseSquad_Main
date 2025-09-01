@@ -198,6 +198,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         
     }
 
+     // IPunObservable 구현: 네트워크 상태 전송 및 수신
+    
+
     public void EnableInvincibility(bool status)
     {
         isInvincible = status;
@@ -283,19 +286,19 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             collision.gameObject.SetActive(false); // 아이템 제거
                                                    //gameManager.NextStage();
                                                    //PlaySound("Finish");
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient && photonView != null)
             {
                 if (!stageToSelect)
                 {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
+                    photonView.RPC("ReqeustStagetoSelect", RpcTarget.All, "StageSelect");
                     stageToSelect = true;
                 }
             }
             else
             {
-                if (!stageToSelect)
+                if (photonView!=null)
                 {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
+                    photonView.RPC("ReqeustStagetoSelect", RpcTarget.MasterClient, "StageSelect");
                     stageToSelect = true;
                 }
             }
@@ -329,28 +332,31 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             {
                 if (!waitToSelect)
                 {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
+                    photonView.RPC("ReqeustWaitingtoSelect", RpcTarget.All, "StageSelect");
                 }
             }
             else
             {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
+                    photonView.RPC("ReqeustWaitingtoSelect", RpcTarget.MasterClient, "StageSelect");
             }
         }
     }
 
 
     [PunRPC]
-    void ReqeustLoadLeveltoStage(string sceneName)
+    void ReqeustWaitingtoSelect(string sceneName)
     {
-        if (PhotonNetwork.IsMasterClient && waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
-        {
-            GameManager.Instance.stageIndex++;
-        }
         PhotonNetwork.LoadLevel(sceneName);
         waitToSelect = true;
     }
 
+    [PunRPC]
+    void ReqeustStagetoSelect(string sceneName)
+    {
+            GameManager.Instance.stageIndex++;
+            Debug.Log("스테이지 증가");
+            PhotonNetwork.LoadLevel(sceneName);
+    }
     void OnAttack(Transform enemy)
     {
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
