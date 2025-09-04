@@ -90,6 +90,20 @@ public class ItemManager : MonoBehaviour
                 StartCoroutine(ActivateColorRestore());
                 break;
 
+            case ItemType.BossSpecialAttack:
+            Debug.Log("⚡ Boss Special Attack 아이템 사용됨");
+            var boss = FindObjectOfType<BossController>();
+            if (boss != null)
+            {
+                boss.OnBossHit();
+                Debug.Log("⚡ 보스에게 특수 공격을 사용했습니다!");
+            }
+            else
+            {
+                Debug.LogWarning("❗ 보스가 아직 존재하지 않습니다. 공격 실패");
+            }
+            break;
+
             default:
                 Debug.LogWarning("❓ Unknown item type");
                 break;

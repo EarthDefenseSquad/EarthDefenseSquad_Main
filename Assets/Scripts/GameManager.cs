@@ -9,10 +9,15 @@ using Photon.Realtime;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public int totalPoint=0;
+    public GameObject finalBossPortal;
+    public GameObject bossUIRoot;
+    public GameObject bossBackdrop;
+    public bool isBossActive = false;
+    public int totalPoint = 0;
     public int stagePoint=0;
-    public int stageIndex;
-    public int health;
+    public int stageIndex=-1;
+    public int year = 0;
+    public int health = 3;
     public GameObject playerObj;
     public PlayerMove player;
 

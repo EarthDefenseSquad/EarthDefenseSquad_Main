@@ -34,7 +34,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
-
+    public bool waitToSelect,stageToSelect = false;
 
 
     IEnumerator Start()
@@ -192,6 +192,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
         }
 
+     // IPunObservable 구현: 네트워크 상태 전송 및 수신
+    
+
     public void EnableInvincibility(bool status)
     {
         isInvincible = status;
@@ -254,9 +257,16 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                     return;
                 }
 
-                if (playerType == PlayerType.Player2)
+                 if (name.Contains("BossSpecialAttack"))
                 {
-                    Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
+                    itemManager.UseItem(ItemType.BossSpecialAttack);
+                    collision.gameObject.SetActive(false);
+                    return;
+                }
+
+                if (playerType == PlayerType.Player2 && !GameManager.Instance.isBossActive)
+                {
+                    Debug.Log("Player2는 보스 전투 외에는 아이템을 사용할 수 없습니다.");
                     return;
                 }
 
@@ -275,20 +285,23 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         {
             //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
             collision.gameObject.SetActive(false); // 아이템 제거
-
-            //gameManager.NextStage();
-            PlaySound("Finish");
-        }
-        else if (collision.CompareTag("GameStart"))
-        {
-            Debug.Log("충돌. 스테이지 선택씬으로 이동.");
-            if (PhotonNetwork.IsMasterClient)
+                                                   //gameManager.NextStage();
+                                                   //PlaySound("Finish");
+            if (PhotonNetwork.IsMasterClient && photonView != null)
             {
-                PhotonNetwork.LoadLevel("StageSelect");
+                if (!stageToSelect)
+                {
+                    photonView.RPC("ReqeustStagetoSelect", RpcTarget.All, "StageSelect");
+                    stageToSelect = true;
+                }
             }
             else
             {
-                photonView.RPC("ReqeustLoadLeveltoStageSelect", RpcTarget.MasterClient, "StageSelect");
+                if (photonView!=null)
+                {
+                    photonView.RPC("ReqeustStagetoSelect", RpcTarget.MasterClient, "StageSelect");
+                    stageToSelect = true;
+                }
             }
         } // 세대, 스테이지선택씬으로
     }
@@ -317,8 +330,41 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 OnDamaged(collision.transform.position);
             }
         }
+        else if (collision.gameObject.CompareTag("Doctor"))
+        {
+            Debug.Log("충돌");
+            // Doctor 오브젝트 비활성화
+            //collision.gameObject.SetActive(false);
+            collision.gameObject.GetComponent<Collider2D>().enabled = false;
+            if (PhotonNetwork.IsMasterClient)
+            {
+                if (!waitToSelect)
+                {
+                    photonView.RPC("ReqeustWaitingtoSelect", RpcTarget.All, "StageSelect");
+                }
+            }
+            else
+            {
+                    photonView.RPC("ReqeustWaitingtoSelect", RpcTarget.MasterClient, "StageSelect");
+            }
+        }
     }
 
+
+    [PunRPC]
+    void ReqeustWaitingtoSelect(string sceneName)
+    {
+        PhotonNetwork.LoadLevel(sceneName);
+        waitToSelect = true;
+    }
+
+    [PunRPC]
+    void ReqeustStagetoSelect(string sceneName)
+    {
+            GameManager.Instance.stageIndex++;
+            Debug.Log("스테이지 증가");
+            PhotonNetwork.LoadLevel(sceneName);
+    }
     void OnAttack(Transform enemy)
     {
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);

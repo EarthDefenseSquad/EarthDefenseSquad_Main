@@ -1,89 +1,125 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using Photon.Pun;
 
-public class StageSelectUI : MonoBehaviour
+// UnityEngine.UI.Button 이름 충돌방지, using안에서만 별칭 사용
+using Image = UnityEngine.UI.Image;
+using Button = UnityEngine.UI.Button;
+
+public class StageSelectUI : MonoBehaviourPun
 {
+    [Header("Stage Buttons Per Year")]
     public Button[] stageButtons1960;
+    public Button[] yearButtons;
 
-
-    // 각 스테이지의 해금 상태를 저장
     private bool[] unlockedStages;
     public int stageNumber;
+    public Button backButton;
+    public GameObject yearSelect;
+    public GameObject[] stageSelect1960, stageSelect1970, stageSelect1980, stageSelect1990, stageSelect2000, stageSelect2010;
+    private GameObject[][] stageSelects;
+
     void Start()
     {
-        unlockedStages = new bool[stageButtons1960.Length]; //해금 상태를 스테이지 버튼의 길이만큼 1(언락)과 0(락)으로 저장.
-        for (int i = 0; i < stageButtons1960.Length; i++)
-        {
-            // 첫 번째 스테이지만 기본 해금. 즉 i가 0일 때만 언락이 true. 
-            unlockedStages[i] = (i == 0);
+        // GameObject 2차원 배열 구성
+        stageSelects = new GameObject[][] {
+            stageSelect1960, stageSelect1970, stageSelect1980, stageSelect1990, stageSelect2000, stageSelect2010
+        };
 
+        // 해금 배열 초기화
+        unlockedStages = new bool[stageButtons1960.Length];
+
+        // 게임매니저 상태 반영
+        stageNumber = GameManager.Instance.stageIndex;
+        if (stageNumber == 10) {
+            GameManager.Instance.year++;
+            GameManager.Instance.stageIndex = 0;
+            stageNumber = 0;
+        }
+
+        // 스테이지 언락 처리
+        for (int i = 0; i <= stageNumber && i < unlockedStages.Length; i++) {
+            unlockedStages[i] = true;
             UpdateStageButton(i);
+        }
 
-            stageNumber = i + 1; // 1번부터 시작
-            stageButtons1960[i].onClick.AddListener(() =>
+        // 연도/스테이지 버튼 초기화
+        if (PhotonNetwork.IsMasterClient) {
+            SetYearButtonListeners(true);
+        }
+        else {
+            SetYearButtonListeners(false);
+            backButton.gameObject.SetActive(false);
+        }
+
+        SetStageButtonListeners();
+    }
+
+    private void SetYearButtonListeners(bool interactable)
+    {
+        for (int i = 0; i < yearButtons.Length; i++)
+        {
+            yearButtons[i].interactable = interactable;
+            int idx = i;
+            yearButtons[i].onClick.RemoveAllListeners();
+            yearButtons[i].onClick.AddListener(() =>
             {
-                if (unlockedStages[stageNumber - 1])
-                    Debug.Log($"스테이지 {stageNumber} 선택됨");
-                else
-                    Debug.Log($"스테이지 {stageNumber}은 잠겨 있음");
+                photonView.RPC("OnYearButtonClicked", RpcTarget.All, idx);
             });
         }
     }
 
-    public void Go1960Scene()
+    private void SetStageButtonListeners()
     {
-        PhotonNetwork.LoadLevel("StageScene");
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        GameManager.Instance.SpawnPlayer(playerIndex);
-    }
-
-    public void Go1970Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        GameManager.Instance.SpawnPlayer(playerIndex);
-    }
-
-    public void Go1980Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void Go1990Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void Go2000Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void Go2010Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void GoWaitingScene()
-    {
-        PhotonNetwork.LoadLevel("WaitingScene");
-    }
-
-
-    // 특정 스테이지를 해금(잠금 해제)하는 public 메서드
-    public void UnlockStage(int stageNumber)
-    {
-        int idx = stageNumber;
-        if (idx >= 0 && idx < unlockedStages.Length)
+        for (int i = 0; i < stageButtons1960.Length; i++)
         {
-            unlockedStages[idx] = true; //언락됨.
-            UpdateStageButton(idx); //보여지는 상태도 같이 업데이트.
+            int idx = i;
+            stageButtons1960[i].onClick.RemoveAllListeners();
+            stageButtons1960[i].onClick.AddListener(() =>
+            {
+                if (unlockedStages[idx])
+                {
+                    Debug.Log($"스테이지 {idx + 1} 선택됨");
+                    if (PhotonNetwork.IsMasterClient)
+                        photonView.RPC("LoadStageScene", RpcTarget.All, idx);
+                    else
+                        photonView.RPC("LoadStageScene", RpcTarget.MasterClient, idx);
+                }
+                else Debug.Log($"스테이지 {idx + 1}은 잠겨 있음");
+            });
         }
     }
 
-    // 버튼과 LockIcon UI 상태 갱신
+    [PunRPC]
+    void OnYearButtonClicked(int yearIdx)
+    {
+        yearSelect.SetActive(false);
+        for (int i = 0; i < stageSelects.Length; i++)
+        {
+            foreach (GameObject go in stageSelects[i])
+                go.SetActive(i == yearIdx);
+        }
+        // 버튼 상태 감지, 연도별 추가 처리 시 여기에
+    }
+
+    [PunRPC]
+    void LoadStageScene(int stageIdx)
+    {
+        GameManager.Instance.stageIndex = stageIdx;
+        PhotonNetwork.LoadLevel("StageScene");
+    }
+
+    // 스테이지 언락
+    public void UnlockStage(int stageIdx)
+    {
+        if (stageIdx >= 0 && stageIdx < unlockedStages.Length)
+        {
+            unlockedStages[stageIdx] = true;
+            UpdateStageButton(stageIdx);
+        }
+    }
+
+    // 버튼 및 LockIcon UI상태 동기화
     public void UpdateStageButton(int i)
     {
         Button btn = stageButtons1960[i];
@@ -93,14 +129,11 @@ public class StageSelectUI : MonoBehaviour
         Transform lockIcon = btn.transform.Find("LockIcon");
         Image bg = btn.GetComponent<Image>();
 
-        if (isUnlocked)
-        {
+        if (isUnlocked) {
             if (bg) bg.color = Color.white;
             if (lockIcon) lockIcon.gameObject.SetActive(false);
-        }
-        else
-        {
-            //if (bg) bg.color = Color.gray;
+        } else {
+            if (bg) bg.color = Color.gray;
             if (lockIcon) lockIcon.gameObject.SetActive(true);
         }
     }
