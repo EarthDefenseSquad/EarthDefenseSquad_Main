@@ -344,7 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 2176261}
-  cameraShake: {fileID: 955661632}
+  cameraShake: {fileID: 0}
   keywordObjectPairs:
   - keyword: aa
     targetObject: {fileID: 2055325967}
@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 2176261}
-  cameraShake: {fileID: 955661632}
+  cameraShake: {fileID: 0}
 --- !u!1 &38315999
 GameObject:
   m_ObjectHideFlags: 0
@@ -17052,23 +17052,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &955661627 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2540957990166389679, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-  m_PrefabInstance: {fileID: 1189598869}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &955661632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 955661627}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5e3095bd8adc452fb4dd91fc3b243a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &961418260
 GameObject:
   m_ObjectHideFlags: 0
@@ -21244,7 +21227,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1125412620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21262,7 +21245,7 @@ MonoBehaviour:
   stageIndex: 0
   health: 3
   playerObj: {fileID: 1170266249}
-  player: {fileID: 1189598870}
+  player: {fileID: 0}
   Stages:
   - {fileID: 1922412238}
   - {fileID: 1491859046}
@@ -22344,25 +22327,15 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7311355029095597900, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
+      propertyPath: sceneViewId
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2540957990166389679, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 955661632}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
---- !u!114 &1189598870 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1265464301027977866, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-  m_PrefabInstance: {fileID: 1189598869}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1170266249}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b9dbf3c6b6afcd42b4992d2011083b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1192212744
 GameObject:
   m_ObjectHideFlags: 0
@@ -28467,7 +28440,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1189598870}
+  player: {fileID: 0}
 --- !u!58 &1400856973
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -30176,7 +30149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1189598870}
+  player: {fileID: 0}
 --- !u!4 &1504869699
 Transform:
   m_ObjectHideFlags: 0
@@ -36974,7 +36947,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1189598870}
+  player: {fileID: 0}
 --- !u!58 &1844851742
 CircleCollider2D:
   m_ObjectHideFlags: 0

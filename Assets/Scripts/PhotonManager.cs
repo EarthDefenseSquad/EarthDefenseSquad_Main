@@ -81,11 +81,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Button_CharacterSelect_OK.gameObject.SetActive(false);
         }
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
-        photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+        photonView.RPC("SpawnRoomPlayer", RpcTarget.AllBuffered, playerIndex);
         //SpawnPlayer(playerIndex);
     }
     [PunRPC]
-    void SpawnPlayer(int player_index)
+    void SpawnRoomPlayer(int player_index)
     {
         var spawnPositions = new Vector3[]
         {
@@ -180,7 +180,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Button_Tutorial_Back.onClick.RemoveAllListeners(); //뒤로가기
         Button_Tutorial_Back.onClick.AddListener(() => photonView.RPC("MoveThe_CharacterSelectPanel", RpcTarget.All));
         Button_Tutorial_OK.onClick.RemoveAllListeners(); //ok버튼
-        Button_Tutorial_OK.onClick.AddListener(() => photonView.RPC("MoveTheWaitingScene", RpcTarget.All));
+        Button_Tutorial_OK.onClick.AddListener(() => photonView.RPC("MoveTheWaitingScene", RpcTarget.MasterClient));
         if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
         {
             Button_Tutorial_Back.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
@@ -211,7 +211,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Button_CharacterSelect_OK.gameObject.SetActive(false);
         }
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        photonView.RPC("SpawnPlayer", RpcTarget.AllBuffered, playerIndex);
+        photonView.RPC("SpawnRoomPlayer", RpcTarget.All, playerIndex);
     }
     
 }

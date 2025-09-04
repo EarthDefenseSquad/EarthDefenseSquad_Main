@@ -9078,7 +9078,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1243099257}
   - component: {fileID: 1243099256}
-  - component: {fileID: 1243099255}
+  - component: {fileID: 1243099258}
   m_Layer: 0
   m_Name: ChatManager
   m_TagString: Untagged
@@ -9086,28 +9086,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1243099255
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1243099254}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 2
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!114 &1243099256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9139,6 +9117,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1243099258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243099254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1263097413
 GameObject:
   m_ObjectHideFlags: 0
@@ -9418,6 +9418,7 @@ GameObject:
   - component: {fileID: 1296495554}
   - component: {fileID: 1296495553}
   - component: {fileID: 1296495552}
+  - component: {fileID: 1296495555}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -9499,6 +9500,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1296495555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296495551}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 099898ed2b32c02418315d3f893ed71f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
 --- !u!1 &1309911458
 GameObject:
   m_ObjectHideFlags: 0
@@ -13868,7 +13882,7 @@ Transform:
   m_GameObject: {fileID: 1912960173}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 516.9911, y: 309.0698, z: 0.48479313}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13883,7 +13897,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1912960173}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1b4ce9be51ef6541ac3e24bc7cce2eb, type: 3}
+  m_Script: {fileID: 11500000, guid: abe0a73d0d312ec4aac8d8f3f9578083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Start_Panel: {fileID: 0}
@@ -13894,7 +13908,6 @@ MonoBehaviour:
   selectedYear: -1
   selectedStageIndex: -1
   stageUnlocked: 
-  story: 0
   characterNames:
   - "MZ\uC138\uB300"
   - "MZ\uC138\uB300 2"

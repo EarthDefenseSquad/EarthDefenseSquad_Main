@@ -37,14 +37,16 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
 
 
-    IEnumerator Start()
+    void Start()
     {
-        yield return null;
+        //yield return null; 코루틴으로 한 프레임 늦추는 코드인데 굳이 안늦춰도 될 거 같음.
 
         rigid = GetComponent<Rigidbody2D>();
+        Debug.Log("rigid: " + rigid);
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
+        capsulecollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
 
         if (photonView.IsMine)
@@ -177,7 +179,15 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         void FixedUpdate()
         {
             float h = Input.GetAxisRaw("Horizontal");
-            rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
+            if(rigid != null)
+            {
+                rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
+            }
+            else
+            {
+                Debug.LogError("rigid가 null입니다!");
+            }
+            //rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
             if (rigid.velocity.x > maxSpeed)
                 rigid.velocity = new Vector2(maxSpeed, rigid.velocity.y);

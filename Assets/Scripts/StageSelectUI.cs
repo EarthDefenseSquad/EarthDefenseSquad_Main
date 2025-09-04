@@ -35,15 +35,11 @@ public class StageSelectUI : MonoBehaviour
     public void Go1960Scene()
     {
         PhotonNetwork.LoadLevel("StageScene");
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        GameManager.Instance.SpawnPlayer(playerIndex);
     }
 
     public void Go1970Scene()
     {
         PhotonNetwork.LoadLevel("StageScene");
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        GameManager.Instance.SpawnPlayer(playerIndex);
     }
 
     public void Go1980Scene()

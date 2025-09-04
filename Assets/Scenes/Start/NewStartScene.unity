@@ -3918,7 +3918,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &644778396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3931,6 +3931,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe0a73d0d312ec4aac8d8f3f9578083, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Start_Panel: {fileID: 0}
+  StageSelectPanel: {fileID: 0}
+  stageSelectUI: {fileID: 0}
   selectedCharacterIndex1P: -1
   selectedCharacterIndex2P: -1
   selectedYear: -1
@@ -6788,6 +6791,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageButtons1960: []
+  stageNumber: 0
 --- !u!4 &1129442568
 Transform:
   m_ObjectHideFlags: 0
@@ -10627,37 +10631,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1746722958}
   m_CullTransparentMesh: 1
---- !u!1 &1763886902
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1763886903}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1763886903
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763886902}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 564.5575, y: 310.75345, z: 0.394016}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1778191736
 GameObject:
   m_ObjectHideFlags: 0
@@ -12732,7 +12705,6 @@ SceneRoots:
   - {fileID: 644778397}
   - {fileID: 419782557}
   - {fileID: 1129442568}
-  - {fileID: 1763886903}
   - {fileID: 1394448691}
   - {fileID: 740428976}
   - {fileID: 315869981}
