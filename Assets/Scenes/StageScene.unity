@@ -7019,6 +7019,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1403286389434020617, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
+      propertyPath: m_text
+      value: "\uCC98\uC74C\uC73C\uB85C"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403286389434020617, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 5896d3d3982264fc582caa7a66dc1001, type: 2}
+    - target: {fileID: 1403286389434020617, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -5130646603778175874, guid: 5896d3d3982264fc582caa7a66dc1001, type: 2}
+    - target: {fileID: 1403286389434020617, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2781668520372250045, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
       propertyPath: m_Name
       value: PausePanel
@@ -7129,7 +7145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7962475001700169350, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8754737892197670057, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
       propertyPath: m_Pivot.x
