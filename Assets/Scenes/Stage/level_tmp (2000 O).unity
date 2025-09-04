@@ -344,7 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 2176261}
-  cameraShake: {fileID: 0}
+  cameraShake: {fileID: 955661632}
   keywordObjectPairs:
   - keyword: aa
     targetObject: {fileID: 2055325967}
@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 2176261}
-  cameraShake: {fileID: 0}
+  cameraShake: {fileID: 955661632}
 --- !u!1 &38315999
 GameObject:
   m_ObjectHideFlags: 0
@@ -17052,6 +17052,23 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &955661627 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2540957990166389679, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
+  m_PrefabInstance: {fileID: 1189598869}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &955661632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955661627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5e3095bd8adc452fb4dd91fc3b243a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &961418260
 GameObject:
   m_ObjectHideFlags: 0
@@ -22279,10 +22296,6 @@ PrefabInstance:
       propertyPath: audioDamaged
       value: 
       objectReference: {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
-    - target: {fileID: 1661695695479113464, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: sceneViewId
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -22334,7 +22347,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2540957990166389679, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 955661632}
   m_SourcePrefab: {fileID: 100100000, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
 --- !u!114 &1189598870 stripped
 MonoBehaviour:
