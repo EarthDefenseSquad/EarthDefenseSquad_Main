@@ -140,6 +140,8 @@ public class SpriteSwitch : MonoBehaviour
     public TextMeshProUGUI warningText;
 
     public Button startSceneButton;
+    public GameObject CharacterSelect_Panel;
+    public GameObject Start_Panel;
 
 
     void Start()
@@ -170,8 +172,14 @@ public class SpriteSwitch : MonoBehaviour
         if (warningPanel != null)
             warningPanel.SetActive(false);
 
+
         if (startSceneButton != null)
-            startSceneButton.onClick.AddListener(() => SceneManager.LoadScene("StartScene"));
+        {startSceneButton.onClick.AddListener(() =>{
+            CharacterSelect_Panel.SetActive(false);
+            Start_Panel.SetActive(true);
+            });
+        }
+
 
     }
 
