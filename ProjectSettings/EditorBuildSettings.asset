@@ -6,28 +6,25 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/StartScene.unity
+    path: Assets/Scenes/Start/StartScene.unity
     guid: 2bddfa777220e42ad9e491b4d1e8c305
-  - enabled: 0
-    path: Assets/Scenes/GameScene.unity
-    guid: 5ade52a27a02f2a44ad7f415004754dc
   - enabled: 1
-    path: Assets/Scenes/WaitingScene.unity
+    path: Assets/Scenes/Start/WaitingScene.unity
     guid: 58be44cd15af7754f8c90321c41eb56b
   - enabled: 1
-    path: Assets/Scenes/WaitingSceneDesign.unity
+    path: Assets/Scenes/Start/WaitingSceneDesign.unity
     guid: 159957c6458076943811eeb6165a1044
   - enabled: 1
-    path: Assets/Scenes/StageScene.unity
+    path: Assets/Scenes/Stage/StageScene.unity
     guid: d860608fea392e04dad51c4f0020eb2b
   - enabled: 1
-    path: Assets/Scenes/GoodEnding.unity
+    path: Assets/Scenes/Story/GoodEnding.unity
     guid: 286943bf6046a2141ae20fc537551018
   - enabled: 1
-    path: Assets/Scenes/BadEnding.unity
+    path: Assets/Scenes/Story/BadEnding.unity
     guid: 94b0471c93720a14498f97dff3a4c89f
   - enabled: 1
-    path: Assets/Scenes/StageSelect.unity
+    path: Assets/Scenes/Start/StageSelect.unity
     guid: 66c5c4e7537c1854fa9ee37f4342bc56
   - enabled: 1
     path: Assets/Scenes/NewStartScene.unity

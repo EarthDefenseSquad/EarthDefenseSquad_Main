@@ -2043,7 +2043,7 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
 --- !u!224 &317283246 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8754737892197670057, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
+  m_CorrespondingSourceObject: {fileID: 876751825750362925, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
   m_PrefabInstance: {fileID: 317283245}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &329406553
@@ -6788,6 +6788,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stageButtons1960: []
+  stageNumber: 0
 --- !u!4 &1129442568
 Transform:
   m_ObjectHideFlags: 0
