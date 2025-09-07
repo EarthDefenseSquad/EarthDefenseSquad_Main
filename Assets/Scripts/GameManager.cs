@@ -54,24 +54,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public static GameManager Instance;
     void Awake()
     {
-        // 인스턴스가 없으면 자신을 할당
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // 씬이 바뀌어도 파괴되지 않게
-            SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-        else
-        {
-            Destroy(gameObject); // 중복 방지
-        }
-
-    }
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name == "WaitingScene"|| scene.name == "StageScene")
-        {
-            if (isInstantDeathMode)
+        if (isInstantDeathMode)
             {
                 health = 1;
                 UpdateHealthUI(); // ✅ UI 반영
@@ -80,27 +63,17 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 health = 3;
             }
-            // 씬 전환마다 실행하고 싶은 초기화 코드를 여기에 작성 즉 start역할
-            Debug.Log("씬이 바뀜: " + scene.name);
 
-            if (photonView.IsMine)
-            {   
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "WaitingScene" || currentScene == "StageScene") {
+          if (photonView.IsMine)
+            {
                 int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-                 photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex); 
-            }
+                photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
+            }      
         }
     }
-
-    void OnDestroy()
-    {
-        // 씬 로드 이벤트에서 함수 등록 해제
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
-    /*void Start()
-    {
-        
-    }*/
-
+    
 
 
     void Update()
