@@ -259,9 +259,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b9dbf3c6b6afcd42b4992d2011083b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerType: 0
-  maxSpeed: 10
-  jumpForce: 10
+  playerType: 1
+  maxSpeed: 6.5
+  jumpForce: 26
   hasAccessPass: 0
   itemManager: {fileID: 0}
   clearedStage: 0
