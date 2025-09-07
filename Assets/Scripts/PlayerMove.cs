@@ -42,9 +42,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool waitToSelect = false;
     private bool stageToSelect = false;
 
-    
-    
+    private GameManager gameManager;
 
+    void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -80,8 +83,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         // y값이 -20보다 작아지면 추락으로 간주
         if (transform.position.y <= -20f)
         {
-            if (GameManager.Instance != null)
-                GameManager.Instance.HealthDown();
+            if (gameManager != null)
+                gameManager.HealthDown();
         }
         
         // 플레이어: 방향키, Space
@@ -89,7 +92,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         if (Input.GetKeyDown(KeyCode.Space))
             jumpPressed = true;
 
-        if (GameManager.Instance.colorRestoreMode)
+        if (gameManager.colorRestoreMode)
         {
             Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
             foreach (var hit in hits)
@@ -138,11 +141,11 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (restoreAreas.Length == restoredObjects.Count && restoreAreas.Length > 0)
             {
                 Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 나타남");
-                GameManager.Instance.colorRestoreMode = false;
+                gameManager.colorRestoreMode = false;
 
-                if (GameManager.Instance.goalObject != null)
+                if (gameManager.goalObject != null)
                 {
-                    StartCoroutine(GameManager.Instance.GoalAppearEffect()); // 연출 호출
+                    StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
                 }
             }
 
@@ -219,7 +222,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     // ColorRestore가 GameManager를 통해 동작하고, Goal 연출도 GameManager에서 담당
     public void EnableColorRestore(bool enable)
     {
-        GameManager.Instance.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
+        gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
     }
 
     bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
@@ -251,9 +254,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
                 if (isCoin)
                 {
-                    if (name.Contains("Bronze")) GameManager.Instance.stagePoint += 50;
-                    else if (name.Contains("Sliver")) GameManager.Instance.stagePoint += 100;
-                    else if (name.Contains("Gold")) GameManager.Instance.stagePoint += 300;
+                    if (name.Contains("Bronze")) gameManager.stagePoint += 50;
+                    else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
+                    else if (name.Contains("Gold")) gameManager.stagePoint += 300;
 
                     collision.gameObject.SetActive(false);
                     //PlaySound("Item");
@@ -345,7 +348,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient && waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
         {
-            GameManager.Instance.stageIndex++;
+            gameManager.stageIndex++;
         }
         PhotonNetwork.LoadLevel(sceneName);
         waitToSelect = true;
@@ -354,13 +357,13 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     void OnAttack(Transform enemy)
     {
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
-        GameManager.Instance.stagePoint += 100;
+        gameManager.stagePoint += 100;
         enemy.GetComponent<EnemyMove>()?.OnDamaged();
     }
 
     void OnDamaged(Vector2 targetPos)
     {
-        GameManager.Instance.HealthDown();
+        gameManager.HealthDown();
         gameObject.layer = 11;
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
