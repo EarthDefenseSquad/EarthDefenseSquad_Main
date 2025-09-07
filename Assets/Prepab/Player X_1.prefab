@@ -260,8 +260,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerType: 0
-  maxSpeed: 10
-  jumpForce: 10
+  maxSpeed: 5
+  jumpForce: 20
   hasAccessPass: 0
   itemManager: {fileID: 0}
   clearedStage: 0
