@@ -8,6 +8,11 @@ TagManager:
   - GameStart
   - Item
   - Doctor
+  - NPC
+  - Obstacle
+  - Platform
+  - RestoreArea
+  - Machine
   layers:
   - Default
   - TransparentFX
