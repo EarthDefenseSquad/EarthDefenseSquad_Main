@@ -58,6 +58,8 @@ MonoBehaviour:
   - SpawnRoomPlayer
   - PlayerReposition
   - ReqeustLoadLeveltoStage
+  - SyncCharacterSelection
+  - RPC_OnConfirmToggle
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 
-public class SpriteSwitch : MonoBehaviourPun
+public class SpriteSwitchNetworkManager : MonoBehaviourPun
 {
     [System.Serializable]
     public class SpriteSet
@@ -166,24 +166,17 @@ public class SpriteSwitch : MonoBehaviourPun
     }
 
     private void OnConfirmToggle_Network(SpriteSet toggledSet)
-{
-    if (toggledSet == null) return;
-    if (set1 == null || set2 == null) return;
+    {
+        int setNumber = (toggledSet == set1) ? 1 : 2;
+        int currentIndex = toggledSet.currentIndex;
+        bool nextState = !toggledSet.isConfirmed;
 
-    int setNumber = (toggledSet == set1) ? 1 : 2;
-    int currentIndex = toggledSet.currentIndex;
-    bool nextState = !toggledSet.isConfirmed;
+        // RPC 호출: 다른 클라이언트에 선택 정보 전송
+        photonView.RPC(nameof(RPC_OnConfirmToggle), RpcTarget.OthersBuffered, setNumber, currentIndex, nextState);
 
-    // 먼저 로컬 UI 반영
-    
-    toggledSet.SetConfirmed(nextState);
-    toggledSet.ApplyCurrent();
-    HandleSelection(toggledSet, nextState);
-
-    // RPC 호출로 다른 클라이언트 동기화
-    photonView.RPC(nameof(RPC_OnConfirmToggle), RpcTarget.OthersBuffered, setNumber, currentIndex, nextState);
-}
-
+        // 로컬 클라이언트는 즉시 처리
+        HandleSelection(toggledSet, nextState);
+    }
 
     [PunRPC]
     private void RPC_OnConfirmToggle(int setNumber, int currentIndex, bool isConfirmed)
@@ -192,12 +185,11 @@ public class SpriteSwitch : MonoBehaviourPun
         targetSet.currentIndex = currentIndex;
         targetSet.SetConfirmed(isConfirmed);
         targetSet.ApplyCurrent();
+
         HandleSelection(targetSet, isConfirmed);
+    }
 
-}
-
-
-   private void HandleSelection(SpriteSet toggledSet, bool isConfirmed)
+    private void HandleSelection(SpriteSet toggledSet, bool isConfirmed)
     {
         SpriteSet otherSet = (toggledSet == set1) ? set2 : set1;
 
@@ -209,18 +201,14 @@ public class SpriteSwitch : MonoBehaviourPun
             ShowWarning("서로 다른 세대를 선택하세요.");
             return;
         }
-
-        // 상태 변경은 여기서 하지 않고, 이미 RPC_OnConfirmToggle에서 상태 적용되었으므로 무시
-
+        toggledSet.SetConfirmed(isConfirmed);
         if (warningPanel != null)
             warningPanel.SetActive(false);
-
         if (set1.isConfirmed && set2.isConfirmed)
         {
             SceneManager.LoadScene("WaitingScene");
         }
     }
-
 
     private void ShowWarning(string message)
     {
