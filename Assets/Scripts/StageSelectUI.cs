@@ -14,6 +14,7 @@ public class StageSelectUI : MonoBehaviour
     void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
+        stageNumber = 0;
     }
         void Start()
     {
@@ -21,7 +22,7 @@ public class StageSelectUI : MonoBehaviour
 
             // 기본: 첫번째 스테이지 언락
             //unlockedStages[0] = true;
-            stageNumber = gameManager.stageIndex;
+            //stageNumber = gameManager.stageIndex;
             // 현재 stageNumber까지 해금 상태로 설정
             for (int i = 0; i <= stageNumber && i < unlockedStages.Length; i++)
             {
@@ -48,15 +49,13 @@ public class StageSelectUI : MonoBehaviour
     public void Go1960Scene()
     {
         PhotonNetwork.LoadLevel("StageScene");
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        gameManager.SpawnPlayer(playerIndex);
+       
     }
 
     public void Go1970Scene()
     {
         PhotonNetwork.LoadLevel("StageScene");
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        gameManager.SpawnPlayer(playerIndex);
+        
     }
 
     public void Go1980Scene()

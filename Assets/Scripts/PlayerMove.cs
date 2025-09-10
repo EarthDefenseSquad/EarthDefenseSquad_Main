@@ -43,10 +43,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool stageToSelect = false;
 
     private GameManager gameManager;
+    public StageSelectUI stageSelectUI;
 
     void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
+        stageSelectUI = FindObjectOfType<StageSelectUI>();
     }
     void Start()
     {
@@ -346,12 +348,14 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     [PunRPC]
     void ReqeustLoadLeveltoStage(string sceneName)
     {
-        if (PhotonNetwork.IsMasterClient && waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
+        if (PhotonNetwork.IsMasterClient && !waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
         {
-            gameManager.stageIndex++;
+            stageSelectUI.stageNumber++;
+            Debug.Log(stageSelectUI.stageNumber);
+            waitToSelect = true;
         }
         PhotonNetwork.LoadLevel(sceneName);
-        waitToSelect = true;
+        
     }
 
     void OnAttack(Transform enemy)
