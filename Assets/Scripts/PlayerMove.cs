@@ -271,12 +271,13 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                     return;
                 }
 
-                if (name.Contains("Buffering")) itemManager.UseItem(ItemType.BufferingIcon);
-                else if (name.Contains("Invincibility")) itemManager.UseItem(ItemType.Invincibility);
-                else if (name.Contains("DoubleJump")) itemManager.UseItem(ItemType.DoubleJump);
-                else if (name.Contains("AccessPass")) itemManager.UseItem(ItemType.AccessPass);
-                else if (name.Contains("RevealPlatform")) itemManager.UseItem(ItemType.RevealPlatform);
-                else if (name.Contains("ColorRestore")) itemManager.UseItem(ItemType.ColorRestore);
+                if (name.Contains("Buffering")) ItemManager.Instance.UseItem(ItemType.BufferingIcon, this);
+                else if (name.Contains("Invincibility")) ItemManager.Instance.UseItem(ItemType.Invincibility, this);
+                else if (name.Contains("DoubleJump")) ItemManager.Instance.UseItem(ItemType.DoubleJump, this);
+                else if (name.Contains("AccessPass")) ItemManager.Instance.UseItem(ItemType.AccessPass, this);
+                else if (name.Contains("RevealPlatform")) ItemManager.Instance.UseItem(ItemType.RevealPlatform, this);
+                else if (name.Contains("ColorRestore")) ItemManager.Instance.UseItem(ItemType.ColorRestore, this);
+
 
                 collision.gameObject.SetActive(false);
                 PlaySound("Item");

@@ -7,26 +7,25 @@ public class ItemManager : MonoBehaviour
     public static ItemManager Instance { get; private set; }
 
     public GameManager gameManager;
-    public PlayerMove player;
     private Coroutine revealCoroutine;
 
+    // 멀티플레이어 지원
+    private List<PlayerMove> players = new List<PlayerMove>();
 
-    // private void Awake()
-    // {
-    //     if (Instance != null && Instance != this)
-    //     {
-    //         Destroy(gameObject); // 중복 방지
-    //         return;
-    //     }
-
-    //     Instance = this;
-    //     DontDestroyOnLoad(gameObject); // 씬 전환 시 유지
-    // }
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // 씬 전환 시 유지
+    }
 
     private void Start()
     {
         InitializeItems();
-        InitializePlayer();
 
         // 시작 시 HiddenPlatform 레이어 오브젝트 숨김
         GameObject[] allObjects = FindObjectsOfType<GameObject>();
@@ -48,35 +47,59 @@ public class ItemManager : MonoBehaviour
         Debug.Log("✅ Items Initialized.");
     }
 
-    private void InitializePlayer()
+    // 플레이어 등록
+    public void RegisterPlayer(PlayerMove newPlayer)
     {
-        if (player != null && player.playerType == PlayerMove.PlayerType.Player1)
-            player.maxSpeed = 5f;
+        if (!players.Contains(newPlayer))
+        {
+            players.Add(newPlayer);
 
-        if (player != null)
-            player.EnableInvincibility(false);
+            if (newPlayer.playerType == PlayerMove.PlayerType.Player1)
+                newPlayer.maxSpeed = 5f;
 
-        Debug.Log("✅ Player Initialized.");
+            newPlayer.EnableInvincibility(false);
+
+            Debug.Log($"🎮 Player 등록됨: {newPlayer.name}, 타입: {newPlayer.playerType}");
+        }
     }
 
-    public void UseItem(ItemType itemType)
+    // 플레이어 제거
+    public void UnregisterPlayer(PlayerMove playerToRemove)
     {
-        Debug.Log($"🧪 UseItem 호출됨: {itemType}");
-        if (this == null) return;
+        if (players.Contains(playerToRemove))
+        {
+            players.Remove(playerToRemove);
+            Debug.Log($"🗑️ Player 제거됨: {playerToRemove.name}");
+        }
+    }
+
+    // 특정 플레이어가 아이템 사용
+    public void UseItem(ItemType itemType, PlayerMove targetPlayer)
+    {
+        if (targetPlayer == null) return;
+
+        // Player2 제약 유지
+        if (targetPlayer.playerType == PlayerMove.PlayerType.Player2)
+        {
+            Debug.Log("🚫 Player2는 아이템을 사용할 수 없습니다.");
+            return;
+        }
+
+        Debug.Log($"🧪 {targetPlayer.playerType} 이(가) {itemType} 사용");
 
         switch (itemType)
         {
             case ItemType.BufferingIcon:
-                StartCoroutine(ActivateBufferingEffect());
+                StartCoroutine(ActivateBufferingEffect(targetPlayer));
                 break;
             case ItemType.Invincibility:
-                StartCoroutine(ActivateInvincibilityEffect());
+                StartCoroutine(ActivateInvincibilityEffect(targetPlayer));
                 break;
             case ItemType.DoubleJump:
-                StartCoroutine(ActivateDoubleJumpEffect());
+                StartCoroutine(ActivateDoubleJumpEffect(targetPlayer));
                 break;
             case ItemType.AccessPass:
-                GrantAccessPass();
+                GrantAccessPass(targetPlayer);
                 break;
             case ItemType.RevealPlatform:
                 if (revealCoroutine != null)
@@ -87,19 +110,18 @@ public class ItemManager : MonoBehaviour
                 revealCoroutine = StartCoroutine(ActivateRevealPlatform());
                 break;
             case ItemType.ColorRestore:
-                StartCoroutine(ActivateColorRestore());
+                StartCoroutine(ActivateColorRestore(targetPlayer));
                 break;
-
             default:
                 Debug.LogWarning("❓ Unknown item type");
                 break;
         }
     }
 
-    private IEnumerator ActivateBufferingEffect()
+    // -------------------------------
+    // 아이템별 효과 구현
+    private IEnumerator ActivateBufferingEffect(PlayerMove player)
     {
-        if (player == null) yield break;
-
         Debug.Log("🐢 Buffering Effect Activated!");
         player.maxSpeed /= 2;
         yield return new WaitForSeconds(5f);
@@ -107,10 +129,8 @@ public class ItemManager : MonoBehaviour
         Debug.Log("⏩ Buffering Effect Ended");
     }
 
-    private IEnumerator ActivateInvincibilityEffect()
+    private IEnumerator ActivateInvincibilityEffect(PlayerMove player)
     {
-        if (player == null) yield break;
-
         Debug.Log("🛡️ Invincibility Activated!");
         player.EnableInvincibility(true);
         yield return new WaitForSeconds(5f);
@@ -118,19 +138,15 @@ public class ItemManager : MonoBehaviour
         Debug.Log("💥 Invincibility Ended");
     }
 
-    private IEnumerator ActivateDoubleJumpEffect()
+    private IEnumerator ActivateDoubleJumpEffect(PlayerMove player)
     {
-        if (player == null) yield break;
-
         Debug.Log("🪂 Double Jump Activated!");
         player.EnableDoubleJump(5f);
         yield return null;
     }
 
-    private void GrantAccessPass()
+    private void GrantAccessPass(PlayerMove player)
     {
-        if (player == null) return;
-
         Debug.Log("🗝️ Access Pass Granted!");
         player.hasAccessPass = true;
     }
@@ -181,15 +197,12 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-
-
-    private IEnumerator ActivateColorRestore()
+    private IEnumerator ActivateColorRestore(PlayerMove player)
     {
-        Debug.Log("Color Restore Started");
+        Debug.Log("🌈 Color Restore Started");
         player.EnableColorRestore(true);
 
-        // Goal 오브젝트 숨기기
-        if (gameManager.goalObject != null)
+        if (gameManager != null && gameManager.goalObject != null)
         {
             gameManager.goalObject.SetActive(false);
             Debug.Log("🚫 Goal 비활성화");
@@ -197,5 +210,4 @@ public class ItemManager : MonoBehaviour
 
         yield return null;
     }
-
 }
