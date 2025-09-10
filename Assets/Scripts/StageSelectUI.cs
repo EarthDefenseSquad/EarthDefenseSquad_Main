@@ -11,10 +11,13 @@ public class StageSelectUI : MonoBehaviour
     public int stageNumber;
     private GameManager gameManager;
 
+    
+
     void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
-        stageNumber = 0;
+        stageNumber=PlayerMove.clearedStage;
+        
     }
         void Start()
     {

@@ -61,6 +61,7 @@ MonoBehaviour:
   - RPC_OnConfirmToggle
   - RPC_LoadStageScene
   - RPC_ShowPanel1970
+  - SyncClearedStage
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

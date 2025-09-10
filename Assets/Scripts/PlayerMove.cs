@@ -30,7 +30,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     CapsuleCollider2D capsulecollider;
     public ItemManager itemManager;
     AudioSource audioSource;
-    public int clearedStage = 0;
+    public static int clearedStage = -1;
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
@@ -293,7 +293,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 if (!stageToSelect)
                 {
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
-                    stageToSelect = true;
+                    
                 }
             }
             else
@@ -301,7 +301,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 if (!stageToSelect)
                 {
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
-                    stageToSelect = true;
+                    
                 }
             }
         }
@@ -350,14 +350,21 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient && !waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
         {
-            stageSelectUI.stageNumber++;
-            Debug.Log(stageSelectUI.stageNumber);
+            clearedStage++;
+            Debug.Log("마스터 클라이언트 clearedStage: "+ clearedStage);
+            photonView.RPC("SyncClearedStage", RpcTarget.OthersBuffered, clearedStage);
             waitToSelect = true;
+            stageToSelect = true;
         }
         PhotonNetwork.LoadLevel(sceneName);
         
     }
-
+    [PunRPC]
+    void SyncClearedStage(int updatedClearedStage)
+    {
+        clearedStage = updatedClearedStage;
+        Debug.Log("플레이어 clearedStage : " +clearedStage);
+    }
     void OnAttack(Transform enemy)
     {
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
