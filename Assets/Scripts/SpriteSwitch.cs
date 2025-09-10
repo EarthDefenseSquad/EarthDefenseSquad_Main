@@ -2,8 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
-public class SpriteSwitch : MonoBehaviour
+public class SpriteSwitch : MonoBehaviourPun
 {
     [System.Serializable]
     public class SpriteSet
@@ -41,15 +42,13 @@ public class SpriteSwitch : MonoBehaviour
             if (leftButton != null)
             {
                 leftButton.onClick.AddListener(SwitchLeft);
-                originalLeftColor = leftButton.image.color; // 🔸 저장
+                originalLeftColor = leftButton.image.color;
             }
-
             if (rightButton != null)
             {
                 rightButton.onClick.AddListener(SwitchRight);
-                originalRightColor = rightButton.image.color; // 🔸 저장
+                originalRightColor = rightButton.image.color;
             }
-
             if (confirmButton != null)
                 confirmButton.onClick.AddListener(ToggleConfirm);
         }
@@ -72,7 +71,7 @@ public class SpriteSwitch : MonoBehaviour
             }
         }
 
-        private void ApplyCurrent()
+        public void ApplyCurrent()
         {
             targetImage.sprite = sprites[currentIndex];
             characterName.text = names[currentIndex];
@@ -96,7 +95,6 @@ public class SpriteSwitch : MonoBehaviour
             SetDimmed(characterName, isConfirmed);
             SetDimmed(characterInfo, isConfirmed);
 
-            // 🔸 스프라이트 전환 버튼 색상 명도 조절 or 원복
             if (leftButton.image != null)
                 leftButton.image.color = isConfirmed ? new Color(0.5f, 0.5f, 0.5f, originalLeftColor.a) : originalLeftColor;
             if (rightButton.image != null)
@@ -117,10 +115,7 @@ public class SpriteSwitch : MonoBehaviour
         {
             if (graphic == null) return;
 
-            if (dim)
-                graphic.color = new Color(0.5f, 0.5f, 0.5f, graphic.color.a);
-            else
-                graphic.color = new Color(1f, 1f, 1f, graphic.color.a);
+            graphic.color = dim ? new Color(0.5f, 0.5f, 0.5f, graphic.color.a) : new Color(1f, 1f, 1f, graphic.color.a);
         }
 
         public int GetCharacterGroup()
@@ -143,7 +138,6 @@ public class SpriteSwitch : MonoBehaviour
     public GameObject CharacterSelect_Panel;
     public GameObject Start_Panel;
 
-
     void Start()
     {
         set1.infos = new string[] {
@@ -160,8 +154,13 @@ public class SpriteSwitch : MonoBehaviour
             "X세대 캐릭터\n아이템 사용 가능\n이동속도, 점프력 낮음",
         };
 
+        // 기존 UI 이벤트 구독
         set1.onConfirmToggle += OnConfirmToggled;
         set2.onConfirmToggle += OnConfirmToggled;
+
+        // 멀티플레이어용 네트워크 RPC 호출 구독 추가
+        set1.onConfirmToggle += OnConfirmToggle_Network;
+        set2.onConfirmToggle += OnConfirmToggle_Network;
 
         set1.Init();
         set2.Init();
@@ -172,21 +171,20 @@ public class SpriteSwitch : MonoBehaviour
         if (warningPanel != null)
             warningPanel.SetActive(false);
 
-
         if (startSceneButton != null)
-        {startSceneButton.onClick.AddListener(() =>{
-            CharacterSelect_Panel.SetActive(false);
-            Start_Panel.SetActive(true);
+        {
+            startSceneButton.onClick.AddListener(() =>
+            {
+                CharacterSelect_Panel.SetActive(false);
+                Start_Panel.SetActive(true);
             });
         }
-
-
     }
 
+    // 기존 UI 동작 유지
     private void OnConfirmToggled(SpriteSet toggledSet)
     {
         SpriteSet otherSet = (toggledSet == set1) ? set2 : set1;
-
         int group1 = toggledSet.GetCharacterGroup();
         int group2 = otherSet.GetCharacterGroup();
 
@@ -206,6 +204,30 @@ public class SpriteSwitch : MonoBehaviour
         {
             SceneManager.LoadScene("WaitingScene");
         }
+    }
+
+    // 네트워크 동기화 담당 함수
+    private void OnConfirmToggle_Network(SpriteSet toggledSet)
+    {
+        if (toggledSet == null || set1 == null || set2 == null) return;
+
+        int setNumber = (toggledSet == set1) ? 1 : 2;
+        int currentIndex = toggledSet.currentIndex;
+        bool nextState = !toggledSet.isConfirmed;
+
+        // 로컬 UI 변경은 기존 OnConfirmToggled에서 처리 중이므로 RPC만 호출
+        photonView.RPC(nameof(RPC_OnConfirmToggle), RpcTarget.OthersBuffered, setNumber, currentIndex, nextState);
+    }
+
+    [PunRPC]
+    private void RPC_OnConfirmToggle(int setNumber, int currentIndex, bool isConfirmed)
+    {
+        SpriteSet targetSet = (setNumber == 1) ? set1 : set2;
+
+        targetSet.currentIndex = currentIndex;
+
+        // 기존 OnConfirmToggled 호출로 UI 상태 변경 및 동작 수행
+        OnConfirmToggled(targetSet);
     }
 
     private void ShowWarning(string message)
