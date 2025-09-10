@@ -16,13 +16,13 @@ EditorBuildSettings:
     guid: 159957c6458076943811eeb6165a1044
   - enabled: 1
     path: Assets/Scenes/Stage/StageScene.unity
-    guid: d860608fea392e04dad51c4f0020eb2b
+    guid: 87653f79beed6ba4591fd965178e940c
   - enabled: 1
     path: Assets/Scenes/Story/GoodEnding.unity
     guid: 286943bf6046a2141ae20fc537551018
   - enabled: 1
     path: Assets/Scenes/Story/BadEnding.unity
-    guid: 94b0471c93720a14498f97dff3a4c89f
+    guid: 11a0766a0541d374484abc0c43ef8f79
   - enabled: 1
     path: Assets/Scenes/Start/StageSelect.unity
     guid: 66c5c4e7537c1854fa9ee37f4342bc56
