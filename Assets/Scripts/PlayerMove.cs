@@ -251,15 +251,15 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     }
     void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌들
     {
-        RaycastHit2D rayHit = Physics2D.Raycast(transform.position, Vector2.down, 1f, LayerMask.GetMask("Platform"));
+      
         if (collision.CompareTag("Item"))
         {
             string name = collision.name;
 
             bool isCoin = name.Contains("Bronze") || name.Contains("Sliver") || name.Contains("Gold");
 
-            if (rayHit.collider != null)
-            {
+           // if (rayHit.collider != null)
+            //{
             
                 if (isCoin)
                 {
@@ -288,8 +288,10 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
                 collision.gameObject.SetActive(false);
                 PlaySound("Item");
-            }
+            //}
+
         }
+
         else if (collision.CompareTag("Finish"))
         {
             //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
@@ -332,7 +334,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 OnDamaged(collision.transform.position);
             }
         }
-        else if (collision.gameObject.CompareTag("Doctor"))
+        else if (collision.gameObject.CompareTag("Machine"))
         {
             Debug.Log("충돌");
             // Doctor 오브젝트 비활성화
