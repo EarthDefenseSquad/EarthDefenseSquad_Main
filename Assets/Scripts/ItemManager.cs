@@ -12,16 +12,21 @@ public class ItemManager : MonoBehaviour
     // 멀티플레이어 지원
     private List<PlayerMove> players = new List<PlayerMove>();
 
+    // private void Awake()
+    // {
+    //     if (Instance != null && Instance != this)
+    //     {
+    //         Destroy(gameObject);
+    //         return;
+    //     }
+    //     Instance = this;
+    //     DontDestroyOnLoad(gameObject); // 씬 전환 시 유지
+    // }
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
         Instance = this;
-        DontDestroyOnLoad(gameObject); // 씬 전환 시 유지
     }
+
 
     private void Start()
     {

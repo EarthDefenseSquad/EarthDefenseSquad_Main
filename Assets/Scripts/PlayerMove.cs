@@ -175,11 +175,27 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (rayHit.collider != null && rayHit.distance < 0.65f)
                 anim.SetBool("isJumping", false);
         }
-        // Jump
-        if (jumpPressed && !anim.GetBool("isJumping"))
+        if (jumpPressed)
         {
-            rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            anim.SetBool("isJumping", true);
+            if (!anim.GetBool("isJumping")) // 1단 점프
+            {
+                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                anim.SetBool("isJumping", true);
+                doubleJumpUsed = false; // 땅에서 점프했으니 2단 점프 다시 허용
+                Debug.Log("점프!");
+                PlaySound("Jump");
+            }
+            else if (doubleJumpActive && !doubleJumpUsed) // 2단 점프
+            {
+                rigid.velocity = new Vector2(rigid.velocity.x, 0); // 기존 Y속도 리셋
+                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                doubleJumpUsed = true;
+                Debug.Log("2단 점프!");
+    
+
+                PlaySound("Jump");
+            }
+
             jumpPressed = false;
         }
         // Stop Speed
@@ -244,16 +260,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
             if (rayHit.collider != null)
             {
-                //Debug.Log(rayHit.collider.name);
-                //Debug.Log(rayHit.distance); // 거리 0.5076 이렇게나옴
-                if (rayHit.distance < 0.6f)
-                // 플레이어중심(레이시작점)-(레이쏴서맞은)플랫폼 거리가 0.5보다 커서 0.5f로하면 점핑모션 안끝나는 버그가 있었음.
-                // 0.6f로 수정하니 해결..
-                // 바닥에 비비다보면 점핑모션 제대로 끝났는데 그건 왜된거지 -> 가끔 0.4로 찍히는 곳도 있는데 이래서 끝난듯
-                {
-                    anim.SetBool("isJumping", false);
-                }
-
+            
                 if (isCoin)
                 {
                     if (name.Contains("Bronze")) gameManager.stagePoint += 50;
