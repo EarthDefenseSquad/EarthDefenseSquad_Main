@@ -236,7 +236,7 @@ Animator:
   m_GameObject: {fileID: 7536506671615735303}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: fb151ef885360429c946386e20515549, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7c46982467f9ba548ab4e7dc9491c625, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -264,13 +264,13 @@ MonoBehaviour:
   jumpForce: 20
   hasAccessPass: 0
   itemManager: {fileID: 0}
-  clearedStage: 0
   audioJump: {fileID: 0}
   audioAttack: {fileID: 0}
   audioDamaged: {fileID: 0}
   audioItem: {fileID: 0}
   audioDie: {fileID: 0}
   audioFinish: {fileID: 0}
+  stageSelectUI: {fileID: 0}
 --- !u!50 &3563691755332131556
 Rigidbody2D:
   serializedVersion: 4
@@ -307,7 +307,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 7536506671615735303}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: c01c332e5e1453941a8ffa1a65d43cc9, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

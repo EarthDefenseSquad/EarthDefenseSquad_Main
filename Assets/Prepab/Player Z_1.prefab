@@ -264,13 +264,13 @@ MonoBehaviour:
   jumpForce: 26
   hasAccessPass: 0
   itemManager: {fileID: 0}
-  clearedStage: 0
   audioJump: {fileID: 0}
   audioAttack: {fileID: 0}
   audioDamaged: {fileID: 0}
   audioItem: {fileID: 0}
   audioDie: {fileID: 0}
   audioFinish: {fileID: 0}
+  stageSelectUI: {fileID: 0}
 --- !u!50 &351059627983231880
 Rigidbody2D:
   serializedVersion: 4
@@ -307,7 +307,7 @@ CapsuleCollider2D:
   m_GameObject: {fileID: 4828525040922323524}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: c01c332e5e1453941a8ffa1a65d43cc9, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

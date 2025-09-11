@@ -19,6 +19,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool isInvincible = false;
     private bool doubleJumpActive = false;
     private bool doubleJumpUsed = false;
+    private bool isJumping = false;
 
     private bool colorRestoreMode = false;
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
@@ -181,23 +182,22 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             {
                 rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 anim.SetBool("isJumping", true);
-                doubleJumpUsed = false; // 땅에서 점프했으니 2단 점프 다시 허용
-                Debug.Log("점프!");
+                doubleJumpUsed = false;
                 PlaySound("Jump");
+
+                jumpPressed = false;   // ✅ 여기서 바로 false 처리 → 같은 프레임에서 else if 못 탐
+                return;                // ✅ 강제 리턴 → 2단 점프 분기 진입 방지
             }
             else if (doubleJumpActive && !doubleJumpUsed) // 2단 점프
             {
-                rigid.velocity = new Vector2(rigid.velocity.x, 0); // 기존 Y속도 리셋
+                rigid.velocity = new Vector2(rigid.velocity.x, 0);
                 rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 doubleJumpUsed = true;
-                Debug.Log("2단 점프!");
-    
-
                 PlaySound("Jump");
             }
-
             jumpPressed = false;
         }
+
         // Stop Speed
         if (h == 0)
         {
