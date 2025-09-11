@@ -697,7 +697,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &100779313
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1819,7 +1818,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &349556534
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3098,7 +3096,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &469154978
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3456,7 +3453,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &581279928
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3735,7 +3731,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &598449048
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3945,7 +3940,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &615267204
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4080,7 +4074,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &616256949
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4215,7 +4208,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &699631905
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4494,7 +4486,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &730530430
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4629,7 +4620,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &738639183
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5017,7 +5007,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &803974244
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5594,7 +5583,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &861241348
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5729,7 +5717,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &885119622
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -6268,7 +6255,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1039155278
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -6547,7 +6533,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1122046416
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -7073,7 +7058,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1200813185
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -7435,15 +7419,14 @@ MonoBehaviour:
   maxSpeed: 4.5
   jumpForce: 20
   hasAccessPass: 0
-  roleID: 0
   itemManager: {fileID: 1504869698}
-  clearedStage: 0
   audioJump: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
   audioAttack: {fileID: 8300000, guid: d8d04c6f80a1140db85ede568dab1f51, type: 3}
   audioDamaged: {fileID: 8300000, guid: 7e9ee6dc04a5d40d1a5dfc4beb9865e7, type: 3}
   audioItem: {fileID: 8300000, guid: 79180f511d89441b9aa23ccae1992fe0, type: 3}
   audioDie: {fileID: 8300000, guid: a0010a1a0c474473b81729eb770c485f, type: 3}
   audioFinish: {fileID: 8300000, guid: 7478151cf36724a7dada558f746c3633, type: 3}
+  stageSelectUI: {fileID: 0}
 --- !u!82 &1262362414
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7587,7 +7570,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1285058886
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -8997,7 +8979,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1432781481
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -9276,7 +9257,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1442654222
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -9437,7 +9417,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!4 &1504869699
 Transform:
   m_ObjectHideFlags: 0
@@ -9500,7 +9479,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1526461219
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -9847,7 +9825,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1579857494
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -10124,7 +10101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1599625448
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -10447,7 +10423,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1699655467
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -10870,7 +10845,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1737553750
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -11190,7 +11164,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1777072480
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -11943,7 +11916,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1933598451
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -12078,7 +12050,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1941774201
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -12213,7 +12184,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &1952861472
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -12661,7 +12631,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &2128992819
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -12929,7 +12898,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 1125412620}
-  player: {fileID: 1262362413}
 --- !u!58 &2144020172
 CircleCollider2D:
   m_ObjectHideFlags: 0
