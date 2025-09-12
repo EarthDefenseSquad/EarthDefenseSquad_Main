@@ -9,10 +9,10 @@ using Photon.Realtime;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public int totalPoint=0;
-    public int stagePoint=0;
-    public int stageIndex=-1;
-    public int health=3;
+    public int totalPoint = 0;
+    public int stagePoint = 0;
+    public int stageIndex = -1;
+    public int health = 3;
     public GameObject playerObj;
     public PlayerMove player;
 
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int finishItemCount = 0;
 
     // 총 Finish 아이템의 개수 (엔딩 분기 기준값) - 인스펙터에서 설정 가능
-    public int totalStages = 3;
+    public int totalStages = 30;
 
     // Finish 아이템 개수를 화면에 표시할 UI 텍스트 (왼쪽 하단에 위치한 Text 오브젝트)
     public Text finishItemText;
@@ -45,42 +45,43 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     [Header("개발용 설정 - 즉사 모드")]
-    public bool isInstantDeathMode=false;
+    public bool isInstantDeathMode = false;
 
     //플레이어들 동기화 스폰
     //플레이어들 동기화 이동
     //플레이어들 특정 조건 만족 시 DB로 클리어 기록 전송.(나중에 DB스크립트에서 클리어 기록이 있다면 게임 스테이지 변경)
-    
+
     public static GameManager Instance;
     void Awake()
     {
         if (isInstantDeathMode)
-            {
-                health = 1;
-                UpdateHealthUI(); // ✅ UI 반영
-            }
-            else
-            {
-                health = 3;
-            }
+        {
+            health = 1;
+            UpdateHealthUI(); // ✅ UI 반영
+        }
+        else
+        {
+            health = 3;
+        }
 
         string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene == "WaitingScene" || currentScene == "StageScene") {
-          if (photonView.IsMine)
+        if (currentScene == "WaitingScene" || currentScene == "StageScene")
+        {
+            if (photonView.IsMine)
             {
                 int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
                 photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
-            }      
+            }
         }
     }
-    
+
 
 
     void Update()
     {
         if (totalPoint != 0 && stagePoint != 0)
         {
-          UIPoint.text = (totalPoint + stagePoint).ToString();   
+            UIPoint.text = (totalPoint + stagePoint).ToString();
         }
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
@@ -96,7 +97,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
 #endif
-       
+
 
     }
 
@@ -237,7 +238,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
 
             if (health <= 0)
-            {   
+            {
                 Debug.Log(health);
                 player.OnDie();
                 Debug.Log("플레이어가 죽었습니다.");
@@ -270,7 +271,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             player.transform.position = new Vector3(-1.0f, -0.5f, 0);
             //player.VelocityZero();
         }
-         
+
     }
 
 
@@ -332,12 +333,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         UpdateFinishItemUI();
     }
 
-    // 로컬 저장된 아이템 개수를 불러오는 함수
-    public void LoadFinishItemCount()
-    {
-        // 만약 저장된 값이 없다면 기본값 0을 반환함
-        finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
-    }
+    // // 로컬 저장된 아이템 개수를 불러오는 함수
+    // public void LoadFinishItemCount()
+    // {
+    //     // 만약 저장된 값이 없다면 기본값 0을 반환함
+    //     finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
+    // }
 
     // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
     public void ResetFinishItemData()
@@ -353,12 +354,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     // UI에 Finish 아이템 수치를 업데이트하는 함수
-    public void UpdateFinishItemUI()
-    {
-        // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
-        if (finishItemText != null)
-            finishItemText.text = finishItemCount.ToString();
-    }
+    // public void UpdateFinishItemUI()
+    // {
+    //     // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
+    //     if (finishItemText != null)
+    //         finishItemText.text = finishItemCount.ToString();
+    // }
 
     void UpdateHealthUI()
     {
@@ -378,6 +379,29 @@ public class GameManager : MonoBehaviourPunCallbacks
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }
+
+
+    public void SaveFinishItem()
+    {
+        int count = PlayerPrefs.GetInt(FinishItemKey, 0);
+        count++;
+        PlayerPrefs.SetInt(FinishItemKey, count);
+        PlayerPrefs.Save();
+        finishItemCount = count;
+        Debug.Log("🎯 Finish 아이템 저장 완료: " + count);
+    }
+
+    public void LoadFinishItemCount()
+    {
+        finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
+    }
+
+    public void UpdateFinishItemUI()
+    {
+        if (finishItemText != null)
+            finishItemText.text = $"Finish: {finishItemCount}/{totalStages}";
+    }
+
 }
 
 

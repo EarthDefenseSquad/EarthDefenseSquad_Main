@@ -296,22 +296,47 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         {
             //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
             collision.gameObject.SetActive(false); // 아이템 제거
-                                                   //gameManager.NextStage();
-                                                   //PlaySound("Finish");
+            gameManager.NextStage();
+            //PlaySound("Finish");
+
+            string finishId = collision.gameObject.name; // 예: Finish_1970_Stage1
+
+            // 이미 저장된 경우 → 재카운트 방지 + 투명화
+            if (PlayerPrefs.HasKey(finishId))
+            {
+                Debug.Log($"이미 먹은 Finish 아이템: {finishId}");
+                // 이미 먹었음을 표시 (예: 반투명)
+                SpriteRenderer sr = collision.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.color = new Color(1f, 1f, 1f, 0.3f);
+                }
+                return;
+            }
+
+            // 처음 먹은 경우 → 저장하고 클리어 처리
+            PlayerPrefs.SetInt(finishId, 1);
+            PlayerPrefs.Save();
+
+            Debug.Log($"✅ Finish 아이템 최초 획득: {finishId}");
+
+            // GameManager 처리
+            GameManager.Instance.SaveFinishItem();
             if (PhotonNetwork.IsMasterClient)
             {
                 if (!stageToSelect)
                 {
+                    // ✅ 스테이지 클리어 처리
+                    GameManager.Instance.OnGameClear();
+                    GameManager.Instance.SaveFinishItem();
+
+                    int clearedStage = GameManager.Instance.stageIndex;
+
+                    // ✅ 스테이지 해금 DB 처리
+                    photonView.RPC("DBonGameClear", RpcTarget.All, clearedStage);
+
+                    // ✅ 씬 이동
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
-                    
-                }
-            }
-            else
-            {
-                if (!stageToSelect)
-                {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
-                    
                 }
             }
         }
