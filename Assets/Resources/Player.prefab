@@ -134,6 +134,7 @@ MonoBehaviour:
   audioItem: {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
   audioDie: {fileID: 8300000, guid: cabfae866cab347928b74b7d0ca6bfa9, type: 3}
   audioFinish: {fileID: 8300000, guid: 657578e4be6b64dbf9b09deada272e55, type: 3}
+  gameManager: {fileID: 0}
   stageSelectUI: {fileID: 0}
 --- !u!50 &351059627983231880
 Rigidbody2D:

@@ -63431,7 +63431,7 @@ GameObject:
   - component: {fileID: 1125412623}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -82580,7 +82580,7 @@ GameObject:
   - component: {fileID: 1398477653}
   m_Layer: 0
   m_Name: ItemManager
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -86265,8 +86265,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 462781043}
   m_HandleRect: {fileID: 462781042}
   m_Direction: 2
-  m_Value: 0.00000008888158
-  m_Size: 0.12538585
+  m_Value: -0.000000012697367
+  m_Size: 0.12538584
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -94492,7 +94492,7 @@ GameObject:
   - component: {fileID: 1623271207}
   m_Layer: 0
   m_Name: hmGM
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110093,7 +110093,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 871326596}
   m_HandleRect: {fileID: 871326595}
   m_Direction: 2
-  m_Value: 1.0112574
+  m_Value: 1.0088724
   m_Size: 0.99950045
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -117930,6 +117930,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1125412621}
+  - {fileID: 1398477654}
   - {fileID: 305386731}
   - {fileID: 1391347251}
   - {fileID: 687393974}
@@ -117944,4 +117945,3 @@ SceneRoots:
   - {fileID: 1538645017}
   - {fileID: 701477067}
   - {fileID: 1623271208}
-  - {fileID: 1398477654}

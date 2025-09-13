@@ -1,8 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using UnityEngine.UI;
+using Photon.Realtime;
+using Unity.VisualScripting;
 
-public class ItemManager : MonoBehaviour
+public class ItemManager : MonoBehaviourPunCallbacks
 {
     public static ItemManager Instance { get; private set; }
 
@@ -31,6 +35,8 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
         InitializeItems();
+
+
 
         // 시작 시 HiddenPlatform 레이어 오브젝트 숨김
         GameObject[] allObjects = FindObjectsOfType<GameObject>();

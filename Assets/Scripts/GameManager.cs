@@ -193,42 +193,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void HealthDown()
     {
-        // if (health > 0)
-        // {
-        //     health--;
-        //     UIhealth[health].color = new Color(1, 0, 0, 0.2f);
-        // }
-        // else
-        // {
-        //     UIhealth[0].color = new Color(1, 0, 0, 0.2f);
-
-        //     player.OnDie();
-
-        //     Debug.Log("플레이어가 죽었습니다.");
-
-        //     RestartButton.SetActive(true);
-        // }
-
-        // if (oneHitKill || health <= 1)
-        // {
-        //     // 즉사 또는 체력 1 남은 경우
-        //     health = 0;
-
-        //     if (UIhealth.Length > 0)
-        //         UIhealth[0].color = new Color(1, 0, 0, 0.2f);
-
-        //     player.OnDie();
-        //     Debug.Log("☠️ 즉사 처리됨 또는 체력 소진");
-        //     RestartButton.SetActive(true);
-        // }
-        // else
-        // {
-        //     // 일반 모드에서는 체력 감소
-        //     health--;
-        //     if (UIhealth.Length > health)
-        //         UIhealth[health].color = new Color(1, 0, 0, 0.2f);
-        // }
-
+    
 
         {
             if (health > 0)
@@ -336,12 +301,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         UpdateFinishItemUI();
     }
 
-    // // 로컬 저장된 아이템 개수를 불러오는 함수
-    // public void LoadFinishItemCount()
-    // {
-    //     // 만약 저장된 값이 없다면 기본값 0을 반환함
-    //     finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
-    // }
 
     // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
     public void ResetFinishItemData()
@@ -356,13 +315,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         UpdateFinishItemUI();
     }
 
-    // UI에 Finish 아이템 수치를 업데이트하는 함수
-    // public void UpdateFinishItemUI()
-    // {
-    //     // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
-    //     if (finishItemText != null)
-    //         finishItemText.text = finishItemCount.ToString();
-    // }
+    //UI에 Finish 아이템 수치를 업데이트하는 함수
+    public void UpdateFinishItemUI()
+    {
+        // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
+        if (finishItemText != null)
+            finishItemText.text = finishItemCount.ToString();
+    }
 
     void UpdateHealthUI()
     {
@@ -397,12 +356,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void LoadFinishItemCount()
     {
         finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
-    }
-
-    public void UpdateFinishItemUI()
-    {
-        if (finishItemText != null)
-            finishItemText.text = $"Finish: {finishItemCount}/{totalStages}";
     }
 
 }
