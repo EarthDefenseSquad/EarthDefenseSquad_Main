@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Stage/StageScene.unity
     guid: 87653f79beed6ba4591fd965178e940c
   - enabled: 1
-    path: Assets/Scenes/Story/GoodEnding.unity
+    path: Assets/Scenes/Story/GoodEnding--.unity
     guid: 286943bf6046a2141ae20fc537551018
   - enabled: 1
     path: Assets/Scenes/Story/BadEnding.unity

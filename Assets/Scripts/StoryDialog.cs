@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Doublsb.Dialog;
+using UnityEngine.SceneManagement;
+
 
 public class StoryDialog : MonoBehaviour
 {
     public DialogManager DialogManager;
 
+    public GameObject EndButton;
     public GameObject[] Example;
 
     private void Awake()
@@ -31,7 +34,7 @@ public class StoryDialog : MonoBehaviour
 
         dialogTexts.Add(new DialogData("/emote:5//speed:0.1/많은 요원들이 디바이드의 힘에 맞서 싸우기 시작했지.\n작전을 수행하며 갈등을 꿰뚫고 진실에 다가가려 했어.", "Story"));
 
-        dialogTexts.Add(new DialogData("/emote:6//speed:0.1/하지만 디바이드는 이미 너무 깊숙이 퍼져 있었고.. 그들의 노력은 끝내 미완으로 남고 말았지. \n그들이 남긴 데이터는, 지금 너희 손에 맡겨졌다. ", "Story"));
+        dialogTexts.Add(new DialogData("/emote:6//speed:0.1/하지만 디바이드는 이미 너무 깊숙이 퍼져 있었고..\n그들의 노력은 끝내 미완으로 남고 말았지. \n그들이 남긴 데이터는, 지금 너희 손에 맡겨졌다. ", "Story"));
 
         dialogTexts.Add(new DialogData("/emote:7//speed:0.1/지구방위본부의 마지막 희망.. 요원 X, 그리고 요원 Z.\n너희는 지금까지 요원들이 목숨을 걸고 수집한 데이터를 바탕으로\n내가 완성한 가상 시뮬레이션에 진입해야 한다.", "Story"));
 
@@ -39,7 +42,7 @@ public class StoryDialog : MonoBehaviour
 
         dialogTexts.Add(new DialogData("/emote:7//speed:0.1/두려움은 있어도 좋다. 하지만, 멈춰선 안 된다.\n너희의 용기가 곧 인류의 미래이니.", "Story"));
 
-        dialogTexts.Add(new DialogData("/emote:8//speed:0.1/너희를 돕기 위해 몇가지 아이템을 시뮬레이션 내부에 배치해뒀다.\n이건 단순한 도구가 아니야. 데이터를 추적하는 데 있어 결정적인 ‘이정표’가 되어줄 것이지.\n아이템을 활용하여 너희 선배들의 임무를 완수해라. 사용방식은 요원 X에게 일러뒀다.", "Story"));
+        dialogTexts.Add(new DialogData("/emote:8//speed:0.1/너희를 돕기 위해 몇가지 아이템을 시뮬레이션 내부에 배치해뒀다.\n이건 단순한 도구가 아니야.\n데이터를 추적하는 데 있어 결정적인 ‘이정표’가 되어줄 것이지.\n아이템을 활용하여 너희 선배들의 임무를 완수해라. 사용방식은 요원 X에게 일러뒀다.", "Story"));
 
         dialogTexts.Add(new DialogData("/emote:9//speed:0.1/그곳에서 모은 기록은.. 우리 모두를 구할 실마리가 된다.\n…모든 건 너희 손에 달렸다.\n행운을 빈다. 요원 X, 요원 Z.", "Story"));
 
@@ -51,6 +54,18 @@ public class StoryDialog : MonoBehaviour
     private void Show_Example(int index)
     {
         Example[index].SetActive(true);
+    }
+
+    private void ShowEndButton()
+    {
+        // 원하는 UI 오브젝트를 활성화
+        Debug.Log("다이얼로그가 모두 끝났습니다.");
+        EndButton.SetActive(true); // <- 여기에 버튼 연결
+    }
+    
+    public void GoToMainScene()
+    {
+        SceneManager.LoadScene("StartScene");
     }
     
     //private void GoNextScene()

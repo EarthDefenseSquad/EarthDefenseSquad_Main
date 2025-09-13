@@ -233,7 +233,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 Debug.Log("생명 감소");
                 Debug.Log(health);
                 UpdateHealthUI(); // ✅ UI 업데이트
-                photonView.RPC("PlayerReposition", RpcTarget.All);
+                //photonView.RPC("PlayerReposition", RpcTarget.All);
             }
 
             if (health <= 0)
@@ -241,7 +241,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 Debug.Log(health);
                 player.OnDie();
                 Debug.Log("플레이어가 죽었습니다.");
-                //RestartButton.SetActive(true);
+                RestartButton.SetActive(true);
             }
         }
 
