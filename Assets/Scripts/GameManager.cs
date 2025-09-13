@@ -73,6 +73,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                 photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
             }
         }
+
+
+        
     }
 
 

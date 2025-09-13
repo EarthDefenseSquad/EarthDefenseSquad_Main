@@ -49,7 +49,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
-        stageSelectUI = FindObjectOfType<StageSelectUI>();
+        if (itemManager == null)
+            itemManager = FindObjectOfType<ItemManager>();
+
+        if (stageSelectUI == null)
+            stageSelectUI = FindObjectOfType<StageSelectUI>();
+
     }
     void Start()
     {
