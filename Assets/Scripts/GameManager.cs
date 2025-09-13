@@ -82,10 +82,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (totalPoint != 0 && stagePoint != 0)
-        {
-            UIPoint.text = (totalPoint + stagePoint).ToString();
-        }
+        UIPoint.text = (totalPoint + stagePoint).ToString();
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
 
