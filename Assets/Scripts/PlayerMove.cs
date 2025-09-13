@@ -48,7 +48,18 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        gameManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<GameManager>();
+        if (gameManager == null)
+        {
+            GameObject gm = GameObject.FindGameObjectWithTag("MainManager");
+            if (gm != null)
+            {
+                gameManager = gm.GetComponent<GameManager>();
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ GameManager를 찾을 수 없습니다. 'MainManager' 태그 확인 필요!");
+            }
+        }
         if (itemManager == null)
             itemManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<ItemManager>();
 
@@ -271,9 +282,16 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             
                 if (isCoin)
                 {
-                    if (name.Contains("Bronze")) gameManager.stagePoint += 50;
-                    else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
-                    else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+                    Debug.Log($"[Coin] {name} 먹음. gameManager: {gameManager}, stagePoint: {gameManager?.stagePoint}");
+
+                if (gameManager == null)
+                {
+                    Debug.LogWarning("⚠️ GameManager가 null입니다!! 점수 증가 안 됨");
+                }
+
+                if (name.Contains("Bronze")) gameManager.stagePoint += 50;
+                else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
+                else if (name.Contains("Gold")) gameManager.stagePoint += 300;
 
                     collision.gameObject.SetActive(false);
                     //PlaySound("Item");
