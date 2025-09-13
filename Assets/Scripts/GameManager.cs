@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -65,12 +66,21 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
 
         string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene == "WaitingScene" || currentScene == "StageScene") {
-          if (photonView.IsMine)
+        if (currentScene == "WaitingScene" || currentScene == "StageScene")
+        {
+            if (photonView.IsMine)
             {
                 int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-                photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
-            }      
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    // 마스터 클라이언트는 RPC로만 호출, 직접 Instantiate 금지
+                    photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
+                }
+                else
+                {
+                    // 일반 클라이언트는 RPC 호출 안함, 마스터가 대신 처리
+                }
+            }     
         }
     }
     

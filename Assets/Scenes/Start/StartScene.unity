@@ -1702,7 +1702,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &322687691
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2436,12 +2436,17 @@ MonoBehaviour:
   RoomLoadingPanel: {fileID: 1914146855}
   CharacterSelect_Panel: {fileID: 567280961}
   Tutorial_Panel: {fileID: 784821219}
+  Player1_Info_all: {fileID: 322687690}
+  Player2_Info_all: {fileID: 1873262262}
   Button_Start: {fileID: 979912796}
-  Button_CharacterSelect_Back: {fileID: 0}
+  Button_CharacterSelect_Back: {fileID: 565252682}
   Button_Tutorial_Back: {fileID: 1570503141}
-  Button_CharacterSelect_OK: {fileID: 0}
+  Button_CharacterSelect_LB: {fileID: 70915811}
+  Button_CharacterSelect_RB: {fileID: 408443373}
   Button_Tutorial_OK: {fileID: 1192185960}
   isGameStartRequested: 0
+  Button_CharacterSelect_LB_Pressed: 0
+  Button_CharacterSelect_RB_Pressed: 0
 --- !u!114 &641360786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5985,8 +5990,8 @@ MonoBehaviour:
   warningPanel: {fileID: 1101175259}
   warningText: {fileID: 608701324}
   startSceneButton: {fileID: 565252682}
-  CharacterSelect_Panel: {fileID: 0}
-  Start_Panel: {fileID: 0}
+  CharacterSelect_Panel: {fileID: 567280961}
+  Start_Panel: {fileID: 1486800918}
 --- !u!4 &1557381701
 Transform:
   m_ObjectHideFlags: 0
@@ -6260,7 +6265,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1748023277
 Transform:
   m_ObjectHideFlags: 0
@@ -6755,7 +6760,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1873262263
 RectTransform:
   m_ObjectHideFlags: 0
