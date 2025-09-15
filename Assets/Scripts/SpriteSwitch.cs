@@ -250,16 +250,25 @@ public class SpriteSwitch : MonoBehaviourPun
         targetSet.ApplyCurrent();
     }
 
+    private bool IsSameGenerationConflict(SpriteSet toggledSet)
+    {
+        SpriteSet otherSet = (toggledSet == set1) ? set2 : set1;
+        int group1 = toggledSet.GetCharacterGroup();
+        int group2 = otherSet.GetCharacterGroup();
+
+        return otherSet.isConfirmed && group1 == group2;
+    }
+
     // 캐릭터 선택 확인 토글 시 로컬 UI와 상태 처리 함수
     public void OnConfirmToggled(SpriteSet toggledSet)
     {
         // 다른 캐릭터 세트 참조
-        SpriteSet otherSet = (toggledSet == set1) ? set2 : set1;
-        int group1 = toggledSet.GetCharacterGroup(); // 선택된 캐릭터 그룹
-        int group2 = otherSet.GetCharacterGroup(); // 다른 플레이어 캐릭터 그룹
+        //SpriteSet otherSet = (toggledSet == set1) ? set2 : set1;
+        //int group1 = toggledSet.GetCharacterGroup(); // 선택된 캐릭터 그룹
+        //int group2 = otherSet.GetCharacterGroup(); // 다른 플레이어 캐릭터 그룹
 
         // 같은 그룹이면 경고 메시지 출력 후 종료
-        if (otherSet.isConfirmed && group1 == group2)
+        if (IsSameGenerationConflict(toggledSet))
         {
             ShowWarning("서로 다른 세대를 선택하세요.");
             return;
@@ -274,6 +283,8 @@ public class SpriteSwitch : MonoBehaviourPun
         if (warningPanel != null)
             warningPanel.SetActive(false);
 
+        // 네트워크에 상태 변경 알리기
+        OnConfirmToggle_Network(toggledSet);
         // 두 플레이어 모두 선택 완료 시 씬 전환
         if (set1.isConfirmed && set2.isConfirmed)
         {
@@ -303,10 +314,20 @@ public class SpriteSwitch : MonoBehaviourPun
         // 캐릭터 인덱스 갱신
         targetSet.currentIndex = currentIndex;
         targetSet.ApplyCurrent();       // 현재 인덱스 UI 반영
-        targetSet.SetConfirmed(isConfirmed); // 확정 상태 UI 반영
+        
+        if (IsSameGenerationConflict(targetSet))
+        {
+            // 자신의 캐릭터일 때만 경고 메시지 표시
+            //ShowWarning("서로 다른 세대를 선택하세요.");
+            // 중복인 경우는 Confirmed 상태 변경 안 함
+            return;
+        }
+       // [중요] Confirmed 상태 갱신은 모든 클라이언트가 해야 함
+        targetSet.SetConfirmed(isConfirmed);
 
-        // 기존 OnConfirmToggled 실행해 UI 변경 및 상태 동작 수행
+        // 로컬 UI 맞춤 처리는 소유자만
         OnConfirmToggled(targetSet);
+        
     }
 
     // 경고 메시지 보여주기 함수
@@ -319,7 +340,7 @@ public class SpriteSwitch : MonoBehaviourPun
         {
             warningPanel.SetActive(true);
             CancelInvoke(nameof(HideWarning)); // 기존 숨김 예약 취소
-            Invoke(nameof(HideWarning), 1f); // 1초 후 경고 패널 숨기기 예약
+            Invoke(nameof(HideWarning), 1f); // 3초 후 경고 패널 숨기기 예약
         }
     }
 
