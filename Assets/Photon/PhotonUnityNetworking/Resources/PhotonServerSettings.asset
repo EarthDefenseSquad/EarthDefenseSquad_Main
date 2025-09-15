@@ -65,6 +65,7 @@ MonoBehaviour:
   - OnButton_CharacterSelect_LB_Click
   - OnButton_CharacterSelect_RB_Click
   - SpawnCharacterRoom
+  - RPC_SyncCurrentIndex
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

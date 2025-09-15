@@ -22,6 +22,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public GameObject CharacterSelect_Panel;
     public GameObject Tutorial_Panel;
     public GameObject Player1_Info_all, Player2_Info_all;
+    public SpriteSwitch spriteSwitch;
     public Button Button_Start;
     public Button Button_CharacterSelect_Back, Button_Tutorial_Back;
     public Button Button_CharacterSelect_LB,Button_CharacterSelect_RB, Button_Tutorial_OK;
@@ -46,7 +47,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Start_Panel.SetActive(false);
             RoomLoadingPanel.SetActive(false);
             CharacterSelect_Panel.SetActive(true);
-            Player1_Info_all.SetActive(false);
+            Player1_Info_all.SetActive(false); //처음엔 캐릭터들 비활성화
             Player2_Info_all.SetActive(false);
             Debug.Log("CharacterSelect_Panel 활성화", this);
             Button_CharacterSelect_Back.onClick.RemoveAllListeners(); // 중복 방지
@@ -75,30 +76,39 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Player2_Info_all.SetActive(false);
         Button_CharacterSelect_Back.onClick.RemoveAllListeners(); // 중복 방지
         Button_CharacterSelect_Back.onClick.AddListener(OnCharacterSelect_BackButtonClicked);
-        Button_CharacterSelect_LB.onClick.RemoveAllListeners(); // 중복 방지
-        Button_CharacterSelect_RB.onClick.RemoveAllListeners();
-        Button_CharacterSelect_LB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_LB_Click", RpcTarget.All));
-        Button_CharacterSelect_RB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_RB_Click", RpcTarget.All));
+        //Button_CharacterSelect_LB.onClick.RemoveAllListeners(); // 중복 방지
+        //Button_CharacterSelect_RB.onClick.RemoveAllListeners();
+        //Button_CharacterSelect_LB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_LB_Click", RpcTarget.All));
+        //Button_CharacterSelect_RB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_RB_Click", RpcTarget.All));
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
         //photonView.RPC("SpawnRoomPlayer", RpcTarget.AllBuffered, playerIndex);
-        photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex);
+        photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex); //방입장 성공시 캐릭터들 활성화
     }
     [PunRPC]
     void SpawnCharacterRoom(int player_Index)
     {
-        if (player_Index == 0&&Player1_Info_all.activeSelf == false)
+        if (player_Index == 0 && Player1_Info_all.activeSelf == false)
         {
             Player1_Info_all.SetActive(true);
+            spriteSwitch.set1.Init();
+            spriteSwitch.set2.Init(); // 직접 초기화 호출
+            spriteSwitch.set1.SetConfirmed(false); // 필요시 초기 상태 세팅
+            spriteSwitch.set2.SetConfirmed(false);
         }
         else
         {
             Player2_Info_all.SetActive(true);
+            spriteSwitch.set1.Init();
+            spriteSwitch.set2.Init(); // 직접 초기화 호출
+            spriteSwitch.set1.SetConfirmed(false); // 필요시 초기 상태 세팅
+            spriteSwitch.set2.SetConfirmed(false);
         }
         
     }
-    [PunRPC]
+    /*[PunRPC]
     void OnButton_CharacterSelect_LB_Click()
     {
+        Debug.Log("1player가 레디했습니다.");
         Button_CharacterSelect_LB_Pressed = true;
         CheckBothButtonPressed();
         
@@ -106,6 +116,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void OnButton_CharacterSelect_RB_Click()
     {
+        Debug.Log("2player가 레디했습니다.");
         Button_CharacterSelect_RB_Pressed = true;
         CheckBothButtonPressed();
     }
@@ -117,7 +128,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             Button_CharacterSelect_LB_Pressed = false;
             Button_CharacterSelect_RB_Pressed = false;   
         }
-    }
+    }*/
     [PunRPC]
     void SpawnRoomPlayer(int player_index)
     {

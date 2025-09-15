@@ -2438,6 +2438,7 @@ MonoBehaviour:
   Tutorial_Panel: {fileID: 784821219}
   Player1_Info_all: {fileID: 322687690}
   Player2_Info_all: {fileID: 1873262262}
+  spriteSwitch: {fileID: 1557381700}
   Button_Start: {fileID: 979912796}
   Button_CharacterSelect_Back: {fileID: 565252682}
   Button_Tutorial_Back: {fileID: 1570503141}
@@ -5957,13 +5958,15 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 61172fc864d3d4273a63be31b2a773c2, type: 3}
     - {fileID: 21300000, guid: e935d34c07ac44dadb40c28ee64a60be, type: 3}
     names:
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
+    - "\uC5D0\uC774\uC804\uD2B8Z"
+    - "\uC5D0\uC774\uC804\uD2B8Z"
+    - "\uC5D0\uC774\uC804\uD2B8X"
+    - "\uC5D0\uC774\uC804\uD2B8X"
     infos: []
     currentIndex: 0
     isConfirmed: 0
+    originalLeftColor: {r: 0, g: 0, b: 0, a: 0}
+    originalRightColor: {r: 0, g: 0, b: 0, a: 0}
   set2:
     targetImage: {fileID: 249626836}
     backgroundPanel: {fileID: 1309191331}
@@ -5980,13 +5983,15 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 61172fc864d3d4273a63be31b2a773c2, type: 3}
     - {fileID: 21300000, guid: e935d34c07ac44dadb40c28ee64a60be, type: 3}
     names:
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
+    - "\uC5D0\uC774\uC804\uD2B8Z"
+    - "\uC5D0\uC774\uC804\uD2B8Z"
+    - "\uC5D0\uC774\uC804\uD2B8X"
+    - "\uC5D0\uC774\uC804\uD2B8X"
     infos: []
     currentIndex: 0
     isConfirmed: 0
+    originalLeftColor: {r: 0, g: 0, b: 0, a: 0}
+    originalRightColor: {r: 0, g: 0, b: 0, a: 0}
   warningPanel: {fileID: 1101175259}
   warningText: {fileID: 608701324}
   startSceneButton: {fileID: 565252682}
@@ -6303,19 +6308,13 @@ MonoBehaviour:
     confirmButton: {fileID: 0}
     confirmButtonText: {fileID: 0}
     confirmIcon: {fileID: 0}
-    sprites:
-    - {fileID: 21300000, guid: 1baf2645b6c464cbbb040d9e712af24a, type: 3}
-    - {fileID: 21300000, guid: eb46fb1477c5742418b4c6155eba6aff, type: 3}
-    - {fileID: 21300000, guid: 61172fc864d3d4273a63be31b2a773c2, type: 3}
-    - {fileID: 21300000, guid: e935d34c07ac44dadb40c28ee64a60be, type: 3}
-    names:
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
+    sprites: []
+    names: []
     infos: []
     currentIndex: 0
     isConfirmed: 0
+    originalLeftColor: {r: 0, g: 0, b: 0, a: 0}
+    originalRightColor: {r: 0, g: 0, b: 0, a: 0}
   set2:
     targetImage: {fileID: 0}
     backgroundPanel: {fileID: 0}
@@ -6326,19 +6325,13 @@ MonoBehaviour:
     confirmButton: {fileID: 0}
     confirmButtonText: {fileID: 0}
     confirmIcon: {fileID: 0}
-    sprites:
-    - {fileID: 21300000, guid: 1baf2645b6c464cbbb040d9e712af24a, type: 3}
-    - {fileID: 21300000, guid: eb46fb1477c5742418b4c6155eba6aff, type: 3}
-    - {fileID: 21300000, guid: 61172fc864d3d4273a63be31b2a773c2, type: 3}
-    - {fileID: 21300000, guid: e935d34c07ac44dadb40c28ee64a60be, type: 3}
-    names:
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 Z"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
-    - "\uC5D0\uC774\uC804\uD2B8 X"
+    sprites: []
+    names: []
     infos: []
     currentIndex: 0
     isConfirmed: 0
+    originalLeftColor: {r: 0, g: 0, b: 0, a: 0}
+    originalRightColor: {r: 0, g: 0, b: 0, a: 0}
   warningPanel: {fileID: 0}
   warningText: {fileID: 0}
   startSceneButton: {fileID: 0}
