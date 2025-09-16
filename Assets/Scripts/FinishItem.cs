@@ -37,7 +37,7 @@ public class FinishItem : MonoBehaviour
         }
 
         // 항상 다음 스테이지로는 넘어가게
-        gm.NextStage();
+        //gm.NextStage();
     }
 
     void SetCollectedVisual()

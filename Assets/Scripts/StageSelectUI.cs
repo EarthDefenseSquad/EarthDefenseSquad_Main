@@ -11,7 +11,12 @@ public class StageSelectUI : MonoBehaviour
     public int stageNumber;
     private GameManager gameManager;
 
-    
+    [Header("스테이지 버튼들")]
+    public Button[] stageButtons;
+
+    [Header("게임 씬 이름")]
+    public string gameSceneName = "StageScene"; // 예: 모든 스테이지가 포함된 하나의 씬
+
 
     void Awake()
     {
@@ -19,40 +24,54 @@ public class StageSelectUI : MonoBehaviour
         stageNumber=PlayerMove.clearedStage;
         
     }
-        void Start()
+    void Start()
     {
-        unlockedStages = new bool[stageButtons1960.Length];
-
-            // 기본: 첫번째 스테이지 언락
-            //unlockedStages[0] = true;
-            //stageNumber = gameManager.stageIndex;
-            // 현재 stageNumber까지 해금 상태로 설정
-            for (int i = 0; i <= stageNumber && i < unlockedStages.Length; i++)
-            {
-                unlockedStages[i] = true;
-                UpdateStageButton(i);
-                Debug.Log("STAGE" + i + "열렸습니다.");
-            }
-        
-        // 각 버튼마다 개별 인덱스 복사해서 클릭 이벤트 등록
-        for (int i = 0; i < stageButtons1960.Length; i++)
+        for (int i = 0; i < stageButtons.Length; i++)
         {
-            int index = i; // 클로저 문제 해결용 로컬 변수 복사
-            stageButtons1960[i].onClick.AddListener(() =>
+            Button button = stageButtons[i];
+            StageButtonData data = button.GetComponent<StageButtonData>();
+
+            if (data == null) continue;
+
+            bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
+                || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
+
+            button.interactable = isUnlocked;
+            button.enabled = isUnlocked;
+
+            // 🔓 Lock 아이콘 처리
+            Transform lockIcon = button.transform.Find("LockIcon");
+            if (lockIcon != null)
             {
-                if (unlockedStages[index])
-                    Debug.Log($"스테이지 {index + 1} 선택됨");
-                else
-                    Debug.Log($"스테이지 {index + 1}은 잠겨 있음");
+                lockIcon.gameObject.SetActive(!isUnlocked);
+
+                // Raycast 막는 문제 해결
+                Image img = lockIcon.GetComponent<Image>();
+                if (img != null)
+                    img.raycastTarget = false;
+            }
+
+
+            int selectedIndex = data.stageIndex;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() =>
+            {
+                if (isUnlocked)
+                {
+                    PlayerPrefs.SetInt("SelectedStageIndex", selectedIndex);
+                    PlayerPrefs.Save();
+                    SceneManager.LoadScene(gameSceneName);
+                }
             });
         }
     }
 
 
+
     public void Go1960Scene()
     {
         PhotonNetwork.LoadLevel("StageScene");
-       
+
     }
 
     public void Go1970Scene()

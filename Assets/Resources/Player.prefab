@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: -4260999947153293278}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,7 +129,7 @@ MonoBehaviour:
   jumpForce: 20
   hasAccessPass: 0
   itemManager: {fileID: 0}
-  audioJump: {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
+  audioJump: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
   audioAttack: {fileID: 8300000, guid: a0010a1a0c474473b81729eb770c485f, type: 3}
   audioDamaged: {fileID: 8300000, guid: 72127805eb2bc4e7fbf2e02eca266cfa, type: 3}
   audioItem: {fileID: 8300000, guid: ff5f85da24bc943d1abdc5760a22bc81, type: 3}
