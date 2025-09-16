@@ -77,6 +77,7 @@ public class SpriteSwitch : MonoBehaviourPun
             if (!isConfirmed)
             {
                 currentIndex = (currentIndex - 1 + sprites.Length) % sprites.Length;
+                Debug.Log($"SwitchLeft currentIndex={currentIndex}");
                 ApplyCurrent();
             }
         }
@@ -85,6 +86,7 @@ public class SpriteSwitch : MonoBehaviourPun
             if (!isConfirmed)
             {
                 currentIndex = (currentIndex + 1) % sprites.Length;
+                Debug.Log($"SwitchRight currentIndex={currentIndex}");
                 ApplyCurrent();
             }
         }
@@ -150,6 +152,9 @@ public class SpriteSwitch : MonoBehaviourPun
     public Button startSceneButton; // 시작 씬 이동 버튼
     public GameObject CharacterSelect_Panel; // 캐릭터 선택 패널
     public GameObject Start_Panel; // 시작 패널
+
+    private bool isProcessing = false;
+
     void Awake()
     {
         // 캐릭터 설명 텍스트 초기화 (set1)
@@ -169,12 +174,12 @@ public class SpriteSwitch : MonoBehaviourPun
         // UI 선택 확인시 실행될 로컬 콜백 등록
         //set1.onConfirmToggle += OnConfirmToggled;
         //set2.onConfirmToggle += OnConfirmToggled;
-        set1.onConfirmToggle += OnConfirmToggledLocalWithNetwork;
-        set2.onConfirmToggle += OnConfirmToggledLocalWithNetwork;
+        //set1.onConfirmToggle += OnConfirmToggledLocalWithNetwork;
+        //set2.onConfirmToggle += OnConfirmToggledLocalWithNetwork;
         
         // 네트워크 동기화용 RPC 호출 처리 콜백 등록
-        set1.onConfirmToggle += OnConfirmToggle_Network;
-        set2.onConfirmToggle += OnConfirmToggle_Network;
+        //set1.onConfirmToggle += OnConfirmToggle_Network;
+        //set2.onConfirmToggle += OnConfirmToggle_Network;
         // UI 초기화 및 선택 해제 상태로 설정
         //set1.Init();
         //set2.Init();
@@ -217,13 +222,14 @@ public class SpriteSwitch : MonoBehaviourPun
         var targetSet = (setNumber == 1) ? set1 : set2;
         targetSet.currentIndex = syncedIndex;
         targetSet.ApplyCurrent();
-         // 소유자가 아니면 인덱스 갱신
+        // 소유자가 아니면 인덱스 갱신
         /*if (!photonView.IsMine)
         {
             targetSet.currentIndex = syncedIndex;
             targetSet.ApplyCurrent();
         }*/
         // 소유자라면 로컬 인풋을 우선시하여 덮어쓰지 않음
+       
     }
     private bool IsSameGenerationConflict(SpriteSet toggledSet)
     {
@@ -241,37 +247,33 @@ public class SpriteSwitch : MonoBehaviourPun
             ShowWarning("서로 다른 세대를 선택하세요.");
             return;
         }
-        OnConfirmToggled(toggledSet);
+        OnConfirmToggled_Internal(toggledSet, true);
+    }
 
-         // 네트워크에 상태 변경 알림
-        OnConfirmToggle_Network(toggledSet);
+    private void OnConfirmToggled_Internal(SpriteSet toggledSet, bool isLocalCall)
+    {
+        if (isProcessing) return;
+            isProcessing = true;
+
+        bool nextState = !toggledSet.isConfirmed;
+        toggledSet.SetConfirmed(nextState);
+
+        if (warningPanel != null)
+            warningPanel.SetActive(false);
+
+        //if (isLocalCall && photonView.IsMine)
+        if(isLocalCall)
+            OnConfirmToggle_Network(toggledSet);
+
+        if (set1.isConfirmed && set2.isConfirmed)
+            SceneManager.LoadScene("WaitingScene");
+
+        isProcessing = false;
     }
     // 캐릭터 선택 확인 토글 시 로컬 UI와 상태 처리 함수
     public void OnConfirmToggled(SpriteSet toggledSet)
     {
-        // 다른 캐릭터 세트 참조
-        //SpriteSet otherSet = (toggledSet == set1) ? set2 : set1;
-        //int group1 = toggledSet.GetCharacterGroup(); // 선택된 캐릭터 그룹
-        //int group2 = otherSet.GetCharacterGroup(); // 다른 플레이어 캐릭터 그룹
-        // 같은 그룹이면 경고 메시지 출력 후 종료
-        //if (IsSameGenerationConflict(toggledSet))
-        //{
-        //    ShowWarning("서로 다른 세대를 선택하세요.");
-        //    return;
-        //}
-        // 선택 상태 토글
-        bool nextState = !toggledSet.isConfirmed;
-        toggledSet.SetConfirmed(nextState);
-        // 경고 패널 숨기기
-        if (warningPanel != null)
-            warningPanel.SetActive(false);
-        // 네트워크에 상태 변경 알리기
-        OnConfirmToggle_Network(toggledSet);
-        // 두 플레이어 모두 선택 완료 시 씬 전환
-        if (set1.isConfirmed && set2.isConfirmed)
-        {
-            SceneManager.LoadScene("WaitingScene");
-        }
+        OnConfirmToggled_Internal(toggledSet, true);
     }
     // 선택 확인 토글 시 네트워크 RPC 호출 처리 함수
     public void OnConfirmToggle_Network(SpriteSet toggledSet)
@@ -281,29 +283,18 @@ public class SpriteSwitch : MonoBehaviourPun
         int currentIndex = toggledSet.currentIndex; // 선택된 캐릭터 인덱스
         bool nextState = !toggledSet.isConfirmed; // 변경될 선택 상태
         // 다른 클라이언트에게 RPC로 상태 정보 전송 (버퍼 포함)
-        photonView.RPC(nameof(RPC_OnConfirmToggle), RpcTarget.OthersBuffered, setNumber, currentIndex, nextState);
+        photonView.RPC(nameof(RPC_OnConfirmToggle), RpcTarget.AllBuffered, setNumber, currentIndex, nextState);
     }
     // RPC 함수 - 다른 클라이언트에서 호출되어 UI 상태 동기화 처리
     [PunRPC]
     public void RPC_OnConfirmToggle(int setNumber, int currentIndex, bool isConfirmed)
     {
-        SpriteSet targetSet = (setNumber == 1) ? set1 : set2;
-        // 캐릭터 인덱스 갱신
+        var targetSet = (setNumber == 1) ? set1 : set2;
         targetSet.currentIndex = currentIndex;
-        targetSet.ApplyCurrent();       // 현재 인덱스 UI 반영
-        
-        //if (IsSameGenerationConflict(targetSet))
-        //{
-        //    // 자신의 캐릭터일 때만 경고 메시지 표시
-        //    //ShowWarning("서로 다른 세대를 선택하세요.");
-        //    // 중복인 경우는 Confirmed 상태 변경 안 함
-        //    return;
-        //}
-       // [중요] Confirmed 상태 갱신은 모든 클라이언트가 해야 함
-        targetSet.SetConfirmed(isConfirmed);
-        // 로컬 UI 맞춤 처리는 소유자만
-        OnConfirmToggled(targetSet);
-        
+        targetSet.ApplyCurrent();
+
+        // 네트워크에서는 무한 호출 금지를 위해 isLocalCall=false로 전달
+        OnConfirmToggled_Internal(targetSet, false);
     }
     // 경고 메시지 보여주기 함수
     public void ShowWarning(string message)
