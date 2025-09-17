@@ -87,22 +87,26 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void SpawnCharacterRoom(int player_Index)
     {
+        int myPlayerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+
         if (player_Index == 0 && Player1_Info_all.activeSelf == false)
         {
             Player1_Info_all.SetActive(true);
-            spriteSwitch.set1.Init();
-            spriteSwitch.set2.Init(); // 직접 초기화 호출
-            spriteSwitch.set1.SetConfirmed(false); // 필요시 초기 상태 세팅
-            spriteSwitch.set2.SetConfirmed(false);
+            spriteSwitch.set1.ownerPlayerIndex = 0;
+            spriteSwitch.set1.currentIndex = 0;
+            spriteSwitch.set1.ApplyCurrent();
+            spriteSwitch.set1.Init(myPlayerIndex);
+            spriteSwitch.set1.SetConfirmed(false);
         }
-        else
+        if (player_Index == 1 && Player2_Info_all.activeSelf == false)
         {
             Player2_Info_all.SetActive(true);
-            spriteSwitch.set1.Init();
-            spriteSwitch.set2.Init(); // 직접 초기화 호출
-            spriteSwitch.set1.SetConfirmed(false); // 필요시 초기 상태 세팅
+            spriteSwitch.set2.ownerPlayerIndex = 1;
+            spriteSwitch.set2.currentIndex = 0;
+            spriteSwitch.set2.ApplyCurrent();
+            spriteSwitch.set2.Init(myPlayerIndex);
             spriteSwitch.set2.SetConfirmed(false);
-        }
+    }
         
     }
     /*[PunRPC]

@@ -12,6 +12,7 @@ public class SpriteSwitch : MonoBehaviourPun
         // 중첩 클래스 내부에 부모 참조 추가
         [System.NonSerialized]
         public SpriteSwitch parent;
+        public int ownerPlayerIndex; // 0: set1, 1: set2
         public Image targetImage; // 캐릭터 이미지를 표시할 UI 이미지
         public Image backgroundPanel; // 배경 패널 이미지
         public TextMeshProUGUI characterName; // 캐릭터 이름 텍스트
@@ -31,17 +32,20 @@ public class SpriteSwitch : MonoBehaviourPun
         public System.Action<SpriteSet> onConfirmToggle; // 선택 토글시 호출되는 이벤트
 
         // 초기화 함수 - 버튼에 클릭 이벤트 리스너 등록 및 초기 UI 적용
-        public void Init()
+        public void Init(int myPlayerIndex)
         {
+            
+            // 내 소유(Set1이 0, Set2가 1) 아니면 초기화 무시
+            if (ownerPlayerIndex != myPlayerIndex)
+                return;
             // 입력 데이터 유효성 검사
             if (sprites.Length == 0 || targetImage == null ||
                 names.Length != sprites.Length || infos.Length != sprites.Length)
                 return;
-            ApplyCurrent(); // 현재 인덱스에 맞는 UI 내용 적용
+
             if (leftButton != null)
             {
                 leftButton.onClick.RemoveAllListeners(); // 기존 리스너 제거
-                leftButton.onClick.RemoveAllListeners();
                 leftButton.onClick.AddListener(() =>
                 {
                     SwitchLeft();
@@ -69,6 +73,7 @@ public class SpriteSwitch : MonoBehaviourPun
                     parent?.OnConfirmToggledLocalWithNetwork(this);
                 });
             }
+            ApplyCurrent(); // 현재 인덱스에 맞는 UI 내용 적용
         }
 
         // 우측 버튼 클릭시 선택 스프라이트 인덱스 증가, 적용
@@ -202,14 +207,14 @@ public class SpriteSwitch : MonoBehaviourPun
             });
         }
     }
-    public void OnEnable()
+    /*public void OnEnable()
     {
         Debug.Log("SpriteSwitch OnEnable - UI 초기화");
         set1.Init();
         set2.Init();
         set1.SetConfirmed(false);
         set2.SetConfirmed(false);
-    }
+    }*/
     // 중첩 클래스가 호출하는 함수, RPC 호출 수행
     public void OnSpriteSetIndexChanged(SpriteSet changedSet)
     {
