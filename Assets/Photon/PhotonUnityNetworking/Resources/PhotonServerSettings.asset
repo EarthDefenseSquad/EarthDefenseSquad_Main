@@ -66,6 +66,9 @@ MonoBehaviour:
   - OnButton_CharacterSelect_RB_Click
   - SpawnCharacterRoom
   - RPC_SyncCurrentIndex
+  - RPC_BackToWaitingScene
+  - RPC_GoToStageScene
+  - RPC_BackToYearSelect
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
