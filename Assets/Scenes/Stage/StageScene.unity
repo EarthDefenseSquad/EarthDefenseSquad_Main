@@ -64872,7 +64872,7 @@ GameObject:
   - component: {fileID: 1125412623}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84029,7 +84029,7 @@ GameObject:
   - component: {fileID: 1398477653}
   m_Layer: 0
   m_Name: ItemManager
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87968,7 +87968,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 462781043}
   m_HandleRect: {fileID: 462781042}
   m_Direction: 2
-  m_Value: 0.00000008888158
+  m_Value: 0.000000038092104
   m_Size: 0.12538585
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -112475,8 +112475,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 871326596}
   m_HandleRect: {fileID: 871326595}
   m_Direction: 2
-  m_Value: 1.0123044
-  m_Size: 0.99950033
+  m_Value: 1.0100133
+  m_Size: 0.9995002
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

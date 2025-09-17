@@ -88,10 +88,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (totalPoint != 0 && stagePoint != 0)
-        {
-          UIPoint.text = (totalPoint + stagePoint).ToString();   
-        }
+        UIPoint.text = (totalPoint + stagePoint).ToString();
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
 
@@ -199,41 +196,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void HealthDown()
     {
-        // if (health > 0)
-        // {
-        //     health--;
-        //     UIhealth[health].color = new Color(1, 0, 0, 0.2f);
-        // }
-        // else
-        // {
-        //     UIhealth[0].color = new Color(1, 0, 0, 0.2f);
-
-        //     player.OnDie();
-
-        //     Debug.Log("플레이어가 죽었습니다.");
-
-        //     RestartButton.SetActive(true);
-        // }
-
-        // if (oneHitKill || health <= 1)
-        // {
-        //     // 즉사 또는 체력 1 남은 경우
-        //     health = 0;
-
-        //     if (UIhealth.Length > 0)
-        //         UIhealth[0].color = new Color(1, 0, 0, 0.2f);
-
-        //     player.OnDie();
-        //     Debug.Log("☠️ 즉사 처리됨 또는 체력 소진");
-        //     RestartButton.SetActive(true);
-        // }
-        // else
-        // {
-        //     // 일반 모드에서는 체력 감소
-        //     health--;
-        //     if (UIhealth.Length > health)
-        //         UIhealth[health].color = new Color(1, 0, 0, 0.2f);
-        // }
 
 
         {
