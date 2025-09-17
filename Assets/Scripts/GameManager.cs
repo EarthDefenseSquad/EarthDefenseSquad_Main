@@ -56,36 +56,29 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Awake()
     {
         if (isInstantDeathMode)
-            {
-                health = 1;
-                UpdateHealthUI(); // ✅ UI 반영
-            }
-            else
-            {
-                health = 3;
-            }
-
-        string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
-            if (photonView.IsMine)
-            {
-                int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-                if (PhotonNetwork.IsMasterClient)
-                {
-                    // 마스터 클라이언트는 RPC로만 호출, 직접 Instantiate 금지
-                    photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
-                }
-                else
-                {
-                    // 일반 클라이언트는 RPC 호출 안함, 마스터가 대신 처리
-                }
-            }     
+            health = 1;
+            UpdateHealthUI(); // ✅ UI 반영
         }
+        else
+        {
+            health = 3;
+        }
+
+       
     }
 
     void Start()
     {
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "WaitingScene" || currentScene == "StageScene")
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("SpawnPlayer", RpcTarget.All, 0);
+                photonView.RPC("SpawnPlayer", RpcTarget.All, 1);
+            }
+        }
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
 
@@ -107,7 +100,11 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        UIPoint.text = (totalPoint + stagePoint).ToString();
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "StageScene") //현재 씬이 스테이지씬일 경우에만 포인트 띄움
+        {
+            UIPoint.text = (totalPoint + stagePoint).ToString();   
+        }
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
 
