@@ -83,8 +83,27 @@ public class GameManager : MonoBehaviourPunCallbacks
             }     
         }
     }
-    
 
+    void Start()
+    {
+        // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
+        stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
+
+        // ✅ 모든 스테이지 비활성화
+        for (int i = 0; i < Stages.Length; i++)
+            Stages[i].SetActive(false);
+
+        // ✅ 현재 선택된 스테이지만 활성화
+        if (stageIndex >= 0 && stageIndex < Stages.Length)
+        {
+            Stages[stageIndex].SetActive(true);
+            UIStage.text = "STAGE " + (stageIndex + 1);
+        }
+        else
+        {
+            Debug.LogWarning("유효하지 않은 stageIndex 입니다.");
+        }
+    }
 
     void Update()
     {
