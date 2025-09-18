@@ -56,41 +56,54 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Awake()
     {
         if (isInstantDeathMode)
-            {
-                health = 1;
-                UpdateHealthUI(); // ✅ UI 반영
-            }
-            else
-            {
-                health = 3;
-            }
+        {
+            health = 1;
+            UpdateHealthUI(); // ✅ UI 반영
+        }
+        else
+        {
+            health = 3;
+        }
 
+       
+    }
+
+    void Start()
+    {
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
-            if (photonView.IsMine)
+            if (PhotonNetwork.IsMasterClient)
             {
-                int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-                if (PhotonNetwork.IsMasterClient)
-                {
-                    // 마스터 클라이언트는 RPC로만 호출, 직접 Instantiate 금지
-                    photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
-                }
-                else
-                {
-                    // 일반 클라이언트는 RPC 호출 안함, 마스터가 대신 처리
-                }
-            }     
+                photonView.RPC("SpawnPlayer", RpcTarget.All, 0);
+                photonView.RPC("SpawnPlayer", RpcTarget.All, 1);
+            }
+        }
+        // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
+        stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
+
+        // ✅ 모든 스테이지 비활성화
+        for (int i = 0; i < Stages.Length; i++)
+            Stages[i].SetActive(false);
+
+        // ✅ 현재 선택된 스테이지만 활성화
+        if (stageIndex >= 0 && stageIndex < Stages.Length)
+        {
+            Stages[stageIndex].SetActive(true);
+            UIStage.text = "STAGE " + (stageIndex + 1);
+        }
+        else
+        {
+            Debug.LogWarning("유효하지 않은 stageIndex 입니다.");
         }
     }
-    
-
 
     void Update()
     {
-        if (totalPoint != 0 && stagePoint != 0)
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "StageScene") //현재 씬이 스테이지씬일 경우에만 포인트 띄움
         {
-          UIPoint.text = (totalPoint + stagePoint).ToString();   
+            UIPoint.text = (totalPoint + stagePoint).ToString();   
         }
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
@@ -199,41 +212,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void HealthDown()
     {
-        // if (health > 0)
-        // {
-        //     health--;
-        //     UIhealth[health].color = new Color(1, 0, 0, 0.2f);
-        // }
-        // else
-        // {
-        //     UIhealth[0].color = new Color(1, 0, 0, 0.2f);
-
-        //     player.OnDie();
-
-        //     Debug.Log("플레이어가 죽었습니다.");
-
-        //     RestartButton.SetActive(true);
-        // }
-
-        // if (oneHitKill || health <= 1)
-        // {
-        //     // 즉사 또는 체력 1 남은 경우
-        //     health = 0;
-
-        //     if (UIhealth.Length > 0)
-        //         UIhealth[0].color = new Color(1, 0, 0, 0.2f);
-
-        //     player.OnDie();
-        //     Debug.Log("☠️ 즉사 처리됨 또는 체력 소진");
-        //     RestartButton.SetActive(true);
-        // }
-        // else
-        // {
-        //     // 일반 모드에서는 체력 감소
-        //     health--;
-        //     if (UIhealth.Length > health)
-        //         UIhealth[health].color = new Color(1, 0, 0, 0.2f);
-        // }
 
 
         {

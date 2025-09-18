@@ -69,6 +69,8 @@ MonoBehaviour:
   - RPC_BackToWaitingScene
   - RPC_GoToStageScene
   - RPC_BackToYearSelect
+  - RPC_ShowPanel
+  - RPC_GoTo1970_2
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

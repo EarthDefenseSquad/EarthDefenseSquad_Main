@@ -435,7 +435,7 @@ GameObject:
   - component: {fileID: 170673264}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29723,7 +29723,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -74}
+  m_AnchoredPosition: {x: 0, y: 20.009995}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1303064859
@@ -30102,8 +30102,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 691188648}
   m_HandleRect: {fileID: 691188647}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: -1996.907
+  m_Size: 0.9994995
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -31400,7 +31400,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 349407820}
   m_HandleRect: {fileID: 349407819}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

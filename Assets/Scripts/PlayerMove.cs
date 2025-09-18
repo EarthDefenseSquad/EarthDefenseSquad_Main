@@ -48,8 +48,11 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        gameManager = FindObjectOfType<GameManager>();
+        //gameManager = FindObjectOfType<GameManager>();
         stageSelectUI = FindObjectOfType<StageSelectUI>();
+        itemManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<ItemManager>();
+        gameManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<GameManager>();
+
     }
     void Start()
     {
@@ -94,6 +97,46 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
         if (Input.GetKeyDown(KeyCode.Space))
             jumpPressed = true;
+
+        if (jumpPressed)
+        {
+            if (!anim.GetBool("isJumping")) // 1단 점프
+            {
+                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                anim.SetBool("isJumping", true);
+                doubleJumpUsed = false;
+                PlaySound("Jump");
+
+                jumpPressed = false;   // ✅ 여기서 바로 false 처리 → 같은 프레임에서 else if 못 탐
+                return;                // ✅ 강제 리턴 → 2단 점프 분기 진입 방지
+            }
+            else if (doubleJumpActive && !doubleJumpUsed) // 2단 점프
+            {
+                rigid.velocity = new Vector2(rigid.velocity.x, 0);
+                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                doubleJumpUsed = true;
+                PlaySound("Jump");
+            }
+            jumpPressed = false;
+        }
+
+        // Stop Speed
+        if (h == 0)
+        {
+            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
+            //normalized : 벡터 크기를 1로 만든 상태 (단위벡터)
+        }
+
+        // Direction Sprite 
+        //if (Input.GetButton("Horizontal"))
+        //    spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
+        if (h != 0)
+            spriteRenderer.flipX = h == -1;
+        // Animation
+        if (Mathf.Abs(rigid.velocity.x) < 0.3)
+            anim.SetBool("isWalking", false);
+        else
+            anim.SetBool("isWalking", true);
 
         if (gameManager.colorRestoreMode)
         {
@@ -176,45 +219,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (rayHit.collider != null && rayHit.distance < 0.65f)
                 anim.SetBool("isJumping", false);
         }
-        if (jumpPressed)
-        {
-            if (!anim.GetBool("isJumping")) // 1단 점프
-            {
-                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                anim.SetBool("isJumping", true);
-                doubleJumpUsed = false;
-                PlaySound("Jump");
-
-                jumpPressed = false;   // ✅ 여기서 바로 false 처리 → 같은 프레임에서 else if 못 탐
-                return;                // ✅ 강제 리턴 → 2단 점프 분기 진입 방지
-            }
-            else if (doubleJumpActive && !doubleJumpUsed) // 2단 점프
-            {
-                rigid.velocity = new Vector2(rigid.velocity.x, 0);
-                rigid.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                doubleJumpUsed = true;
-                PlaySound("Jump");
-            }
-            jumpPressed = false;
-        }
-
-        // Stop Speed
-        if (h == 0)
-        {
-            rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
-            //normalized : 벡터 크기를 1로 만든 상태 (단위벡터)
-        }
-
-        // Direction Sprite 
-        //if (Input.GetButton("Horizontal"))
-        //    spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
-        if (h != 0)
-            spriteRenderer.flipX = h == -1;
-        // Animation
-        if (Mathf.Abs(rigid.velocity.x) < 0.3)
-            anim.SetBool("isWalking", false);
-        else
-            anim.SetBool("isWalking", true);
+        
             
         
     }

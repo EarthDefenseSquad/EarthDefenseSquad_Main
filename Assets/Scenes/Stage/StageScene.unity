@@ -26886,7 +26886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage2_finish
+  itemID: 1970_2_finish
 --- !u!61 &463270873
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -55059,7 +55059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage4_finish
+  itemID: 1970_4_finish
 --- !u!61 &944802289
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -64872,7 +64872,7 @@ GameObject:
   - component: {fileID: 1125412623}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -69834,7 +69834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage6_finish
+  itemID: 1970_6_finish
 --- !u!61 &1216397123
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -84029,7 +84029,7 @@ GameObject:
   - component: {fileID: 1398477653}
   m_Layer: 0
   m_Name: ItemManager
-  m_TagString: Untagged
+  m_TagString: MainManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -87644,7 +87644,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage8_finish
+  itemID: 1970_8_finish
 --- !u!61 &1475624934
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -93505,7 +93505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage3_finish
+  itemID: 1970_3_finish
 --- !u!61 &1596321057
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -97583,7 +97583,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage5_finish
+  itemID: 1970_5_finish
 --- !u!61 &1648677567
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -100606,7 +100606,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage7_finish
+  itemID: 1970_7_finish
 --- !u!61 &1714275392
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -102892,7 +102892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage1_finish
+  itemID: 1970_1_finish
 --- !u!1 &1752337338
 GameObject:
   m_ObjectHideFlags: 0
@@ -106260,6 +106260,92 @@ Transform:
   - {fileID: 1735060253}
   - {fileID: 586957412}
   m_Father: {fileID: 1391347251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1838452086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1838452088}
+  - component: {fileID: 1838452087}
+  m_Layer: 0
+  m_Name: StageNetworkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1838452087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838452086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d55e4d09cc8964e81dcd580169f900, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel_1970: {fileID: 1391347250}
+  panel_1980: {fileID: 687393973}
+  panel_1990: {fileID: 55704800}
+  panel_2000: {fileID: 1390893737}
+  panel_2010: {fileID: 1560134685}
+  panel_2020: {fileID: 1572230813}
+  panel_1970_stages:
+  - {fileID: 2102439591}
+  - {fileID: 177030915}
+  - {fileID: 1836960458}
+  - {fileID: 1235324510}
+  - {fileID: 49573890}
+  panel_1980_stages:
+  - {fileID: 1061877071}
+  - {fileID: 970802348}
+  - {fileID: 675404710}
+  - {fileID: 1745475281}
+  - {fileID: 1612836377}
+  panel_1990_stages:
+  - {fileID: 1757667463}
+  - {fileID: 185768207}
+  - {fileID: 1464369712}
+  - {fileID: 360337838}
+  - {fileID: 247071922}
+  panel_2000_stages:
+  - {fileID: 902742696}
+  - {fileID: 2083101450}
+  - {fileID: 984637827}
+  - {fileID: 1761678124}
+  - {fileID: 1071926220}
+  panel_2010_stages:
+  - {fileID: 797944910}
+  - {fileID: 1854955605}
+  - {fileID: 483522625}
+  - {fileID: 2139760502}
+  - {fileID: 2054620642}
+  panel_2020_stages:
+  - {fileID: 227390655}
+  - {fileID: 1306977063}
+  - {fileID: 1576039453}
+  - {fileID: 2023007461}
+  - {fileID: 866901914}
+--- !u!4 &1838452088
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838452086}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1843114931
 GameObject:
@@ -115432,7 +115518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage9_finish
+  itemID: 1970_9_finish
 --- !u!61 &2027768307
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -120550,3 +120636,4 @@ SceneRoots:
   - {fileID: 701477067}
   - {fileID: 1623271208}
   - {fileID: 1398477654}
+  - {fileID: 1838452088}
