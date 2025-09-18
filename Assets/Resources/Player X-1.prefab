@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 8605364530776694022}
   - component: {fileID: 3611783178850218198}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player X-1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 1baf2645b6c464cbbb040d9e712af24a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 61172fc864d3d4273a63be31b2a773c2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,7 +101,7 @@ Animator:
   m_GameObject: {fileID: 4828525040922323524}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: cb7128e9ae68cd04c938bd57aef0f5da, type: 2}
+  m_Controller: {fileID: 9100000, guid: fb151ef885360429c946386e20515549, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -124,9 +124,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b9dbf3c6b6afcd42b4992d2011083b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerType: 1
-  maxSpeed: 10
-  jumpForce: 20
+  playerType: 0
+  maxSpeed: 5
+  jumpForce: 10
   hasAccessPass: 0
   itemManager: {fileID: 0}
   audioJump: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}
