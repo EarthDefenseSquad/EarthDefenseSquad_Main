@@ -43,7 +43,13 @@ public class hmGM : MonoBehaviour
         isPaused = false;
     }
 
-    public void RestartGame()
+    public void RestartStage()
+    {
+        Time.timeScale = 1f; // 반드시 시간 되돌리기
+        SceneManager.LoadScene("StageScene");
+    }
+
+    public void GotoMain()
     {
         Time.timeScale = 1f; // 반드시 시간 되돌리기
         SceneManager.LoadScene("StartScene");
