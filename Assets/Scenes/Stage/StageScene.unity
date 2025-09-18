@@ -106290,6 +106290,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d55e4d09cc8964e81dcd580169f900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panel_1970: {fileID: 1391347250}
+  panel_1980: {fileID: 687393973}
+  panel_1990: {fileID: 55704800}
+  panel_2000: {fileID: 1390893737}
+  panel_2010: {fileID: 1560134685}
+  panel_2020: {fileID: 1572230813}
+  panel_1970_stages:
+  - {fileID: 2102439591}
+  - {fileID: 177030915}
+  - {fileID: 1836960458}
+  - {fileID: 1235324510}
+  - {fileID: 49573890}
+  panel_1980_stages:
+  - {fileID: 1061877071}
+  - {fileID: 970802348}
+  - {fileID: 675404710}
+  - {fileID: 1745475281}
+  - {fileID: 1612836377}
+  panel_1990_stages:
+  - {fileID: 1757667463}
+  - {fileID: 185768207}
+  - {fileID: 1464369712}
+  - {fileID: 360337838}
+  - {fileID: 247071922}
+  panel_2000_stages:
+  - {fileID: 902742696}
+  - {fileID: 2083101450}
+  - {fileID: 984637827}
+  - {fileID: 1761678124}
+  - {fileID: 1071926220}
+  panel_2010_stages:
+  - {fileID: 797944910}
+  - {fileID: 1854955605}
+  - {fileID: 483522625}
+  - {fileID: 2139760502}
+  - {fileID: 2054620642}
+  panel_2020_stages:
+  - {fileID: 227390655}
+  - {fileID: 1306977063}
+  - {fileID: 1576039453}
+  - {fileID: 2023007461}
+  - {fileID: 866901914}
 --- !u!4 &1838452088
 Transform:
   m_ObjectHideFlags: 0

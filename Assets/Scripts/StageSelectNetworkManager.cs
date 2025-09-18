@@ -34,7 +34,18 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     public Button backButton_Year, backButton_1970,backButton_1980,backButton_1990,backButton_2000,backButton_2010,backButton_2020;
     //백버튼
 
-    public int stageFlag;
+    public static int[] stage1970Flag = new int[] { 19701, 19702, 19703, 19704, 19705 };
+
+    public static int[] stage1980Flag = new int[] { 19801, 19802, 19803, 19804, 19805 };
+
+    public static int[] stage1990Flag = new int[] { 19901, 19902, 19903, 19904, 19905 };
+
+    public static int[] stage2000Flag = new int[] { 20001, 20002, 20003, 20004, 20005, };
+
+    public static int[] stage2010Flag = new int[] { 20101, 20102, 20103, 20104, 20105 };
+
+    public static int[] stage2020Flag = new int[] { 20201, 20202, 20203, 20204, 20205 };
+    public static int flag;
     void Awake()
     {
 
@@ -62,15 +73,15 @@ public class StageSelectNetworkManager : MonoBehaviourPun
             if (backButton_Year != null)
                 backButton_Year.onClick.AddListener(() => OnBackButtonClicked());
             if (stageButton_1970_1 != null)
-                stageButton_1970_1.onClick.AddListener(() => OnStageButtonClicked(1970));
+                stageButton_1970_1.onClick.AddListener(() => OnStageButtonClicked(1970,0));
             if (stageButton_1970_2 != null)
-                stageButton_1970_2.onClick.AddListener(() => OnStageButtonClicked(1970));
+                stageButton_1970_2.onClick.AddListener(() => OnStageButtonClicked(1970,1));
             if (stageButton_1970_3 != null)
-                stageButton_1970_3.onClick.AddListener(() => OnStageButtonClicked(1970));
+                stageButton_1970_3.onClick.AddListener(() => OnStageButtonClicked(1970,2));
             if (stageButton_1970_4 != null)
-                stageButton_1970_4.onClick.AddListener(() => OnStageButtonClicked(1970));
+                stageButton_1970_4.onClick.AddListener(() => OnStageButtonClicked(1970,3));
             if (stageButton_1970_5 != null)
-                stageButton_1970_5.onClick.AddListener(() => OnStageButtonClicked(1970));
+                stageButton_1970_5.onClick.AddListener(() => OnStageButtonClicked(1970,4));
 
             if (backButton_1970 != null)
                 backButton_1970.onClick.AddListener(() => OnBackToYearSelect(1970));
@@ -245,10 +256,8 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     }
 
 
-    private void OnStageButtonClicked(int year)
+    private void OnStageButtonClicked(int year, int stage)
     {
-        if (year == 1970)
-        {
             if (!PhotonNetwork.IsMasterClient)
             {
                 Debug.LogWarning("스테이지 선택은 마스터 클라이언트만 가능합니다.");
@@ -257,21 +266,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
 
             // 선택된 스테이지에 따라 필요 시 다른 처리를 할 수 있음
             Debug.Log($"마스터가 연도 {year} 선택");
-            photonView.RPC(nameof(RPC_GoToStageScene), RpcTarget.All);
-        }
-
-        if (year == 1980)
-        {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                Debug.LogWarning("스테이지 선택은 마스터 클라이언트만 가능합니다.");
-                return;
-            }
-
-            // 선택된 스테이지에 따라 필요 시 다른 처리를 할 수 있음
-            Debug.Log($"마스터가 연도 {year} 선택");
-            photonView.RPC(nameof(RPC_GoToStageScene), RpcTarget.All);
-        }
+            photonView.RPC(nameof(RPC_GoToStageScene), RpcTarget.All, year, stage);
     }
 
     private void OnBackButtonClicked()
@@ -291,18 +286,41 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    void RPC_GoToStageScene()
+    void RPC_GoToStageScene(int year, int stage)
     {
-        PhotonNetwork.LoadLevel("StageScene");
+        if (year == 1970)
+        {
+            flag = stage1970Flag[stage];
+            PhotonNetwork.LoadLevel("StageScene");
+        }
+        if (year == 1980)
+        {
+            flag = stage1980Flag[stage];
+            PhotonNetwork.LoadLevel("StageScene");
+        }
+        if (year == 1990)
+        {
+            flag = stage1990Flag[stage];
+            PhotonNetwork.LoadLevel("StageScene");
+        }
+        if (year == 2000)
+        {
+            flag = stage2000Flag[stage];
+            PhotonNetwork.LoadLevel("StageScene");
+        }
+        if (year == 2010)
+        {
+            flag = stage2010Flag[stage];
+            PhotonNetwork.LoadLevel("StageScene");
+        }
+        if (year == 2020)
+        {
+            flag = stage2020Flag[stage];
+            PhotonNetwork.LoadLevel("StageScene");
+        }
     }
 
-    [PunRPC]
-    void RPC_GoTo1970_2()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-        stageFlag = 19702;
-        
-    }
+   
     [PunRPC]
     void RPC_BackToYearSelect(int year)
     {
