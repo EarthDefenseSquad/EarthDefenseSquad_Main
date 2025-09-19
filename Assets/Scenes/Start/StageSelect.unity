@@ -3250,7 +3250,7 @@ PrefabInstance:
     - target: {fileID: 4509845034934618266, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 601422034, guid: 8e446f0d5a9ecab429c080225be6c287, type: 3}
+      objectReference: {fileID: -976789918, guid: 8e446f0d5a9ecab429c080225be6c287, type: 3}
     - target: {fileID: 6717363763001830431, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_Color.a
       value: 0.9019608
@@ -3345,7 +3345,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7636430515891389088, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1.5504992
+      value: -0.000038266
+      objectReference: {fileID: 0}
+    - target: {fileID: 7636430515891389088, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -101
       objectReference: {fileID: 0}
     - target: {fileID: 8139175962041800692, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_IsActive
@@ -7209,15 +7213,15 @@ PrefabInstance:
       objectReference: {fileID: 601422034, guid: 8e446f0d5a9ecab429c080225be6c287, type: 3}
     - target: {fileID: 4509845034934618266, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_Color.b
-      value: 0.6039216
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4509845034934618266, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_Color.g
-      value: 0.5882353
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4509845034934618266, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_Color.r
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6717363763001830431, guid: 186844cc2f35eb84fa6d8c89b109523e, type: 3}
       propertyPath: m_Color.a
@@ -17358,7 +17362,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6875641337806698758}
   m_HandleRect: {fileID: 2088308974341397098}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
