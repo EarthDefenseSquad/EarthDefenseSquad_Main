@@ -86881,8 +86881,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 462781043}
   m_HandleRect: {fileID: 462781042}
   m_Direction: 2
-  m_Value: 0.00000008888158
-  m_Size: 0.12538585
+  m_Value: 0.000016849406
+  m_Size: 0.12538584
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -111350,7 +111350,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 871326596}
   m_HandleRect: {fileID: 871326595}
   m_Direction: 2
-  m_Value: 1.0148798
+  m_Value: 1.017169
   m_Size: 0.99950033
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -115847,10 +115847,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: This is a multiline input text field with an automatic scrollbar.
+  m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5896d3d3982264fc582caa7a66dc1001, type: 2}
+  m_sharedMaterial: {fileID: -5130646603778175874, guid: 5896d3d3982264fc582caa7a66dc1001, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -117805,7 +117805,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000076293945}
+  m_AnchoredPosition: {x: 0, y: -0.020225525}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2119673553
