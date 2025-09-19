@@ -8,11 +8,15 @@ public class AccessGate : MonoBehaviour
     private BoxCollider2D col;
     private SpriteRenderer sr;
 
+    public GameManager gameManager;
+
     private void Awake()
     {
         col = GetComponent<BoxCollider2D>();
         sr = GetComponent<SpriteRenderer>();
+        gameManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<GameManager>();
     }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -26,10 +30,17 @@ public class AccessGate : MonoBehaviour
                 return;
             }
 
-            if (GameManager.Instance.stagePoint >= requiredScore)
+            // if (GameManager.Instance == null)
+            // {
+            //     Debug.LogError("GameManager.Instance가 null입니다! AccessGate에서 참조 실패");
+            //     return;
+            // }
+
+
+            if (gameManager.stagePoint >= requiredScore)
             {
-                GameManager.Instance.stagePoint -= requiredScore;
-                Debug.Log($"✅ {requiredScore}점 차감 후 통과. 남은 점수: {GameManager.Instance.stagePoint}");
+                gameManager.stagePoint -= requiredScore;
+                Debug.Log($"✅ {requiredScore}점 차감 후 통과. 남은 점수: {gameManager.stagePoint}");
 
                 col.enabled = false;
                 if (sr != null) sr.enabled = false; // 시각적 제거
@@ -38,7 +49,7 @@ public class AccessGate : MonoBehaviour
             }
             else
             {
-                Debug.Log($"❌ 점수 부족 ({GameManager.Instance.stagePoint} / 필요: {requiredScore})");
+                Debug.Log($"❌ 점수 부족 ({gameManager.stagePoint} / 필요: {requiredScore})");
             }
         }
     }
