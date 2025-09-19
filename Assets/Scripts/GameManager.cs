@@ -73,11 +73,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                photonView.RPC("SpawnPlayer", RpcTarget.All, 0);
-                photonView.RPC("SpawnPlayer", RpcTarget.All, 1);
-            }
+            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+            if (photonView.IsMine) // 자신의 클라이언트에서만 Instantiate!
+                {
+                    photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
+                }
         }
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
