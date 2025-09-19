@@ -88065,8 +88065,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 462781043}
   m_HandleRect: {fileID: 462781042}
   m_Direction: 2
-  m_Value: 0.00000008888157
-  m_Size: 0.12538584
+  m_Value: 0.00000008888158
+  m_Size: 0.12538585
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -106368,6 +106368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1838452088}
   - component: {fileID: 1838452087}
+  - component: {fileID: 1838452089}
   m_Layer: 0
   m_Name: StageNetworkManager
   m_TagString: Untagged
@@ -106444,6 +106445,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1838452089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838452086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1843114931
 GameObject:
   m_ObjectHideFlags: 0
@@ -112658,7 +112681,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 871326596}
   m_HandleRect: {fileID: 871326595}
   m_Direction: 2
-  m_Value: 1.017169
+  m_Value: 1.0123044
   m_Size: 0.99950033
   m_NumberOfSteps: 0
   m_OnValueChanged:

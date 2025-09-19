@@ -48,7 +48,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     public static int flag;
     void Awake()
     {
-
+        Debug.Log("스테이지셀렉트네트워크 시작");
         if (yearButton_1970 != null)
             yearButton_1970.onClick.AddListener(() => OnYearButtonClicked(1970));
         if (yearButton_1980 != null)
@@ -101,7 +101,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     }
 
 
-    private void SetButtonsInteractable(bool interactable)
+    public void SetButtonsInteractable(bool interactable)
     {
         backButton_Year.interactable = interactable;
         backButton_1970.interactable = interactable;
@@ -149,7 +149,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     
     }
 
-    private void OnYearButtonClicked(int year)
+    public void OnYearButtonClicked(int year)
     {
         if (year == 1970)
         {
@@ -203,8 +203,9 @@ public class StageSelectNetworkManager : MonoBehaviourPun
 
 
     [PunRPC]
-    private void RPC_ShowPanel(int year) //백버튼 눌렀을 때 해당 연도 패널 가려지고 year패널 나타나도록.
+    public void RPC_ShowPanel(int year) //백버튼 눌렀을 때 해당 연도 패널 가려지고 year패널 나타나도록.
     {
+        Debug.Log("연도 패널 보여줌");
         if (year == 1970)
         {
             if (panel_1970 != null)
@@ -256,74 +257,80 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     }
 
 
-    private void OnStageButtonClicked(int year, int stage)
+    public void OnStageButtonClicked(int year, int stage)
     {
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                Debug.LogWarning("스테이지 선택은 마스터 클라이언트만 가능합니다.");
-                return;
-            }
+        Debug.Log("스테이지씬 클릭");
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            Debug.LogWarning("스테이지 선택은 마스터 클라이언트만 가능합니다.");
+            return;
+        }
 
-            // 선택된 스테이지에 따라 필요 시 다른 처리를 할 수 있음
-            Debug.Log($"마스터가 연도 {year} 선택");
-            photonView.RPC(nameof(RPC_GoToStageScene), RpcTarget.All, year, stage);
+        // 선택된 스테이지에 따라 필요 시 다른 처리를 할 수 있음
+        Debug.Log($"마스터가 연도 {year} 선택");
+
+        Debug.Log("RPC 호출 시도: year=" + year + ", stage=" + stage);
+        photonView.RPC(nameof(RPC_GoToStageScene), RpcTarget.All, year, stage);
     }
 
-    private void OnBackButtonClicked()
+    public void OnBackButtonClicked()
     {
         photonView.RPC(nameof(RPC_BackToWaitingScene), RpcTarget.All);
     }
 
-    private void OnBackToYearSelect(int year)
+    public void OnBackToYearSelect(int year)
     {
         photonView.RPC(nameof(RPC_BackToYearSelect), RpcTarget.All, year);
     }
 
     [PunRPC]
-    void RPC_BackToWaitingScene()
+    public void RPC_BackToWaitingScene()
     {
+        Debug.Log("웨이팅씬으로 감");
         PhotonNetwork.LoadLevel("WaitingScene");
     }
 
     [PunRPC]
-    void RPC_GoToStageScene(int year, int stage)
+    public void RPC_GoToStageScene(int year, int stage)
     {
+        Debug.Log($"RPC_GoToStageScene 실행! year:{year}, stage:{stage}");
         if (year == 1970)
         {
             flag = stage1970Flag[stage];
-            PhotonNetwork.LoadLevel("StageScene");
+            Debug.Log("현재 플래그 " + flag);
         }
         if (year == 1980)
         {
             flag = stage1980Flag[stage];
-            PhotonNetwork.LoadLevel("StageScene");
         }
         if (year == 1990)
         {
             flag = stage1990Flag[stage];
-            PhotonNetwork.LoadLevel("StageScene");
         }
         if (year == 2000)
         {
             flag = stage2000Flag[stage];
-            PhotonNetwork.LoadLevel("StageScene");
         }
         if (year == 2010)
         {
             flag = stage2010Flag[stage];
-            PhotonNetwork.LoadLevel("StageScene");
         }
         if (year == 2020)
         {
             flag = stage2020Flag[stage];
-            PhotonNetwork.LoadLevel("StageScene");
         }
+        Debug.Log("Save flag to PlayerPrefs: " + flag);
+        PlayerPrefs.SetInt("SelectedStageFlag", flag);
+        PlayerPrefs.Save();
+        PhotonNetwork.LoadLevel("StageScene");
+       
     }
 
    
     [PunRPC]
-    void RPC_BackToYearSelect(int year)
+    public void RPC_BackToYearSelect(int year)
     {
+        Debug.Log("뒤로가기");
         if (year == 1970)
         {
             panel_1970.SetActive(false);

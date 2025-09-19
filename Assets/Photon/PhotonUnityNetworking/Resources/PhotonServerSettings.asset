@@ -28,7 +28,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: 
+  DevRegion: kr
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -71,6 +71,7 @@ MonoBehaviour:
   - RPC_BackToYearSelect
   - RPC_ShowPanel
   - RPC_GoTo1970_2
+  - SyncStagePanel
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
