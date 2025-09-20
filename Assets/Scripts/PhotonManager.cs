@@ -68,7 +68,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("방 참가에 실패하였습니다. 방을 새로 만듭니다.");
         StartCoroutine(DeactivateAfterDelay(0.2f));
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 }); //null은 room 이름, 참가자 최대 2명.
+        //PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 }); //null은 room 이름, 참가자 최대 2명.
+        RoomOptions options = new RoomOptions { MaxPlayers = 2 };
+
+        // 방 이름 고정
+        PhotonNetwork.JoinOrCreateRoom("MyRoom", options, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
