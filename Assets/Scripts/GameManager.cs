@@ -73,11 +73,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
-            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-            if (photonView.IsMine) // 자신의 클라이언트에서만 Instantiate!
-                {
-                    photonView.RPC("SpawnPlayer", RpcTarget.All, playerIndex);
-                }
+            //int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+            int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+            if (photonView.IsMine)
+            {
+                SpawnPlayer(0);
+                SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
+            }
+        
+            /*if (photonView.IsMine) // 자신의 클라이언트에서만 Instantiate!
+            {
+                
+                SpawnPlayer(playerIndex);
+            }*/           
         }
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
@@ -124,15 +132,36 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
 
-    [PunRPC]
+    
     public void SpawnPlayer(int player_index)
     {
+        int selectedIndex = (player_index == 0) ? CharacterSelectionData.player1SelectedIndex : CharacterSelectionData.player2SelectedIndex;
+        string prefabName;
+        switch (selectedIndex)
+        {
+            case 0:
+                prefabName = "Player";
+                break;
+            case 1:
+                prefabName = "Player Z-2";
+                break;
+            case 2:
+                prefabName = "Player X-1";
+                break;
+            case 3:
+                prefabName = "Player X-2";
+                break;
+            default:
+                prefabName = "Player"; // 기본값 설정
+                break;
+        }
+        Debug.Log($"Selected prefabName: {prefabName} for player_index: {player_index}");
         var spawnPositions = new Vector3[]
         {
         new Vector3(-1.0f, -0.5f, 0.0f),
         new Vector3(0.0f, -0.5f, 0.0f)
         };
-        GameObject playerObject = PhotonNetwork.Instantiate("Player", spawnPositions[player_index], Quaternion.identity);
+        GameObject playerObject = PhotonNetwork.Instantiate(prefabName, spawnPositions[player_index], Quaternion.identity);
         player = playerObject.GetComponent<PlayerMove>();
         //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
         //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
@@ -155,6 +184,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.LogError("Main Camera가 없습니다.");
             return;
         }
+    }
+
+    public void SetCharacterSprite(int selectedIndex)
+    {
+        
     }
     public void OnGameClear()
     {

@@ -271,7 +271,13 @@ public class SpriteSwitch : MonoBehaviourPun
             OnConfirmToggle_Network(toggledSet);
 
         if (set1.isConfirmed && set2.isConfirmed)
-            SceneManager.LoadScene("WaitingScene");
+        {
+            CharacterSelectionData.player1SelectedIndex = set1.currentIndex;
+            CharacterSelectionData.player2SelectedIndex = set2.currentIndex;
+            Debug.Log("현재 Player1 인덱스: " + CharacterSelectionData.player1SelectedIndex);
+            Debug.Log("현재 Player2 인덱스: " + CharacterSelectionData.player2SelectedIndex);
+            SceneManager.LoadScene("WaitingScene");   
+        }
 
         isProcessing = false;
     }

@@ -80,22 +80,21 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         //Button_CharacterSelect_RB.onClick.RemoveAllListeners();
         //Button_CharacterSelect_LB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_LB_Click", RpcTarget.All));
         //Button_CharacterSelect_RB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_RB_Click", RpcTarget.All));
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
+        //int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
+        int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
         //photonView.RPC("SpawnRoomPlayer", RpcTarget.AllBuffered, playerIndex);
         photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex); //방입장 성공시 캐릭터들 활성화
     }
     [PunRPC]
     void SpawnCharacterRoom(int player_Index)
     {
-        int myPlayerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-
         if (player_Index == 0 && Player1_Info_all.activeSelf == false)
         {
             Player1_Info_all.SetActive(true);
             spriteSwitch.set1.ownerPlayerIndex = 0;
             spriteSwitch.set1.currentIndex = 0;
             spriteSwitch.set1.ApplyCurrent();
-            spriteSwitch.set1.Init(myPlayerIndex);
+            spriteSwitch.set1.Init(player_Index);
             spriteSwitch.set1.SetConfirmed(false);
         }
         if (player_Index == 1 && Player2_Info_all.activeSelf == false)
@@ -104,7 +103,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             spriteSwitch.set2.ownerPlayerIndex = 1;
             spriteSwitch.set2.currentIndex = 0;
             spriteSwitch.set2.ApplyCurrent();
-            spriteSwitch.set2.Init(myPlayerIndex);
+            spriteSwitch.set2.Init(player_Index);
             spriteSwitch.set2.SetConfirmed(false);
     }
         
