@@ -15,7 +15,7 @@ public class TypingManager : MonoBehaviour
     private void Start()
     {
         inputField.gameObject.SetActive(false);
-        player = FindLocalPlayer();
+        // player = FindLocalPlayer();
     }
 
     void Update()
@@ -27,17 +27,17 @@ public class TypingManager : MonoBehaviour
 }
 
 
-    private PlayerMove FindLocalPlayer()
-    {
-        PlayerMove[] allPlayers = FindObjectsOfType<PlayerMove>();
-        foreach (var p in allPlayers)
-        {
-            var view = p.GetComponent<Photon.Pun.PhotonView>();
-            if (view == null || view.IsMine)
-                return p;
-        }
-        return null;
-    }
+    // private PlayerMove FindLocalPlayer()
+    // {
+    //     PlayerMove[] allPlayers = FindObjectsOfType<PlayerMove>();
+    //     foreach (var p in allPlayers)
+    //     {
+    //         var view = p.GetComponent<Photon.Pun.PhotonView>();
+    //         if (view == null || view.IsMine)
+    //             return p;
+    //     }
+    //     return null;
+    // }
 
     public void ShowInputField(GameObject[] targetObjects, string keyword, GameObject questionPanel)
     {
