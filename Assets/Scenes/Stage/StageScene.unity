@@ -48541,6 +48541,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1626073b8f1b1d42a8c1bbae6059460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  goalObject: {fileID: 0}
 --- !u!1 &789084469
 GameObject:
   m_ObjectHideFlags: 0
@@ -62403,7 +62404,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1061877072
 Transform:
   m_ObjectHideFlags: 0
@@ -64745,7 +64746,7 @@ MonoBehaviour:
   playerObj: {fileID: 0}
   player: {fileID: 0}
   Stages:
-  - {fileID: 1061877071}
+  - {fileID: 2102439591}
   - {fileID: 177030915}
   - {fileID: 1836960458}
   - {fileID: 1235324510}
@@ -87621,8 +87622,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 462781043}
   m_HandleRect: {fileID: 462781042}
   m_Direction: 2
-  m_Value: -0.00000006348684
-  m_Size: 0.12538584
+  m_Value: -0.00000011427631
+  m_Size: 0.12538585
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -96066,71 +96067,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1001 &1628930485
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1265464301027977866, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: playerType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1661695695479113464, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: sceneViewId
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2206831448330191541, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4828525040922323524, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-      propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
 --- !u!1001 &1629045665
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -111802,7 +111738,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 871326596}
   m_HandleRect: {fileID: 871326595}
   m_Direction: 2
-  m_Value: 1.0115436
+  m_Value: 1.0012403
   m_Size: 0.99950045
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -117871,7 +117807,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2102439592
 Transform:
   m_ObjectHideFlags: 0
@@ -119947,7 +119883,6 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1628930485}
   - {fileID: 1125412621}
   - {fileID: 305386731}
   - {fileID: 1391347251}
