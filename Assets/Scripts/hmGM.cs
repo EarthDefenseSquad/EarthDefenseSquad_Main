@@ -15,7 +15,7 @@ public class hmGM : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -65,6 +65,12 @@ public class hmGM : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+    
+    public void SkipStory()
+    {
+        Time.timeScale = 1f; // 반드시 시간 되돌리기
+        SceneManager.LoadScene("StageSelect");
     }
 
 
