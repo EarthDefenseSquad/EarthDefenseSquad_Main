@@ -74,6 +74,7 @@ MonoBehaviour:
   - SyncStagePanel
   - SyncStageUI
   - RPC_stageUpdateUI
+  - RPC_SpawnPlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

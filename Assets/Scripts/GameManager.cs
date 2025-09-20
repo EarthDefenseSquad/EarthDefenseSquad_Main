@@ -74,21 +74,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
             int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-           
+
             /*if (photonView.IsMine)
             {
                 //SpawnPlayer(0);
                 //SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
             }*/
-        
-            if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.LocalPlayer.IsLocal)
             {
-                photonView.RPC("RPC_SpawnPlayer", RpcTarget.AllBuffered, 0); // Master
+                SpawnPlayer(playerIndex);
             }
-            else
-            {
-                photonView.RPC("RPC_SpawnPlayer", RpcTarget.AllBuffered, 1); // 나머지 플레이어
-            }      
+               
         }
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
@@ -131,14 +127,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     }
-    [PunRPC]
-    void RPC_SpawnPlayer(int playerIndex, PhotonMessageInfo info)
-    {
-        if (photonView.IsMine) // 여기선 각자 자기 photonView만 실행
-        {
-            SpawnPlayer(playerIndex);
-        }
-    }
+   
 
 
     public void SpawnPlayer(int player_index)
