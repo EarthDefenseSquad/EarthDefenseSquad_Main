@@ -81,11 +81,10 @@ public class GameManager : MonoBehaviourPunCallbacks
                 //SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
             }*/
         
-            if (photonView.IsMine) // 자신의 클라이언트에서만 Instantiate!
+            if (PhotonNetwork.IsConnected)
             {
-                
-                SpawnPlayer(playerIndex);
-            }           
+                SpawnPlayer(playerIndex); // 모든 클라가 자기 캐릭터 생성
+            }         
         }
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
