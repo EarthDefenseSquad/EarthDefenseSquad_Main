@@ -70,22 +70,22 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        string currentScene = SceneManager.GetActiveScene().name;
+        /*string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
             int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
 
-            /*if (photonView.IsMine)
+            if (photonView.IsMine)
             {
                 //SpawnPlayer(0);
                 //SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
-            }*/
+            }
             if (PhotonNetwork.LocalPlayer.IsLocal)
             {
                 SpawnPlayer(playerIndex);
             }
-               
-        }
+        }*/   
+        
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
 
@@ -105,6 +105,22 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public override void OnJoinedRoom()
+    {
+        base.OnJoinedRoom();
+
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "WaitingScene" || currentScene == "StageScene")
+        {
+            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+
+            // 로컬 플레이어만 스폰
+            if (PhotonNetwork.LocalPlayer.IsLocal)
+            {
+                SpawnPlayer(playerIndex);
+            }
+        }
+    }
     void Update()
     {
         string currentScene = SceneManager.GetActiveScene().name;
