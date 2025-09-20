@@ -1,20 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
+using ExitGames.Client.Photon; // Photon Hashtable
 
-public class FinishItem : MonoBehaviour
+public class FinishItem : MonoBehaviourPunCallbacks
 {
     public string itemID;  // 고유 ID: 예) "Stage1_Finish"
-
     private bool collected = false;
 
     void Start()
     {
-        // 이미 수집한 적 있다면 투명화 처리
-        if (PlayerPrefs.GetInt(itemID, 0) == 1)
+        // 룸 프로퍼티에 이미 기록되어 있으면 투명 처리
+        if (PhotonNetwork.CurrentRoom != null && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(itemID))
         {
-            collected = true;
-            SetCollectedVisual();  // 투명하게 만들기
+            if ((int)PhotonNetwork.CurrentRoom.CustomProperties[itemID] == 1)
+            {
+                collected = true;
+                SetCollectedVisual();
+            }
         }
     }
 
@@ -22,30 +27,43 @@ public class FinishItem : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        // GameManager 가져오기
-        GameManager gm = FindObjectOfType<GameManager>();
-
-        // Finish 개수는 한 번만 증가
         if (!collected)
         {
-            PlayerPrefs.SetInt(itemID, 1);
-            gm.AddFinishItem();  // 실제 Finish 개수 증가
             collected = true;
-        }
+            SetCollectedVisual();
 
-        // 항상 다음 스테이지로는 넘어가게
-        //gm.NextStage();
+            // ✅ 룸 프로퍼티 업데이트
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
+            props[itemID] = 1;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
+            // GameManager에 FinishItem 증가 반영
+            GameManager gm = FindObjectOfType<GameManager>();
+            gm.AddFinishItem();
+        }
     }
 
     void SetCollectedVisual()
     {
-        // SpriteRenderer를 투명하게
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null)
         {
             Color c = sr.color;
             c.a = 0.3f;
             sr.color = c;
+        }
+    }
+
+    // 룸 프로퍼티 변경 시 동기화
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    {
+        if (propertiesThatChanged.ContainsKey(itemID))
+        {
+            if ((int)propertiesThatChanged[itemID] == 1)
+            {
+                collected = true;
+                SetCollectedVisual();
+            }
         }
     }
 }

@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             if (photonView.IsMine)
             {
                 SpawnPlayer(0);
-                SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
+                //SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
             }
         
             /*if (photonView.IsMine) // 자신의 클라이언트에서만 Instantiate!
@@ -200,7 +200,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         StageSelectPanel.SetActive(true);
     }
 
-    [PunRPC]
+   /* [PunRPC]
     void DBonGameClear(int clearedStage)
     {
         //클리어 기록 관련
@@ -217,7 +217,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         playFabDataManager.SaveStageClear(clearedStage, clearedStage =>
         { StageSelectUI.UnlockStage(clearedStage); });
-    }
+    }*/
 
     public void NextStage()
     {

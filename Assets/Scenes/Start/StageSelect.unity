@@ -13821,6 +13821,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 2000_3_finish
   stageIndex: 18
+  yearIndex: 0
 --- !u!222 &7346568311331926349
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13843,6 +13844,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 28
+  yearIndex: 0
 --- !u!222 &7346568312776334632
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13865,6 +13867,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1970_3_finish
   stageIndex: 3
+  yearIndex: 1970
 --- !u!222 &7346568312967595352
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13887,6 +13890,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1980_3_finish
   stageIndex: 8
+  yearIndex: 0
 --- !u!222 &7346568313001664054
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13909,6 +13913,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 23
+  yearIndex: 0
 --- !u!222 &7346568313008426860
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13931,6 +13936,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1990_3_finish
   stageIndex: 13
+  yearIndex: 0
 --- !u!222 &7364218232392181192
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -14124,6 +14130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1980_2_finish
   stageIndex: 7
+  yearIndex: 0
 --- !u!114 &7741826807453197000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14153,6 +14160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1990_2_finish
   stageIndex: 12
+  yearIndex: 0
 --- !u!114 &7741826807460066194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14182,6 +14190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 22
+  yearIndex: 0
 --- !u!114 &7741826807891406988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14211,6 +14220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1970_2_finish
   stageIndex: 2
+  yearIndex: 1970
 --- !u!114 &7741826808056552681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14240,6 +14250,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 27
+  yearIndex: 0
 --- !u!114 &7741826808301668576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14269,6 +14280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 2000_2_finish
   stageIndex: 17
+  yearIndex: 0
 --- !u!114 &7858795398763071258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17362,7 +17374,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6875641337806698758}
   m_HandleRect: {fileID: 2088308974341397098}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -17689,6 +17701,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1970_4_finish
   stageIndex: 4
+  yearIndex: 1970
 --- !u!1 &8970889629548956606
 GameObject:
   m_ObjectHideFlags: 0
@@ -17724,6 +17737,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 24
+  yearIndex: 0
 --- !u!1 &8970889629558938340
 GameObject:
   m_ObjectHideFlags: 0
@@ -17759,6 +17773,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1990_4_finish
   stageIndex: 14
+  yearIndex: 0
 --- !u!1 &8970889629583118544
 GameObject:
   m_ObjectHideFlags: 0
@@ -17794,6 +17809,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1980_4_finish
   stageIndex: 9
+  yearIndex: 0
 --- !u!1 &8970889630994559180
 GameObject:
   m_ObjectHideFlags: 0
@@ -17829,6 +17845,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 2000_4_finish
   stageIndex: 19
+  yearIndex: 0
 --- !u!1 &8970889631235974341
 GameObject:
   m_ObjectHideFlags: 0
@@ -17864,6 +17881,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 29
+  yearIndex: 0
 --- !u!114 &9129782247212848458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17922,6 +17940,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1990_5_finish
   stageIndex: 15
+  yearIndex: 0
 --- !u!114 &9129782247492043075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17980,6 +17999,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 25
+  yearIndex: 0
 --- !u!114 &9129782248664886566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18038,6 +18058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 0
+  yearIndex: 1970
 --- !u!114 &9129782249161094486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18096,6 +18117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1970_5_finish
   stageIndex: 5
+  yearIndex: 0
 --- !u!114 &9129782249170468706
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18154,6 +18176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1980_5_finish
   stageIndex: 10
+  yearIndex: 0
 --- !u!114 &9129782249194008120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18212,6 +18235,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 20
+  yearIndex: 0
 --- !u!114 &9132222261019591053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18270,6 +18294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 26
+  yearIndex: 0
 --- !u!114 &9132222261294044548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18328,6 +18353,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 2000_1_finish
   stageIndex: 16
+  yearIndex: 0
 --- !u!114 &9132222262537268982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18386,6 +18412,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 
   stageIndex: 21
+  yearIndex: 0
 --- !u!114 &9132222262561898412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18444,6 +18471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1990_1_finish
   stageIndex: 11
+  yearIndex: 0
 --- !u!114 &9132222262571398552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18502,6 +18530,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1980_1_finish
   stageIndex: 6
+  yearIndex: 0
 --- !u!114 &9132222263062752744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18560,6 +18589,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requiredFinishID: 1970_1_finish
   stageIndex: 1
+  yearIndex: 1970
 --- !u!114 &9150865524933894942
 MonoBehaviour:
   m_ObjectHideFlags: 0

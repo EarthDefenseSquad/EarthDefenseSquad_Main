@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using Photon.Pun.UtilityScripts;
 using Unity.VisualScripting;
 
+
 //PhotonManager 스크립트 기능:
 //게임 시작하자마자 연결-로비 진입 상태
 //start버튼 누르면 룸 로딩 패널 - 캐릭터 선택 패널로 룸 진입.
@@ -28,13 +29,52 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public Button Button_CharacterSelect_LB,Button_CharacterSelect_RB, Button_Tutorial_OK;
     public bool isGameStartRequested = false;
     public bool Button_CharacterSelect_LB_Pressed, Button_CharacterSelect_RB_Pressed = false;
+    int selectedStageIndex = -1;
+    int selectedYearIndex = -1;
 
+    private int[] years = { 1970, 1980, 1990, 2000, 2010, 2020 };
+    private int stageCountPerYear = 5;
     private void Start() //게임 시작 버튼 클릭과 함께 스크립트 활성화.
     {
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
         GameDataManager.Instance.Start_Panel = this.Start_Panel;
         Button_Start.onClick.AddListener(OnGameStartButtonClicked);
+
+    }
+
+    void ResetFinishItems()
+    {
+        ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable();
+
+        // 스테이지에 존재하는 모든 FinishItem 불러오기
+        FinishItem[] items = FindObjectsOfType<FinishItem>();
+        foreach (var item in items)
+        {
+            resetProps[item.itemID] = 0; // 전부 초기화
+        }
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(resetProps);
+    }
+   private void ResetStageLocks()
+    {
+        ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable();
+
+        foreach (int year in years) // years = {1970, 1980, 1990, 2000, 2010, 2020}
+        {
+            for (int stageIndex = 0; stageIndex < stageCountPerYear; stageIndex++)
+            {
+                string key = $"{year}_{stageIndex}";
+
+                if (stageIndex == 0)
+                    resetProps[key] = 1; // 각 연도의 첫 번째 스테이지는 항상 오픈
+                else
+                    resetProps[key] = 0; // 나머지는 잠금
+            }
+        }
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(resetProps);
+        Debug.Log("스테이지 잠금 초기화 완료 (모든 연도의 Stage1은 항상 오픈)");
     }
     public override void OnConnectedToMaster() //게임 시작하자마자 서버 연결 - 로비 진입 성공 상태시 콜백
     {
@@ -84,6 +124,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
         //photonView.RPC("SpawnRoomPlayer", RpcTarget.AllBuffered, playerIndex);
         photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex); //방입장 성공시 캐릭터들 활성화
+        if (PhotonNetwork.IsMasterClient)
+        {
+            ResetStageLocks(); //스테이지 다시 락락
+            ResetFinishItems(); //finish아이템 초기화
+        }
     }
     [PunRPC]
     void SpawnCharacterRoom(int player_Index)
