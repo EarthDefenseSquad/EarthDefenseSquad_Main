@@ -81,10 +81,14 @@ public class GameManager : MonoBehaviourPunCallbacks
                 //SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
             }*/
         
-            if (PhotonNetwork.IsConnected)
+            if (PhotonNetwork.IsMasterClient)
             {
-                SpawnPlayer(playerIndex); // 모든 클라가 자기 캐릭터 생성
-            }         
+                photonView.RPC("RPC_SpawnPlayer", RpcTarget.AllBuffered, 0); // Master
+            }
+            else
+            {
+                photonView.RPC("RPC_SpawnPlayer", RpcTarget.AllBuffered, 1); // 나머지 플레이어
+            }      
         }
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
@@ -127,7 +131,14 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     }
-
+    [PunRPC]
+    void RPC_SpawnPlayer(int playerIndex, PhotonMessageInfo info)
+    {
+        if (photonView.IsMine) // 여기선 각자 자기 photonView만 실행
+        {
+            SpawnPlayer(playerIndex);
+        }
+    }
 
 
     public void SpawnPlayer(int player_index)
