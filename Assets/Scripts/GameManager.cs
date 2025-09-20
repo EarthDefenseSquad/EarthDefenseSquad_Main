@@ -119,14 +119,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         // UI에 현재 수치 표시
         UpdateFinishItemUI();
 
-#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.R))
         {
             PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
             PlayerPrefs.Save();
             Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
-#endif
        
 
     }
