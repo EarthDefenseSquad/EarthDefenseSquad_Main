@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "StageScene") //현재 씬이 스테이지씬일 경우에만 포인트 띄움
         {
-            UIPoint.text = (totalPoint + stagePoint).ToString();   
+            UIPoint.text = (totalPoint + stagePoint).ToString();
         }
         // 로컬 저장된 아이템 개수를 불러옴
         LoadFinishItemCount();
@@ -125,12 +125,12 @@ public class GameManager : MonoBehaviourPunCallbacks
             PlayerPrefs.Save();
             Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
-       
+
 
     }
 
 
-    
+
     public void SpawnPlayer(int player_index)
     {
         int selectedIndex = (player_index == 0) ? CharacterSelectionData.player1SelectedIndex : CharacterSelectionData.player2SelectedIndex;
