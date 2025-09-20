@@ -125,8 +125,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerType: 1
-  maxSpeed: 10
-  jumpForce: 20
+  maxSpeed: 7
+  jumpForce: 15
   hasAccessPass: 0
   itemManager: {fileID: 0}
   audioJump: {fileID: 8300000, guid: 2c5292ba5cf254919a6b9e2b18e04f49, type: 3}

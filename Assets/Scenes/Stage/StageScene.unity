@@ -17513,7 +17513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 099898ed2b32c02418315d3f893ed71f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 6261512243428422708, guid: 38adb012983cc2a46a65bc1348771aba, type: 3}
+  target: {fileID: 0}
 --- !u!81 &305386729
 AudioListener:
   m_ObjectHideFlags: 0
@@ -25351,7 +25351,7 @@ GameObject:
   - component: {fileID: 431449621}
   - component: {fileID: 431449620}
   - component: {fileID: 431449619}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -25512,7 +25512,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_Sprite: {fileID: 8596640243658272642, guid: 5d4daff38e3d9174b873918abcf2c1d4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -31151,7 +31151,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &513189471
 RectTransform:
   m_ObjectHideFlags: 0
@@ -89633,7 +89633,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 462781043}
   m_HandleRect: {fileID: 462781042}
   m_Direction: 2
-  m_Value: -0.000000012697367
+  m_Value: 0.000000038092097
   m_Size: 0.12538584
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -115830,8 +115830,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 871326596}
   m_HandleRect: {fileID: 871326595}
   m_Direction: 2
-  m_Value: 1.0123044
-  m_Size: 0.99950033
+  m_Value: 1.0171658
+  m_Size: 0.9995002
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
