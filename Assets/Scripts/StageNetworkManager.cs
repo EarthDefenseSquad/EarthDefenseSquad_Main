@@ -1,39 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
+using System.Collections;
 
 
-public class StageNetworkManager : MonoBehaviourPun
+
+public class StageNetworkManager : MonoBehaviourPunCallbacks
 {
     public GameObject panel_1970, panel_1980, panel_1990, panel_2000, panel_2010, panel_2020;
     public GameObject[] panel_1970_stages, panel_1980_stages, panel_1990_stages, panel_2000_stages, panel_2010_stages, panel_2020_stages; // 0: 1스테이지, 1: 2스테이지, ...
     // panel_1980과 panel_1990... 등도 동일하게 추가.
-    
+    int selectedStageIndex = -1;
+    int selectedYearIndex = -1;
     void Start()
     {
 
-        int flag = PlayerPrefs.GetInt("SelectedStageFlag", 0);
-        if(flag == 0)
-            Debug.LogError("선택된 스테이지 플래그가 없습니다!");
-        else
-            Debug.Log("받은 flag: " + flag);
-        
-
-        int year = flag / 10;
-        int stageIndex = flag % 10 - 1; // 1스테이지면 0, 2스테이지면 1 ...
-        Debug.Log("flag = " + flag);
-        photonView.RPC("SyncStagePanel", RpcTarget.AllBuffered, flag);
-
-        
+        ReadCustomProperties();    
 
     }
 
-    [PunRPC]
-    void SyncStagePanel(int flag)
+     void ReadCustomProperties()
     {
-        int year = flag / 10;
-        int stageIndex = flag % 10 - 1;
+        if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("SelectedStageIndex"))
+            selectedStageIndex = (int)PhotonNetwork.LocalPlayer.CustomProperties["SelectedStageIndex"];
+
+        if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("SelectedYearIndex"))
+            selectedYearIndex = (int)PhotonNetwork.LocalPlayer.CustomProperties["SelectedYearIndex"];
+
+        if (selectedStageIndex == -1 || selectedYearIndex == -1)
+        {
+            Debug.LogWarning("커스텀 프로퍼티가 아직 준비되지 않았거나 값이 없습니다.");
+            return;
+        }
+
+        // 정상적으로 값이 있을 때 UI 동기화 RPC 호출
+        photonView.RPC("SyncStagePanel", RpcTarget.AllBuffered, selectedStageIndex, selectedYearIndex);
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if (targetPlayer == PhotonNetwork.LocalPlayer &&
+            (changedProps.ContainsKey("SelectedStageIndex") || changedProps.ContainsKey("SelectedYearIndex")))
+        {
+            Debug.Log("커스텀 프로퍼티 변경 알림 받음");
+
+            // 프로퍼티 다시 읽고 UI 갱신
+            ReadCustomProperties();
+        }
+    }
+
+    [PunRPC]
+    void SyncStagePanel(int selectedStageIndex, int selectedYearIndex)
+    {
+        int year = selectedYearIndex;
+        int stageIndex = selectedStageIndex;
+        Debug.Log("StageNetworkManager: 선택된 스테이지 인덱스: " + selectedStageIndex);
+        Debug.Log("StageNetworkManager: 선택된 연도 인덱스: " + selectedYearIndex);
 
         switch (year)
         {

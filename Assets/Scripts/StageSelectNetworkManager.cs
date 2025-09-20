@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using System;
+using ExitGames.Client.Photon; 
 
 public class StageSelectNetworkManager : MonoBehaviourPun
 {
@@ -205,6 +206,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     [PunRPC]
     public void RPC_ShowPanel(int year) //백버튼 눌렀을 때 해당 연도 패널 가려지고 year패널 나타나도록.
     {
+        
         Debug.Log("연도 패널 보여줌");
         if (year == 1970)
         {
@@ -212,6 +214,11 @@ public class StageSelectNetworkManager : MonoBehaviourPun
             {
                 panel_year.SetActive(false);
                 panel_1970.SetActive(true);
+                Hashtable props = new Hashtable
+                {
+                    { "SelectedYearIndex", 1970 }
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
             }
         }
         if (year == 1980)
@@ -319,10 +326,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
         {
             flag = stage2020Flag[stage];
         }
-        Debug.Log("Save flag to PlayerPrefs: " + flag);
-        PlayerPrefs.SetInt("SelectedStageFlag", flag);
-        PlayerPrefs.Save();
-        PhotonNetwork.LoadLevel("StageScene");
+
        
     }
 

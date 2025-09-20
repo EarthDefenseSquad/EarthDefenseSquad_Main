@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using ExitGames.Client.Photon; 
 
 public class StageSelectUI : MonoBehaviour
 {
@@ -58,12 +59,16 @@ public class StageSelectUI : MonoBehaviour
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
             {
-                if (isUnlocked)
+            if (isUnlocked)
+            {
+                Hashtable props = new Hashtable //포톤으로 저장 동기화
                 {
-                    PlayerPrefs.SetInt("SelectedStageIndex", selectedIndex);
-                    PlayerPrefs.Save();
-                    SceneManager.LoadScene(gameSceneName);
-                }
+                    { "SelectedStageIndex", selectedIndex }
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+                Debug.Log($"selectedIndex: {selectedIndex}");
+                PhotonNetwork.LoadLevel(gameSceneName);
+            }
             });
         }
     }
