@@ -4,144 +4,147 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using ExitGames.Client.Photon; 
 
-public class StageSelectUI : MonoBehaviour
+public class StageSelectUI : MonoBehaviourPun
 {
-     public Button[] stageButtons1960;
-    // 각 스테이지의 해금 상태를 저장
+    // 1960년대 스테이지 버튼 배열 (UI 버튼들)
+    public Button[] stageButtons1960;
+
+    // 각 스테이지의 해금(잠금 해제) 여부를 저장하는 배열
     private bool[] unlockedStages;
+
+    // 현재 선택된 스테이지 번호
     public int stageNumber;
+
+    // 게임 전반 관리 매니저 참조
     private GameManager gameManager;
 
-
     [Header("스테이지 버튼들")]
+    // 실제 모든 스테이지 버튼 (예: 1960, 1970, 1980 등 포함 가능)
     public Button[] stageButtons;
 
     [Header("게임 씬 이름")]
-    public string gameSceneName = "StageScene"; // 예: 모든 스테이지가 포함된 하나의 씬
-
-
+    // 선택된 스테이지를 로드할 씬 이름 (모든 스테이지가 포함된 하나의 씬이라고 가정)
+    public string gameSceneName = "StageScene"; 
 
     void Awake()
     {
+        // 게임 매니저 찾기
         gameManager = FindObjectOfType<GameManager>();
-        stageNumber=PlayerMove.clearedStage;
-        
+
+        // PlayerMove에서 static으로 관리되는 clearedStage 값을 가져와 현재 스테이지 번호 설정
+        stageNumber = PlayerMove.clearedStage;
     }
+
     void Start()
     {
-        for (int i = 0; i < stageButtons.Length; i++)
+        if (PhotonNetwork.IsMasterClient)
         {
-            Button button = stageButtons[i];
+            // 모든 스테이지 버튼을 순회하면서 초기화
+            for (int i = 0; i < stageButtons.Length; i++)
+            {
+                Button button = stageButtons[i];
+
+                // 각 버튼에 붙어 있는 StageButtonData 컴포넌트 가져오기
+                StageButtonData data = button.GetComponent<StageButtonData>();
+
+                if (data == null) continue; // StageButtonData가 없으면 패스
+
+                // --- 스테이지 해금 여부 확인 ---
+                // requiredFinishID가 없거나, PlayerPrefs에 저장된 값이 1이면 해금
+                bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
+                    || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
+
+                photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
+
+            }
+        }
+    } 
+    [PunRPC]
+    void RPC_stageUpdateUI(int index, bool isUnlocked)
+    {
+            Button button = stageButtons[index];
             StageButtonData data = button.GetComponent<StageButtonData>();
-
-            if (data == null) continue;
-
-            bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
-                || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
 
             button.interactable = isUnlocked;
             button.enabled = isUnlocked;
 
-            // 🔓 Lock 아이콘 처리
+            // --- 자물쇠 아이콘 처리 ---
             Transform lockIcon = button.transform.Find("LockIcon");
             if (lockIcon != null)
             {
+                // 잠겨있으면 자물쇠 켜기, 해금이면 끄기
                 lockIcon.gameObject.SetActive(!isUnlocked);
 
-                // Raycast 막는 문제 해결
+                // RaycastTarget 꺼서 자물쇠 아이콘이 클릭을 방해하지 않게 함
                 Image img = lockIcon.GetComponent<Image>();
                 if (img != null)
                     img.raycastTarget = false;
             }
 
-
-            int selectedIndex = data.stageIndex;
-            button.onClick.RemoveAllListeners();
+            // 클릭 이벤트 등록
+            int selectedIndex = data.stageIndex; // 캡쳐 문제 방지 위해 지역 변수 사용
+            button.onClick.RemoveAllListeners(); // 중복 방지
             button.onClick.AddListener(() =>
             {
-            if (isUnlocked)
-            {
-                Hashtable props = new Hashtable //포톤으로 저장 동기화
+                // 버튼이 해금된 상태일 때만 실행
+                if (isUnlocked)
                 {
-                    { "SelectedStageIndex", selectedIndex }
-                };
-                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-                Debug.Log($"selectedIndex: {selectedIndex}");
-                PhotonNetwork.LoadLevel(gameSceneName);
-            }
+                    // 선택된 스테이지 인덱스를 포톤 CustomProperties에 저장 (동기화 용도)
+                    Hashtable props = new Hashtable
+                    {
+                        { "SelectedStageIndex", selectedIndex }
+                    };
+                    PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+
+                    Debug.Log($"selectedIndex: {selectedIndex}");
+
+                    // 게임 씬 로드
+                    PhotonNetwork.LoadLevel(gameSceneName);
+                }
             });
-        }
-    }
-
-
-    public void Go1960Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-       
-    }
-
-    public void Go1970Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
         
     }
+    // --- 씬 이동용 버튼 함수들 (UI Button에서 직접 연결 가능) ---
+    public void Go1960Scene() => PhotonNetwork.LoadLevel("StageScene");
+    public void Go1970Scene() => PhotonNetwork.LoadLevel("StageScene");
+    public void Go1980Scene() => PhotonNetwork.LoadLevel("StageScene");
+    public void Go1990Scene() => PhotonNetwork.LoadLevel("StageScene");
+    public void Go2000Scene() => PhotonNetwork.LoadLevel("StageScene");
+    public void Go2010Scene() => PhotonNetwork.LoadLevel("StageScene");
+    public void GoWaitingScene() => PhotonNetwork.LoadLevel("WaitingScene");
 
-    public void Go1980Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void Go1990Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void Go2000Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void Go2010Scene()
-    {
-        PhotonNetwork.LoadLevel("StageScene");
-    }
-
-    public void GoWaitingScene()
-    {
-        PhotonNetwork.LoadLevel("WaitingScene");
-    }
-
-
-    // 특정 스테이지를 해금(잠금 해제)하는 public 메서드
+    // --- 특정 스테이지 해금 함수 ---
     public void UnlockStage(int stageNum)
     {
         int idx = stageNum;
         if (idx >= 0 && idx < unlockedStages.Length)
         {
-            unlockedStages[idx] = true; //언락됨.
-            UpdateStageButton(idx); //보여지는 상태도 같이 업데이트.
+            unlockedStages[idx] = true; // 해당 스테이지 언락 처리
+            UpdateStageButton(idx);     // 버튼 UI 갱신
         }
-
     }
 
-    // 버튼과 LockIcon UI 상태 갱신
+    // --- 버튼과 LockIcon UI 상태 갱신 ---
     public void UpdateStageButton(int i)
     {
         Button btn = stageButtons1960[i];
         bool isUnlocked = unlockedStages[i];
+
+        // 버튼 활성화 여부 갱신
         btn.interactable = isUnlocked;
 
+        // 잠금 아이콘 처리
         Transform lockIcon = btn.transform.Find("LockIcon");
         Image bg = btn.GetComponent<Image>();
 
         if (isUnlocked)
         {
-            if (bg) bg.color = Color.white;
+            if (bg) bg.color = Color.white;           // 해금된 버튼은 흰색 처리
             if (lockIcon) lockIcon.gameObject.SetActive(false);
         }
         else
         {
-            //if (bg) bg.color = Color.gray;
+            // if (bg) bg.color = Color.gray;         // 잠겨있을 때는 회색 처리할 수도 있음
             if (lockIcon) lockIcon.gameObject.SetActive(true);
         }
     }

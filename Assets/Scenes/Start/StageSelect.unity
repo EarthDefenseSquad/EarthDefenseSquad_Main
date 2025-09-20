@@ -607,6 +607,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1760194933}
   - component: {fileID: 1760194934}
+  - component: {fileID: 1760194935}
   m_Layer: 0
   m_Name: StageSelectUI
   m_TagString: Untagged
@@ -675,6 +676,28 @@ MonoBehaviour:
   - {fileID: 1242054298992637997}
   - {fileID: 2737196157702726106}
   gameSceneName: StageScene
+--- !u!114 &1760194935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760194932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &7354999391200856
 GameObject:
   m_ObjectHideFlags: 0

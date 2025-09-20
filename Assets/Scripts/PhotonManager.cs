@@ -80,8 +80,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         //Button_CharacterSelect_RB.onClick.RemoveAllListeners();
         //Button_CharacterSelect_LB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_LB_Click", RpcTarget.All));
         //Button_CharacterSelect_RB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_RB_Click", RpcTarget.All));
-        //int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
-        int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1; //캐릭터 선택 패널에서의 스폰
+        //int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
         //photonView.RPC("SpawnRoomPlayer", RpcTarget.AllBuffered, playerIndex);
         photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex); //방입장 성공시 캐릭터들 활성화
     }
@@ -256,8 +256,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         Button_CharacterSelect_LB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_LB_Click", RpcTarget.All));
         Button_CharacterSelect_RB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_RB_Click", RpcTarget.All));
 
-        //int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        //int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
        photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex);
     }
     

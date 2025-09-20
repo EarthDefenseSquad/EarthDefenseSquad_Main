@@ -72,6 +72,8 @@ MonoBehaviour:
   - RPC_ShowPanel
   - RPC_GoTo1970_2
   - SyncStagePanel
+  - SyncStageUI
+  - RPC_stageUpdateUI
   DisableAutoOpenWizard: 1
-  ShowSettings: 0
+  ShowSettings: 1
   DevRegionSetOnce: 1

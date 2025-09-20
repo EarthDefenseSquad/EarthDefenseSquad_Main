@@ -73,19 +73,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
-            //int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-            int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
-            if (photonView.IsMine)
+            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+           
+            /*if (photonView.IsMine)
             {
-                SpawnPlayer(0);
-                SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
-            }
+                //SpawnPlayer(0);
+                //SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
+            }*/
         
-            /*if (photonView.IsMine) // 자신의 클라이언트에서만 Instantiate!
+            if (photonView.IsMine) // 자신의 클라이언트에서만 Instantiate!
             {
                 
                 SpawnPlayer(playerIndex);
-            }*/           
+            }           
         }
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
