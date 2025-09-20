@@ -75,8 +75,9 @@ public class StageSelectNetworkManager : MonoBehaviourPun
                 backButton_Year.onClick.AddListener(() => OnBackButtonClicked());
             if (stageButton_1970_1 != null)
                 stageButton_1970_1.onClick.AddListener(() => OnStageButtonClicked(1970,0));
+                Debug.Log("1970 1번 스테이지 버튼 리스너 등록됨");
             if (stageButton_1970_2 != null)
-                stageButton_1970_2.onClick.AddListener(() => OnStageButtonClicked(1970,1));
+                stageButton_1970_2.onClick.AddListener(() => OnStageButtonClicked(1970, 1));
             if (stageButton_1970_3 != null)
                 stageButton_1970_3.onClick.AddListener(() => OnStageButtonClicked(1970,2));
             if (stageButton_1970_4 != null)
