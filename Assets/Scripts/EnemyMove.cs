@@ -9,6 +9,7 @@ public class EnemyMove : MonoBehaviourPun
     Animator anim;
     SpriteRenderer spriteRenderer;
     CapsuleCollider2D capsulecollider;
+    GameManager gameManager;
 
 
     public int nextMove;
@@ -20,13 +21,14 @@ public class EnemyMove : MonoBehaviourPun
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         capsulecollider = GetComponent<CapsuleCollider2D>();
+        gameManager = GetComponent<GameManager>();
 
         Invoke("Think",2);
     }
 
     void FixedUpdate()
     {
-        if (GameManager.Instance.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
+        if (gameManager.gameClear) photonView.RPC("ClearAfterMove", RpcTarget.All);
         // 이동
         rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
 
