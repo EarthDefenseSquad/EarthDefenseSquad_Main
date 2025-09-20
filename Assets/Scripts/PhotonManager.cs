@@ -36,6 +36,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         GameDataManager.Instance.Start_Panel = this.Start_Panel;
         Button_Start.onClick.AddListener(OnGameStartButtonClicked);
     }
+
+    IEnumerator DeactivateAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+    }
     public override void OnConnectedToMaster() //게임 시작하자마자 서버 연결 - 로비 진입 성공 상태시 콜백
     {
         Debug.Log("포톤 마스터 서버 연결 후 로비 진입 성공");
@@ -43,6 +48,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.JoinRandomRoom();
             Debug.Log("방 참가를 시도합니다.");
+            StartCoroutine(DeactivateAfterDelay(0.2f));
             // UI 패널 전환
             Start_Panel.SetActive(false);
             RoomLoadingPanel.SetActive(false);
@@ -61,6 +67,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log("방 참가에 실패하였습니다. 방을 새로 만듭니다.");
+        StartCoroutine(DeactivateAfterDelay(0.2f));
         PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = 2 }); //null은 room 이름, 참가자 최대 2명.
     }
 
