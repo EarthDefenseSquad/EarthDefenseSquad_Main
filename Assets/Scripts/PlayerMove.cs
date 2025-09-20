@@ -291,6 +291,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 else if (name.Contains("ColorRestore")) ItemManager.Instance.UseItem(ItemType.ColorRestore, this);
 
 
+                StartCoroutine(DeactivateAfterDelay(collision.gameObject, 0.2f));
+
                 collision.gameObject.SetActive(false);
                 PlaySound("Item");
             //}
@@ -321,6 +323,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
         }
 
+    }
+
+    IEnumerator DeactivateAfterDelay(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        obj.SetActive(false);
     }
 
     void OnCollisionEnter2D(Collision2D collision) //충돌
