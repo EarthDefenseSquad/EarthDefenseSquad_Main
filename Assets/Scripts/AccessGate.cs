@@ -43,9 +43,8 @@ public class AccessGate : MonoBehaviour
                 Debug.Log($"✅ {requiredScore}점 차감 후 통과. 남은 점수: {gameManager.stagePoint}");
 
                 col.enabled = false;
-                if (sr != null) sr.enabled = false; // 시각적 제거
-
-                // 필요하면 사운드, 애니메이션 등 추가 가능
+                // 오브젝트 전체 비활성화
+                gameObject.SetActive(false);
             }
             else
             {
