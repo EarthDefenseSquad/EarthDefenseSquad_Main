@@ -2,14 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
-using ExitGames.Client.Photon;
+using ExitGames.Client.Photon; 
 
-public class StageSelectUI : MonoBehaviourPunCallbacks
+public class StageSelectUI : MonoBehaviour
 {
-    public Button[] stageButtons1960;
+     public Button[] stageButtons1960;
     // 각 스테이지의 해금 상태를 저장
     private bool[] unlockedStages;
-
     public int stageNumber;
     private GameManager gameManager;
 
@@ -25,8 +24,8 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
     void Awake()
     {
         gameManager = FindObjectOfType<GameManager>();
-        stageNumber = PlayerMove.clearedStage;
-
+        stageNumber=PlayerMove.clearedStage;
+        
     }
     void Start()
     {
@@ -37,12 +36,9 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
 
             if (data == null) continue;
 
-            //bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
-            //    || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
-            string key = data.requiredFinishID;
-            bool isUnlocked = string.IsNullOrEmpty(key) || (PhotonNetwork.CurrentRoom != null
-                      && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(key)
-                      && (int)PhotonNetwork.CurrentRoom.CustomProperties[key] == 1);
+            bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
+                || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
+
             button.interactable = isUnlocked;
             button.enabled = isUnlocked;
 
@@ -63,16 +59,16 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
             {
-                if (isUnlocked)
-                {
-                    Hashtable props = new Hashtable //포톤으로 저장 동기화
+            if (isUnlocked)
+            {
+                Hashtable props = new Hashtable //포톤으로 저장 동기화
                 {
                     { "SelectedStageIndex", selectedIndex }
                 };
-                    PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-                    Debug.Log($"selectedIndex: {selectedIndex}");
-                    PhotonNetwork.LoadLevel(gameSceneName);
-                }
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+                Debug.Log($"selectedIndex: {selectedIndex}");
+                PhotonNetwork.LoadLevel(gameSceneName);
+            }
             });
         }
     }
@@ -81,13 +77,13 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
     public void Go1960Scene()
     {
         PhotonNetwork.LoadLevel("StageScene");
-
+       
     }
 
     public void Go1970Scene()
     {
         PhotonNetwork.LoadLevel("StageScene");
-
+        
     }
 
     public void Go1980Scene()
@@ -117,17 +113,15 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
 
 
     // 특정 스테이지를 해금(잠금 해제)하는 public 메서드
-    public void UnlockStage(string requiredFinishID)
+    public void UnlockStage(int stageNum)
     {
-        if (PhotonNetwork.CurrentRoom == null) return;
-
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        int idx = stageNum;
+        if (idx >= 0 && idx < unlockedStages.Length)
         {
-            { requiredFinishID, 1 }
-        };
-        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+            unlockedStages[idx] = true; //언락됨.
+            UpdateStageButton(idx); //보여지는 상태도 같이 업데이트.
+        }
 
-        Debug.Log($"{requiredFinishID} 언락됨");
     }
 
     // 버튼과 LockIcon UI 상태 갱신
@@ -151,31 +145,4 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
             if (lockIcon) lockIcon.gameObject.SetActive(true);
         }
     }
-    
-    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
-{
-    foreach (Button button in stageButtons)
-    {
-        StageButtonData data = button.GetComponent<StageButtonData>();
-        if (data == null) continue;
-
-        string key = data.requiredFinishID;
-        bool isUnlocked = string.IsNullOrEmpty(key) ||
-                          (PhotonNetwork.CurrentRoom != null &&
-                           PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(key) &&
-                           (int)PhotonNetwork.CurrentRoom.CustomProperties[key] == 1);
-
-        button.interactable = isUnlocked;
-        button.enabled = isUnlocked;
-
-        Transform lockIcon = button.transform.Find("LockIcon");
-        if (lockIcon != null)
-        {
-            lockIcon.gameObject.SetActive(!isUnlocked);
-        }
-    }
-
-    Debug.Log("[StageSelectUI] RoomProperties 갱신됨 → 버튼 상태 업데이트 완료");
-}
-
 }

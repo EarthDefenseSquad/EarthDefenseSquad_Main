@@ -206,6 +206,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
     [PunRPC]
     public void RPC_ShowPanel(int year) //백버튼 눌렀을 때 해당 연도 패널 가려지고 year패널 나타나도록.
     {
+        
         Debug.Log("연도 패널 보여줌");
         if (year == 1970)
         {
@@ -215,7 +216,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
                 panel_1970.SetActive(true);
                 Hashtable props = new Hashtable
                 {
-                    { "SelectedYearIndex", year }
+                    { "SelectedYearIndex", 1970 }
                 };
                 PhotonNetwork.LocalPlayer.SetCustomProperties(props);
             }
@@ -325,7 +326,7 @@ public class StageSelectNetworkManager : MonoBehaviourPun
         {
             flag = stage2020Flag[stage];
         }
-        
+
        
     }
 
