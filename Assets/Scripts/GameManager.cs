@@ -67,24 +67,15 @@ public class GameManager : MonoBehaviourPunCallbacks
 
        
     }
-
+    IEnumerator DelayedSpawn()
+    {
+        yield return new WaitForSeconds(1.0f); // 1초 대기
+        SpawnPlayer(PhotonNetwork.LocalPlayer.ActorNumber - 1);
+    }
     void Start()
     {
-        string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene == "WaitingScene" || currentScene == "StageScene")
-        {
-            int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
 
-            /*if (photonView.IsMine)
-            {
-                //SpawnPlayer(0);
-                //SpawnPlayer(1);   //실험용. 실제로는 아래 코드로.  
-            }*/
-            
-            SpawnPlayer(playerIndex);
-            
-        }   
-        
+
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
 
@@ -102,6 +93,19 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             Debug.LogWarning("유효하지 않은 stageIndex 입니다.");
         }
+        string currentScene = SceneManager.GetActiveScene().name;
+        if (currentScene == "WaitingScene" || currentScene == "StageScene")
+        {
+           if(SceneManager.GetActiveScene().name == "WaitingScene")
+            {
+                StartCoroutine(DelayedSpawn());
+            }
+            else
+            {
+                SpawnPlayer(PhotonNetwork.LocalPlayer.ActorNumber - 1);
+            }
+            
+        }   
     }
     void Update()
     {
@@ -109,12 +113,16 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (currentScene == "StageScene") //현재 씬이 스테이지씬일 경우에만 포인트 띄움
         {
             UIPoint.text = (totalPoint + stagePoint).ToString();
+            //photonView.RPC("LoadAndUpdateItem",RpcTarget.AllBuffered);
+            SyncFinishItemCount();
+
         }
         // 로컬 저장된 아이템 개수를 불러옴
-        LoadFinishItemCount();
+        //LoadFinishItemCount();
 
         // UI에 현재 수치 표시
-        UpdateFinishItemUI();
+        //UpdateFinishItemUI();
+       
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -125,8 +133,32 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     }
-   
+    public void SyncFinishItemCount()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // 마스터 클라이언트만 로컬 저장 불러오기
+            LoadFinishItemCount();
+            // 다른 모든 클라이언트에게 값 전달
+            photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
+        }
+    }
+    [PunRPC]
+    void LoadAndUpdateItem()
+    {
+                // 로컬 저장된 아이템 개수를 불러옴
+        LoadFinishItemCount();
 
+        // UI에 현재 수치 표시
+        UpdateFinishItemUI();
+    }
+
+    [PunRPC]
+    void UpdateFinishItemUI_RPC(int newCount)
+    {
+        finishItemCount = newCount;
+        UpdateFinishItemUI();
+    }
 
     public void SpawnPlayer(int player_index)
     {
@@ -338,6 +370,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Finish 아이템을 하나 먹었을 때 호출하는 함수
     public void AddFinishItem()
     {
+        /*
         // 수치 1 증가
         finishItemCount++;
 
@@ -347,6 +380,16 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // UI 업데이트
         UpdateFinishItemUI();
+        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);*/
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            finishItemCount++;
+            PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
+            PlayerPrefs.Save();
+
+            photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
+        }
     }
 
     // 로컬 저장된 아이템 개수를 불러오는 함수
@@ -359,7 +402,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
     public void ResetFinishItemData()
     {
-        // PlayerPrefs에서 해당 키 제거
+
+        /*// PlayerPrefs에서 해당 키 제거
         PlayerPrefs.DeleteKey(FinishItemKey);
 
         // 메모리 상의 수치도 0으로 초기화
@@ -367,11 +411,23 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // UI 반영
         UpdateFinishItemUI();
+        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered, finishItemCount);*/
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PlayerPrefs.DeleteKey(FinishItemKey);
+            finishItemCount = 0;
+
+            photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
+        }
     }
 
     // UI에 Finish 아이템 수치를 업데이트하는 함수
+
+    
     public void UpdateFinishItemUI()
     {
+        
         // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
         if (finishItemText != null)
             finishItemText.text = finishItemCount.ToString();

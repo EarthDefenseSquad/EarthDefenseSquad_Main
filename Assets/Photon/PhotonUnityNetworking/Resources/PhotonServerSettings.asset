@@ -75,6 +75,9 @@ MonoBehaviour:
   - SyncStageUI
   - RPC_stageUpdateUI
   - RPC_SpawnPlayer
+  - UpdateFinishItemUI
+  - LoadAndUpdateItem
+  - UpdateFinishItemUI_RPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
