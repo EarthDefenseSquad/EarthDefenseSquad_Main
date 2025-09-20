@@ -84,6 +84,18 @@ public class StageSelectNetworkManager : MonoBehaviourPun
                 stageButton_1970_4.onClick.AddListener(() => OnStageButtonClicked(1970,3));
             if (stageButton_1970_5 != null)
                 stageButton_1970_5.onClick.AddListener(() => OnStageButtonClicked(1970,4));
+                
+            if (stageButton_1980_1 != null)
+                stageButton_1980_1.onClick.AddListener(() => OnStageButtonClicked(1980, 0));
+                Debug.Log("1980 1번 스테이지 버튼 리스너 등록됨");
+            if (stageButton_1980_2 != null)
+                stageButton_1980_2.onClick.AddListener(() => OnStageButtonClicked(1980, 1));
+            if (stageButton_1980_3 != null)
+                stageButton_1980_3.onClick.AddListener(() => OnStageButtonClicked(1980,2));
+            if (stageButton_1980_4 != null)
+                stageButton_1980_4.onClick.AddListener(() => OnStageButtonClicked(1980,3));
+            if (stageButton_1980_5 != null)
+                stageButton_1980_5.onClick.AddListener(() => OnStageButtonClicked(1980,4));
 
             if (backButton_1970 != null)
                 backButton_1970.onClick.AddListener(() => OnBackToYearSelect(1970));
@@ -228,6 +240,11 @@ public class StageSelectNetworkManager : MonoBehaviourPun
             {
                 panel_year.SetActive(false);
                 panel_1980.SetActive(true);
+                Hashtable props = new Hashtable
+                {
+                    { "SelectedYearIndex", 1980 }
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
             }
         }
         if (year == 1990)

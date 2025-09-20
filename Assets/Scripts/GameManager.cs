@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 using Unity.VisualScripting;
-
+using ExitGames.Client.Photon;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public int totalPoint=0;
@@ -142,15 +142,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             // 다른 모든 클라이언트에게 값 전달
             photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
         }
-    }
-    [PunRPC]
-    void LoadAndUpdateItem()
-    {
-                // 로컬 저장된 아이템 개수를 불러옴
-        LoadFinishItemCount();
-
-        // UI에 현재 수치 표시
-        UpdateFinishItemUI();
     }
 
     [PunRPC]
@@ -382,14 +373,54 @@ public class GameManager : MonoBehaviourPunCallbacks
         UpdateFinishItemUI();
         //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);*/
 
-        if (PhotonNetwork.IsMasterClient)
-        {
-            finishItemCount++;
-            PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
-            PlayerPrefs.Save();
+        finishItemCount++;
+        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
+        PlayerPrefs.Save();
 
-            photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
+        // 내 커스텀 프로퍼티 갱신
+        var hash = new ExitGames.Client.Photon.Hashtable();
+        hash["FinishItemCount"] = finishItemCount;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        Debug.Log($"[OnPlayerPropertiesUpdate] {targetPlayer.NickName} props changed: {changedProps.ToStringFull()}");
+        if (changedProps.ContainsKey("FinishItemCount"))
+        {
+            int newVal = (int)changedProps["FinishItemCount"];
+            Debug.Log($"[OnPlayerPropertiesUpdate] 새 값: {newVal}");
+            SyncWithMaxValue();
+            
         }
+    }
+
+    void SyncWithMaxValue()
+    {
+        Debug.Log("[SyncWithMaxValue] 실행 시작");
+        int maxCount = 0;
+        foreach (var p in PhotonNetwork.PlayerList)
+        {
+            if (p.CustomProperties.ContainsKey("FinishItemCount"))
+            {
+                int val = (int)p.CustomProperties["FinishItemCount"];
+                Debug.Log($"[SyncWithMaxValue] {p.NickName} → {val}");
+                if (val > maxCount) maxCount = val;
+            }
+            else
+            {
+                 Debug.Log($"[SyncWithMaxValue] {p.NickName} → FinishItemCount 없음");
+            }
+        }
+
+        finishItemCount = maxCount;
+        Debug.Log($"[Sync] 맥스 피니쉬아이템카운트 = {finishItemCount}");
+        UpdateFinishItemUI();
+
+        
+        // 모든 클라이언트에 확정된 최대값 브로드캐스트
+        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
+
     }
 
     // 로컬 저장된 아이템 개수를 불러오는 함수
@@ -417,7 +448,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             PlayerPrefs.DeleteKey(FinishItemKey);
             finishItemCount = 0;
-
+            // 🔹 CustomProperties 초기화 (모든 플레이어가 이 값을 읽을 수 있게 설정)
+            var hash = new ExitGames.Client.Photon.Hashtable();
+            hash["FinishItemCount"] = 0;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        
             photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
         }
     }

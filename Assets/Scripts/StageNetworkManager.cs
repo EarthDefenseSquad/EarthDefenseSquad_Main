@@ -54,9 +54,24 @@ public class StageNetworkManager : MonoBehaviourPunCallbacks
     void SyncStagePanel(int selectedStageIndex, int selectedYearIndex)
     {
         int year = selectedYearIndex;
-        int stageIndex = selectedStageIndex;
+        int stageIndex = selectedStageIndex%5;
         Debug.Log("StageNetworkManager: 선택된 스테이지 인덱스: " + selectedStageIndex);
         Debug.Log("StageNetworkManager: 선택된 연도 인덱스: " + selectedYearIndex);
+
+         // 모든 패널과 스테이지를 끔
+        panel_1970.SetActive(false);
+        panel_1980.SetActive(false);
+        panel_1990.SetActive(false);
+        panel_2000.SetActive(false);
+        panel_2010.SetActive(false);
+        panel_2020.SetActive(false);
+
+        foreach (var s in panel_1970_stages) s.SetActive(false);
+        foreach (var s in panel_1980_stages) s.SetActive(false);
+        foreach (var s in panel_1990_stages) s.SetActive(false);
+        foreach (var s in panel_2000_stages) s.SetActive(false);
+        foreach (var s in panel_2010_stages) s.SetActive(false);
+        foreach (var s in panel_2020_stages) s.SetActive(false);
 
         switch (year)
         {
