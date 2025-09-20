@@ -18,6 +18,15 @@ public class TypingManager : MonoBehaviour
         player = FindLocalPlayer();
     }
 
+    void Update()
+{
+    if (inputField.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Return))
+    {
+        CheckInput(inputField.text);
+    }
+}
+
+
     private PlayerMove FindLocalPlayer()
     {
         PlayerMove[] allPlayers = FindObjectsOfType<PlayerMove>();
