@@ -1,65 +1,34 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ColorRestoreManager : MonoBehaviour
 {
-    public static ColorRestoreManager Instance { get; private set; }
+    [Header("🎯 이 스테이지에서 사용할 Goal 오브젝트 (직접 할당)")]
+    [SerializeField] private GameObject goalObject;
 
-    [Header("스테이지 Goal 오브젝트 (Color Restore용)")]
-    public GameObject goalObject;
+    private GameManager gameManager;
 
-    private void Awake()
+    private void Start()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-    }
+        // GameManager 찾기
+        gameManager = FindObjectOfType<GameManager>();
 
-    public void CheckRestoreStatus()
-    {
-        GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
-        int restoredCount = 0;
-
-        foreach (GameObject obj in restoreAreas)
-        {
-            var sr = obj.GetComponent<SpriteRenderer>();
-            var tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
-
-            if (sr != null && sr.color == Color.white) restoredCount++;
-            else if (tilemap != null && tilemap.color == Color.white) restoredCount++;
-        }
-
-        if (restoredCount == restoreAreas.Length && restoreAreas.Length > 0)
-        {
-            Debug.Log("✅ 모든 RestoreArea 복원 완료 → Goal 등장");
-            StartCoroutine(ShowGoalEffect());
-        }
-    }
-
-    private IEnumerator ShowGoalEffect()
-    {
         if (goalObject == null)
         {
-            Debug.LogWarning("⚠️ Goal 오브젝트가 연결되어 있지 않습니다.");
-            yield break;
+            Debug.LogWarning("[ColorRestoreManager] goalObject가 비어있습니다.");
+            return;
         }
 
-        goalObject.SetActive(true);
-
-        SpriteRenderer sr = goalObject.GetComponent<SpriteRenderer>();
-        if (sr != null)
+        if (gameManager != null)
         {
-            float blinkInterval = 0.2f;
-            for (int i = 0; i < 4; i++)
-            {
-                sr.enabled = false;
-                yield return new WaitForSeconds(blinkInterval);
-                sr.enabled = true;
-                yield return new WaitForSeconds(blinkInterval);
-            }
+            gameManager.goalObject = goalObject;
+            Debug.Log($"[ColorRestoreManager] GameManager에 Goal 오브젝트 등록 완료: {goalObject.name}");
+        }
+        else
+        {
+            Debug.LogWarning("[ColorRestoreManager] GameManager를 찾을 수 없습니다.");
         }
     }
 }
+
