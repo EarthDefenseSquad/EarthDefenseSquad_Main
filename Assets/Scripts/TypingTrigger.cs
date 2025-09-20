@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class TypingTrigger : MonoBehaviour
 {
-    public GameObject targetObject; // »ç¶óÁú B ¿ÀºêÁ§Æ®
-    public string keyword; // Á¤´ä Å°¿öµå
+    public GameObject[] targetObjects; // ì‚¬ë¼ì§ˆ ì˜¤ë¸Œì íŠ¸ë“¤
+    public string keyword;             // ì •ë‹µ í‚¤ì›Œë“œ
+    [TextArea] public string questionText; // ë¬¸ì œ í…ìŠ¤íŠ¸
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -12,8 +13,8 @@ public class TypingTrigger : MonoBehaviour
             TypingManager manager = FindObjectOfType<TypingManager>();
             if (manager != null)
             {
-                Debug.Log("ÇÃ·¹ÀÌ¾î°¡ A¿¡ ´ê¾ÒÀ½, ÀÔ·ÂÇÊµå ¿­±â ½Ãµµ Áß");
-                manager.ShowInputField(targetObject, keyword); // B ¿ÀºêÁ§Æ® Àü´Ş
+                Debug.Log("í”Œë ˆì´ì–´ê°€ ì•„ì´í…œì— ë‹¿ìŒ, ë¬¸ì œì°½ í‘œì‹œ");
+                manager.ShowInputField(targetObjects, keyword, questionText);
             }
         }
     }
