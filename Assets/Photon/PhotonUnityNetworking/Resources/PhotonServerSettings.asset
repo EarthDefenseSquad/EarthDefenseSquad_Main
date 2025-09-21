@@ -78,6 +78,9 @@ MonoBehaviour:
   - UpdateFinishItemUI
   - LoadAndUpdateItem
   - UpdateFinishItemUI_RPC
+  - RPC_EnableColorRestore
+  - RPC_SyncColorRestoration
+  - RPC_TriggerGoalEffect
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -43,8 +43,9 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public bool colorRestoreMode = false;
     public GameObject goalObject; // Goal 오브젝트 연결
-     
-    
+    private HashSet<string> restoredObjectNames = new HashSet<string>();
+
+
 
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode=false;
@@ -440,27 +441,78 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void EnableColorRestoreMode(bool enable)
     {
         colorRestoreMode = enable;
+        photonView.RPC("RPC_EnableColorRestore", RpcTarget.All, enable);
+    }
+
+    [PunRPC]
+    void RPC_EnableColorRestore(bool enable)
+    {
+        colorRestoreMode = enable;
+
+
+        if (!enable) return;
+
+
+        if (goalObject != null)
+        {
+            goalObject.SetActive(false);
+        }
+    }
+
+    public void SyncColorRestoration(string objectName)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+
+        if (!restoredObjectNames.Contains(objectName))
+        {
+            restoredObjectNames.Add(objectName);
+            photonView.RPC("RPC_SyncColorRestoration", RpcTarget.All, objectName);
+
+
+            GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
+            if (restoreAreas.Length == restoredObjectNames.Count && restoreAreas.Length > 0)
+            {
+                photonView.RPC("RPC_TriggerGoalEffect", RpcTarget.All);
+                colorRestoreMode = false;
+            }
+        }
+    }
+
+    [PunRPC]
+    void RPC_SyncColorRestoration(string objectName)
+    {
+        GameObject obj = GameObject.Find(objectName);
+        if (obj == null) return;
+
+
+        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+        if (sr != null) sr.color = Color.white;
+
+
+        UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
+        if (tilemap != null) tilemap.color = Color.white;
+    }
+
+
+    [PunRPC]
+    void RPC_TriggerGoalEffect()
+    {
+        StartCoroutine(GoalAppearEffect());
     }
 
 
     public IEnumerator GoalAppearEffect()
     {
-        if (goalObject == null)
-        {
-            Debug.LogWarning("Goal 오브젝트가 비어있습니다.");
-            yield break;
-        }
-
+        if (goalObject == null) yield break;
         SpriteRenderer sr = goalObject.GetComponent<SpriteRenderer>();
-        if (sr == null)
-        {
-            Debug.LogWarning("Goal 오브젝트에 SpriteRenderer가 없습니다.");
-            yield break;
-        }
+        if (sr == null) yield break;
 
-        goalObject.SetActive(true); // 활성화는 하지만
+
+        goalObject.SetActive(true);
         float blinkInterval = 0.2f;
         int blinkCount = 5;
+
 
         for (int i = 0; i < blinkCount; i++)
         {
@@ -470,10 +522,42 @@ public class GameManager : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(blinkInterval);
         }
 
-        // 최종적으로 보이도록 유지
+
         sr.enabled = true;
-        Debug.Log("Goal 깜빡임 연출 완료");
     }
+
+
+    // public IEnumerator GoalAppearEffect()
+    // {
+    //     if (goalObject == null)
+    //     {
+    //         Debug.LogWarning("Goal 오브젝트가 비어있습니다.");
+    //         yield break;
+    //     }
+
+    //     SpriteRenderer sr = goalObject.GetComponent<SpriteRenderer>();
+    //     if (sr == null)
+    //     {
+    //         Debug.LogWarning("Goal 오브젝트에 SpriteRenderer가 없습니다.");
+    //         yield break;
+    //     }
+
+    //     goalObject.SetActive(true); // 활성화는 하지만
+    //     float blinkInterval = 0.2f;
+    //     int blinkCount = 5;
+
+    //     for (int i = 0; i < blinkCount; i++)
+    //     {
+    //         sr.enabled = false;
+    //         yield return new WaitForSeconds(blinkInterval);
+    //         sr.enabled = true;
+    //         yield return new WaitForSeconds(blinkInterval);
+    //     }
+
+    //     // 최종적으로 보이도록 유지
+    //     sr.enabled = true;
+    //     Debug.Log("Goal 깜빡임 연출 완료");
+    // }
 
     void UpdateHealthUI()
     {

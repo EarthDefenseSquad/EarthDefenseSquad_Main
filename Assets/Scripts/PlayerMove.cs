@@ -178,6 +178,11 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                         {
                             restoredObjects.Add(obj);
                             Debug.Log($"🎨 복원됨: {obj.name}");
+
+                            if (PhotonNetwork.IsMasterClient)
+                            {
+                                gameManager.SyncColorRestoration(obj.name);
+                            }
                         }
                     }
                 }
