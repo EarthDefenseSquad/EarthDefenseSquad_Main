@@ -43,7 +43,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public bool colorRestoreMode = false;
     public GameObject goalObject; // Goal 오브젝트 연결
-
+     
+    
 
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode=false;
@@ -53,6 +54,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     //플레이어들 특정 조건 만족 시 DB로 클리어 기록 전송.(나중에 DB스크립트에서 클리어 기록이 있다면 게임 스테이지 변경)
     
     public static GameManager Instance;
+
+    private int myViewID;   // PhotonView ID 저장용
     void Awake()
     {
         if (isInstantDeathMode)
@@ -63,6 +66,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         else
         {
             health = 3;
+        }
+        Instance = this;
+        PhotonView pv = GetComponent<PhotonView>();
+        if (pv != null)
+        {
+            myViewID = pv.ViewID;
+            Debug.Log($"[GameManager] 내 PhotonView ID = {myViewID}");
+        }
+        else
+        {
+            Debug.LogError("GameManager에 PhotonView가 없습니다!");
         }
 
        
@@ -133,15 +147,22 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     }
+    
+    public int GetViewID()
+    {
+        return myViewID;
+    }
     public void SyncFinishItemCount()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
-            // 마스터 클라이언트만 로컬 저장 불러오기
-            LoadFinishItemCount();
-            // 다른 모든 클라이언트에게 값 전달
-            photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
-        }
+
+        // 마스터 클라이언트만 로컬 저장 불러오기
+        LoadFinishItemCount();
+        // 다른 모든 클라이언트에게 값 전달
+        int gmId = GameManager.Instance.GetViewID();
+        PhotonView targetView = PhotonView.Find(gmId);
+        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
+        Debug.Log($"내 photonView ID: {photonView.ViewID}");
+        Debug.Log($"찾은 targetView ID: {targetView.ViewID}");
     }
 
     [PunRPC]
@@ -149,6 +170,102 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         finishItemCount = newCount;
         UpdateFinishItemUI();
+    }
+
+    
+    void SyncWithMaxValue()
+    {
+        int maxCount = 0;
+        foreach (var p in PhotonNetwork.PlayerList)
+        {
+            if (p.CustomProperties.ContainsKey("FinishItemCount"))
+            {
+                int val = (int)p.CustomProperties["FinishItemCount"];
+                if (val > maxCount) maxCount = val;
+            }
+        }
+
+        finishItemCount = maxCount;
+        Debug.Log($"[Sync] 최종 확정된 finishItemCount = {finishItemCount}");
+
+        // UI 갱신
+        UpdateFinishItemUI();
+
+        // 모든 클라이언트에 확정된 값 전송
+        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
+
+    }
+
+    // 로컬 저장된 아이템 개수를 불러오는 함수
+    public void LoadFinishItemCount()
+    {
+        // 만약 저장된 값이 없다면 기본값 0을 반환함
+        finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
+    }
+
+    // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
+    public void ResetFinishItemData()
+    {
+
+        // PlayerPrefs에서 해당 키 제거
+        PlayerPrefs.DeleteKey(FinishItemKey);
+
+        // 메모리 상의 수치도 0으로 초기화
+        finishItemCount = 0;
+
+        // UI 반영
+        UpdateFinishItemUI();
+        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered, finishItemCount);
+    }
+
+    // UI에 Finish 아이템 수치를 업데이트하는 함수
+
+    
+    public void UpdateFinishItemUI()
+    {
+        
+        // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
+        if (finishItemText != null)
+            finishItemText.text = finishItemCount.ToString();
+    }
+
+    // Finish 아이템을 하나 먹었을 때 호출하는 함수
+    public void AddFinishItem()
+    {
+
+        /*// 수치 1 증가
+        finishItemCount++;
+
+        // PlayerPrefs에 저장 (로컬 디스크에 저장됨)
+        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
+        PlayerPrefs.Save(); // 강제로 저장
+
+        // UI 업데이트
+        UpdateFinishItemUI();
+        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);*/
+        
+        finishItemCount++;
+        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
+        PlayerPrefs.Save();
+
+        // 내 커스텀 프로퍼티 갱신
+        var hash = new ExitGames.Client.Photon.Hashtable();
+        hash["FinishItemCount"] = finishItemCount;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
+        UpdateFinishItemUI();
+
+        
+    }
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if (changedProps.ContainsKey("FinishItemCount"))
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                SyncWithMaxValue();
+            }
+        }
     }
 
     public void SpawnPlayer(int player_index)
@@ -356,116 +473,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         // 최종적으로 보이도록 유지
         sr.enabled = true;
         Debug.Log("Goal 깜빡임 연출 완료");
-    }
-
-    // Finish 아이템을 하나 먹었을 때 호출하는 함수
-    public void AddFinishItem()
-    {
-        /*
-        // 수치 1 증가
-        finishItemCount++;
-
-        // PlayerPrefs에 저장 (로컬 디스크에 저장됨)
-        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
-        PlayerPrefs.Save(); // 강제로 저장
-
-        // UI 업데이트
-        UpdateFinishItemUI();
-        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);*/
-
-        finishItemCount++;
-        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
-        PlayerPrefs.Save();
-
-        // 내 커스텀 프로퍼티 갱신
-        var hash = new ExitGames.Client.Photon.Hashtable();
-        hash["FinishItemCount"] = finishItemCount;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
-    }
-
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
-    {
-        Debug.Log($"[OnPlayerPropertiesUpdate] {targetPlayer.NickName} props changed: {changedProps.ToStringFull()}");
-        if (changedProps.ContainsKey("FinishItemCount"))
-        {
-            int newVal = (int)changedProps["FinishItemCount"];
-            Debug.Log($"[OnPlayerPropertiesUpdate] 새 값: {newVal}");
-            SyncWithMaxValue();
-            
-        }
-    }
-
-    void SyncWithMaxValue()
-    {
-        Debug.Log("[SyncWithMaxValue] 실행 시작");
-        int maxCount = 0;
-        foreach (var p in PhotonNetwork.PlayerList)
-        {
-            if (p.CustomProperties.ContainsKey("FinishItemCount"))
-            {
-                int val = (int)p.CustomProperties["FinishItemCount"];
-                Debug.Log($"[SyncWithMaxValue] {p.NickName} → {val}");
-                if (val > maxCount) maxCount = val;
-            }
-            else
-            {
-                 Debug.Log($"[SyncWithMaxValue] {p.NickName} → FinishItemCount 없음");
-            }
-        }
-
-        finishItemCount = maxCount;
-        Debug.Log($"[Sync] 맥스 피니쉬아이템카운트 = {finishItemCount}");
-        UpdateFinishItemUI();
-
-        
-        // 모든 클라이언트에 확정된 최대값 브로드캐스트
-        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
-
-    }
-
-    // 로컬 저장된 아이템 개수를 불러오는 함수
-    public void LoadFinishItemCount()
-    {
-        // 만약 저장된 값이 없다면 기본값 0을 반환함
-        finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
-    }
-
-    // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
-    public void ResetFinishItemData()
-    {
-
-        /*// PlayerPrefs에서 해당 키 제거
-        PlayerPrefs.DeleteKey(FinishItemKey);
-
-        // 메모리 상의 수치도 0으로 초기화
-        finishItemCount = 0;
-
-        // UI 반영
-        UpdateFinishItemUI();
-        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered, finishItemCount);*/
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            PlayerPrefs.DeleteKey(FinishItemKey);
-            finishItemCount = 0;
-            // 🔹 CustomProperties 초기화 (모든 플레이어가 이 값을 읽을 수 있게 설정)
-            var hash = new ExitGames.Client.Photon.Hashtable();
-            hash["FinishItemCount"] = 0;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
-        
-            photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
-        }
-    }
-
-    // UI에 Finish 아이템 수치를 업데이트하는 함수
-
-    
-    public void UpdateFinishItemUI()
-    {
-        
-        // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
-        if (finishItemText != null)
-            finishItemText.text = finishItemCount.ToString();
     }
 
     void UpdateHealthUI()
