@@ -5943,6 +5943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   set1:
+    ownerPlayerIndex: 0
     targetImage: {fileID: 791707027}
     backgroundPanel: {fileID: 1137564655}
     characterName: {fileID: 1062829225}
@@ -5965,9 +5966,10 @@ MonoBehaviour:
     infos: []
     currentIndex: 0
     isConfirmed: 0
-    originalLeftColor: {r: 0, g: 0, b: 0, a: 0}
-    originalRightColor: {r: 0, g: 0, b: 0, a: 0}
+    originalLeftColor: {r: 0.69411767, g: 0.95686275, b: 1, a: 1}
+    originalRightColor: {r: 0.69411767, g: 0.95686275, b: 1, a: 1}
   set2:
+    ownerPlayerIndex: 1
     targetImage: {fileID: 249626836}
     backgroundPanel: {fileID: 1309191331}
     characterName: {fileID: 2088853130}
@@ -5990,13 +5992,14 @@ MonoBehaviour:
     infos: []
     currentIndex: 0
     isConfirmed: 0
-    originalLeftColor: {r: 0, g: 0, b: 0, a: 0}
-    originalRightColor: {r: 0, g: 0, b: 0, a: 0}
+    originalLeftColor: {r: 0.7764706, g: 1, b: 0.69411767, a: 1}
+    originalRightColor: {r: 0.7764706, g: 1, b: 0.69411767, a: 1}
   warningPanel: {fileID: 1101175259}
   warningText: {fileID: 608701324}
   startSceneButton: {fileID: 565252682}
   CharacterSelect_Panel: {fileID: 567280961}
   Start_Panel: {fileID: 1486800918}
+  nextSceneName: StoryScene
 --- !u!4 &1557381701
 Transform:
   m_ObjectHideFlags: 0
@@ -6265,7 +6268,7 @@ GameObject:
   - component: {fileID: 1748023277}
   - component: {fileID: 1748023278}
   m_Layer: 0
-  m_Name: SpriteSwitch
+  m_Name: SpriteSwitch (x)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6299,6 +6302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   set1:
+    ownerPlayerIndex: 0
     targetImage: {fileID: 0}
     backgroundPanel: {fileID: 0}
     characterName: {fileID: 0}
@@ -6316,6 +6320,7 @@ MonoBehaviour:
     originalLeftColor: {r: 0, g: 0, b: 0, a: 0}
     originalRightColor: {r: 0, g: 0, b: 0, a: 0}
   set2:
+    ownerPlayerIndex: 0
     targetImage: {fileID: 0}
     backgroundPanel: {fileID: 0}
     characterName: {fileID: 0}
@@ -6337,6 +6342,7 @@ MonoBehaviour:
   startSceneButton: {fileID: 0}
   CharacterSelect_Panel: {fileID: 0}
   Start_Panel: {fileID: 0}
+  nextSceneName: WaitingScene
 --- !u!1 &1774640128
 GameObject:
   m_ObjectHideFlags: 0
@@ -7695,8 +7701,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: BACK
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 202c1aea27383a74bb3fd8539c1da2ab, type: 2}
-  m_sharedMaterial: {fileID: -7376050658050364203, guid: 202c1aea27383a74bb3fd8539c1da2ab, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7829,8 +7835,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: OK !
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 202c1aea27383a74bb3fd8539c1da2ab, type: 2}
-  m_sharedMaterial: {fileID: -7376050658050364203, guid: 202c1aea27383a74bb3fd8539c1da2ab, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -10,8 +10,7 @@ public class SpriteSwitch : MonoBehaviourPun
     public class SpriteSet
     {
         // 중첩 클래스 내부에 부모 참조 추가
-        [System.NonSerialized]
-        public SpriteSwitch parent;
+        [System.NonSerialized] public SpriteSwitch parent;
         public int ownerPlayerIndex; // 0: set1, 1: set2
         public Image targetImage; // 캐릭터 이미지를 표시할 UI 이미지
         public Image backgroundPanel; // 배경 패널 이미지
@@ -34,49 +33,30 @@ public class SpriteSwitch : MonoBehaviourPun
         // 초기화 함수 - 버튼에 클릭 이벤트 리스너 등록 및 초기 UI 적용
         public void Init(int myPlayerIndex)
         {
-            
-            // 내 소유(Set1이 0, Set2가 1) 아니면 초기화 무시
-            if (ownerPlayerIndex != myPlayerIndex)
-                return;
-            // 입력 데이터 유효성 검사
-            if (sprites.Length == 0 || targetImage == null ||
-                names.Length != sprites.Length || infos.Length != sprites.Length)
-                return;
+            if (ownerPlayerIndex != myPlayerIndex) return;
+            if (sprites.Length == 0 || targetImage == null || names.Length != sprites.Length || infos.Length != sprites.Length) return;
 
             if (leftButton != null)
             {
-                leftButton.onClick.RemoveAllListeners(); // 기존 리스너 제거
-                leftButton.onClick.AddListener(() =>
-                {
-                    SwitchLeft();
-                    parent?.OnSpriteSetIndexChanged(this);
-                }); // 좌측 버튼 클릭시 SwitchLeft 호출
-                originalLeftColor = leftButton.image.color; // 좌측 버튼 색상 저장
+                leftButton.onClick.RemoveAllListeners();
+                leftButton.onClick.AddListener(() => { SwitchLeft(); parent?.OnSpriteSetIndexChanged(this); });
+                originalLeftColor = leftButton.image.color;
             }
             if (rightButton != null)
             {
-                rightButton.onClick.RemoveAllListeners(); // 기존 리스너 제거
-                rightButton.onClick.AddListener(() =>
-                {
-                    SwitchRight();
-                    parent?.OnSpriteSetIndexChanged(this);
-                });
-                // 우측 버튼 클릭시 SwitchRight 호출
-                originalRightColor = rightButton.image.color; // 우측 버튼 색상 저장
+                rightButton.onClick.RemoveAllListeners();
+                rightButton.onClick.AddListener(() => { SwitchRight(); parent?.OnSpriteSetIndexChanged(this); });
+                originalRightColor = rightButton.image.color;
             }
             if (confirmButton != null)
             {
-                confirmButton.onClick.RemoveAllListeners(); // 기존 리스너 제거
-                //confirmButton.onClick.AddListener(ToggleConfirm); // 확인 버튼 클릭시 ToggleConfirm 호출
-                confirmButton.onClick.AddListener(() =>
-                {
-                    parent?.OnConfirmToggledLocalWithNetwork(this);
-                });
+                confirmButton.onClick.RemoveAllListeners();
+                confirmButton.onClick.AddListener(() => { parent?.OnConfirmToggledLocalWithNetwork(this); });
             }
-            ApplyCurrent(); // 현재 인덱스에 맞는 UI 내용 적용
+            ApplyCurrent();
         }
 
-        // 우측 버튼 클릭시 선택 스프라이트 인덱스 증가, 적용
+        // 좌우 전환 함수
         public void SwitchLeft()
         {
             if (!isConfirmed)
@@ -95,6 +75,7 @@ public class SpriteSwitch : MonoBehaviourPun
                 ApplyCurrent();
             }
         }
+
         // 현재 선택된 인덱스에 맞게 UI 이미지, 이름, 정보 업데이트
         public void ApplyCurrent()
         {
@@ -102,32 +83,26 @@ public class SpriteSwitch : MonoBehaviourPun
             characterName.text = names[currentIndex];
             characterInfo.text = infos[currentIndex];
         }
-        // 확인 버튼 클릭시 호출, 등록된 onConfirmToggle 이벤트 발생
-        public void ToggleConfirm()
-        {
-            onConfirmToggle?.Invoke(this);
-        }
+
         // 선택 확정 및 해제 처리 - 버튼 상호작용 제한, UI 색상 변경 등
         public void SetConfirmed(bool confirm)
         {
             isConfirmed = confirm;
-            // 방향 전환 버튼 비활성화 처리
             leftButton.interactable = !isConfirmed;
             rightButton.interactable = !isConfirmed;
-            // UI 텍스트/이미지 색상 어둡게 (확정 시)
             SetDimmed(targetImage, isConfirmed);
             SetDimmed(backgroundPanel, isConfirmed);
             SetDimmed(characterName, isConfirmed);
             SetDimmed(characterInfo, isConfirmed);
-            // 버튼 이미지 색상 조절 (확정 시 회색톤)
+
             if (leftButton.image != null)
                 leftButton.image.color = isConfirmed ? new Color(0.5f, 0.5f, 0.5f, originalLeftColor.a) : originalLeftColor;
             if (rightButton.image != null)
                 rightButton.image.color = isConfirmed ? new Color(0.5f, 0.5f, 0.5f, originalRightColor.a) : originalRightColor;
-            // 확인 버튼 텍스트 변경 (확정 시 "취소", 미확정 시 "준비")
+
             if (confirmButtonText != null)
                 confirmButtonText.text = isConfirmed ? "취소" : "준비";
-            // 확인 아이콘 색상 변경 (확정 시 노란색, 미확정 시 흰색)
+
             if (confirmIcon != null)
             {
                 string hex = isConfirmed ? "#FFCE3E" : "#FFFFFF";
@@ -135,33 +110,42 @@ public class SpriteSwitch : MonoBehaviourPun
                     confirmIcon.color = color;
             }
         }
+
         // 그래픽 UI 요소 색상 조절 함수 (어둡게 또는 원상복구)
         public void SetDimmed(Graphic graphic, bool dim)
         {
             if (graphic == null) return;
             graphic.color = dim ? new Color(0.5f, 0.5f, 0.5f, graphic.color.a) : new Color(1f, 1f, 1f, graphic.color.a);
         }
+
         // 현재 캐릭터의 그룹 구분 (2개씩 묶는 기준)
         public int GetCharacterGroup()
         {
             return currentIndex / 2;
         }
     }
+
     [Header("첫 번째 UI 세트")]
-    public SpriteSet set1; // 첫 번째 플레이어 UI 캐릭터 세트
+    public SpriteSet set1;
     [Header("두 번째 UI 세트")]
-    public SpriteSet set2; // 두 번째 플레이어 UI 캐릭터 세트
+    public SpriteSet set2;
     [Header("경고 패널")]
-    public GameObject warningPanel; // 경고 메시지 패널
-    public TextMeshProUGUI warningText; // 경고 메시지 텍스트
-    public Button startSceneButton; // 시작 씬 이동 버튼
-    public GameObject CharacterSelect_Panel; // 캐릭터 선택 패널
-    public GameObject Start_Panel; // 시작 패널
+    public GameObject warningPanel;
+    public TextMeshProUGUI warningText;
+    public Button startSceneButton;
+    public GameObject CharacterSelect_Panel;
+    public GameObject Start_Panel;
+    [Header("다음 씬 이름")]
+    public string nextSceneName = "WaitingScene";
 
     private bool isProcessing = false;
 
     void Awake()
     {
+        // 중첩 클래스에 부모 참조 전달
+        set1.parent = this;
+        set2.parent = this;
+
         // 캐릭터 설명 텍스트 초기화 (set1)
         set1.infos = new string[] {
             "Z세대 캐릭터\n아이템 사용 불가\n이동속도, 점프력 높음",
@@ -176,75 +160,52 @@ public class SpriteSwitch : MonoBehaviourPun
             "X세대 캐릭터\n아이템 사용 가능\n이동속도, 점프력 낮음",
             "X세대 캐릭터\n아이템 사용 가능\n이동속도, 점프력 낮음",
         };
-        // UI 선택 확인시 실행될 로컬 콜백 등록
-        //set1.onConfirmToggle += OnConfirmToggled;
-        //set2.onConfirmToggle += OnConfirmToggled;
-        //set1.onConfirmToggle += OnConfirmToggledLocalWithNetwork;
-        //set2.onConfirmToggle += OnConfirmToggledLocalWithNetwork;
-        
-        // 네트워크 동기화용 RPC 호출 처리 콜백 등록
-        //set1.onConfirmToggle += OnConfirmToggle_Network;
-        //set2.onConfirmToggle += OnConfirmToggle_Network;
-        // UI 초기화 및 선택 해제 상태로 설정
-        //set1.Init();
-        //set2.Init();
-        //set1.SetConfirmed(false);
-        //set2.SetConfirmed(false);
-        // 중첩 클래스에 부모 참조 전달
-        set1.parent = this;
-        set2.parent = this;
+
         // 경고 패널 숨김
-        if (warningPanel != null)
-            warningPanel.SetActive(false);
+        if (warningPanel != null) warningPanel.SetActive(false);
+
         // 씬 이동 버튼 클릭 리스너 등록
         if (startSceneButton != null)
         {
             startSceneButton.onClick.AddListener(() =>
             {
-                // 캐릭터 선택 패널 끄고 시작 패널 켬
                 CharacterSelect_Panel.SetActive(false);
                 Start_Panel.SetActive(true);
             });
         }
     }
-    /*public void OnEnable()
+
+    void OnEnable()
     {
         Debug.Log("SpriteSwitch OnEnable - UI 초기화");
-        set1.Init();
-        set2.Init();
+        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        set1.Init(playerIndex);
         set1.SetConfirmed(false);
+        set2.Init(playerIndex);
         set2.SetConfirmed(false);
-    }*/
-    // 중첩 클래스가 호출하는 함수, RPC 호출 수행
+    }
+
+    // 캐릭터 인덱스 변경 동기화
     public void OnSpriteSetIndexChanged(SpriteSet changedSet)
     {
         int setNumber = (changedSet == set1) ? 1 : 2;
         photonView.RPC(nameof(RPC_SyncCurrentIndex), RpcTarget.AllBuffered, setNumber, changedSet.currentIndex);
     }
+
     [PunRPC]
     private void RPC_SyncCurrentIndex(int setNumber, int syncedIndex)
     {
         var targetSet = (setNumber == 1) ? set1 : set2;
         targetSet.currentIndex = syncedIndex;
         targetSet.ApplyCurrent();
-        // 소유자가 아니면 인덱스 갱신
-        /*if (!photonView.IsMine)
-        {
-            targetSet.currentIndex = syncedIndex;
-            targetSet.ApplyCurrent();
-        }*/
-        // 소유자라면 로컬 인풋을 우선시하여 덮어쓰지 않음
-       
     }
+
     private bool IsSameGenerationConflict(SpriteSet toggledSet)
     {
         SpriteSet otherSet = (toggledSet == set1) ? set2 : set1;
-        int group1 = toggledSet.GetCharacterGroup();
-        int group2 = otherSet.GetCharacterGroup();
-        bool conflict = otherSet.isConfirmed && group1 == group2;
-        Debug.Log($"Check Conflict: toggledSet.Group={group1}, otherSet.Group={group2}, otherSet.isConfirmed={otherSet.isConfirmed}, conflict={conflict}");
-        return conflict;
+        return otherSet.isConfirmed && toggledSet.GetCharacterGroup() == otherSet.GetCharacterGroup();
     }
+
     public void OnConfirmToggledLocalWithNetwork(SpriteSet toggledSet)
     {
         if (IsSameGenerationConflict(toggledSet))
@@ -258,7 +219,7 @@ public class SpriteSwitch : MonoBehaviourPun
     private void OnConfirmToggled_Internal(SpriteSet toggledSet, bool isLocalCall)
     {
         if (isProcessing) return;
-            isProcessing = true;
+        isProcessing = true;
 
         bool nextState = !toggledSet.isConfirmed;
         toggledSet.SetConfirmed(nextState);
@@ -266,48 +227,42 @@ public class SpriteSwitch : MonoBehaviourPun
         if (warningPanel != null)
             warningPanel.SetActive(false);
 
-        //if (isLocalCall && photonView.IsMine)
-        if(isLocalCall)
+        if (isLocalCall)
             OnConfirmToggle_Network(toggledSet);
 
-        if (set1.isConfirmed && set2.isConfirmed)
+        if (set1.isConfirmed && set2.isConfirmed && PhotonNetwork.IsMasterClient)
         {
             CharacterSelectionData.player1SelectedIndex = set1.currentIndex;
             CharacterSelectionData.player2SelectedIndex = set2.currentIndex;
-            Debug.Log("현재 Player1 인덱스: " + CharacterSelectionData.player1SelectedIndex);
-            Debug.Log("현재 Player2 인덱스: " + CharacterSelectionData.player2SelectedIndex);
-            SceneManager.LoadScene("WaitingScene");   
+            photonView.RPC(nameof(RPC_LoadNextScene), RpcTarget.AllBuffered, nextSceneName);
         }
 
         isProcessing = false;
     }
-    // 캐릭터 선택 확인 토글 시 로컬 UI와 상태 처리 함수
-    public void OnConfirmToggled(SpriteSet toggledSet)
-    {
-        OnConfirmToggled_Internal(toggledSet, true);
-    }
-    // 선택 확인 토글 시 네트워크 RPC 호출 처리 함수
+
     public void OnConfirmToggle_Network(SpriteSet toggledSet)
     {
-        if (toggledSet == null || set1 == null || set2 == null) return;
-        int setNumber = (toggledSet == set1) ? 1 : 2; // UI 세트 번호 구분
-        int currentIndex = toggledSet.currentIndex; // 선택된 캐릭터 인덱스
-        bool nextState = !toggledSet.isConfirmed; // 변경될 선택 상태
-        // 다른 클라이언트에게 RPC로 상태 정보 전송 (버퍼 포함)
+        int setNumber = (toggledSet == set1) ? 1 : 2;
+        int currentIndex = toggledSet.currentIndex;
+        bool nextState = !toggledSet.isConfirmed;
         photonView.RPC(nameof(RPC_OnConfirmToggle), RpcTarget.AllBuffered, setNumber, currentIndex, nextState);
     }
-    // RPC 함수 - 다른 클라이언트에서 호출되어 UI 상태 동기화 처리
+
     [PunRPC]
     public void RPC_OnConfirmToggle(int setNumber, int currentIndex, bool isConfirmed)
     {
         var targetSet = (setNumber == 1) ? set1 : set2;
         targetSet.currentIndex = currentIndex;
         targetSet.ApplyCurrent();
-
-        // 네트워크에서는 무한 호출 금지를 위해 isLocalCall=false로 전달
         OnConfirmToggled_Internal(targetSet, false);
     }
-    // 경고 메시지 보여주기 함수
+
+    [PunRPC]
+    public void RPC_LoadNextScene(string sceneName)
+    {
+        PhotonNetwork.LoadLevel(sceneName);
+    }
+
     public void ShowWarning(string message)
     {
         if (warningText != null)
@@ -315,11 +270,11 @@ public class SpriteSwitch : MonoBehaviourPun
         if (warningPanel != null)
         {
             warningPanel.SetActive(true);
-            CancelInvoke(nameof(HideWarning)); // 기존 숨김 예약 취소
-            Invoke(nameof(HideWarning), 3f); // 3초 후 경고 패널 숨기기 예약
+            CancelInvoke(nameof(HideWarning));
+            Invoke(nameof(HideWarning), 3f);
         }
     }
-    // 경고 메시지 숨기기 함수
+
     public void HideWarning()
     {
         if (warningPanel != null)
