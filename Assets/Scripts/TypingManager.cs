@@ -10,42 +10,48 @@ public class TypingManager : MonoBehaviour
     private GameObject[] currentTargets;
     private string correctKeyword;
     private GameObject currentQuestionPanel;
+    private GameObject currentTriggerObject;
     private PlayerMove player;
 
     private void Start()
     {
         inputField.gameObject.SetActive(false);
-        // player = FindLocalPlayer();
+        player = FindLocalPlayer();
     }
 
     void Update()
-{
-    if (inputField.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Return))
     {
-        CheckInput(inputField.text);
+        if (inputField.gameObject.activeSelf && Input.GetKeyDown(KeyCode.Return))
+        {
+            CheckInput(inputField.text);
+        }
     }
-}
 
-
-    // private PlayerMove FindLocalPlayer()
-    // {
-    //     PlayerMove[] allPlayers = FindObjectsOfType<PlayerMove>();
-    //     foreach (var p in allPlayers)
-    //     {
-    //         var view = p.GetComponent<Photon.Pun.PhotonView>();
-    //         if (view == null || view.IsMine)
-    //             return p;
-    //     }
-    //     return null;
-    // }
-
-    public void ShowInputField(GameObject[] targetObjects, string keyword, GameObject questionPanel)
+    private PlayerMove FindLocalPlayer()
     {
+        PlayerMove[] allPlayers = FindObjectsOfType<PlayerMove>();
+        foreach (var p in allPlayers)
+        {
+            var view = p.GetComponent<Photon.Pun.PhotonView>();
+            if (view == null || view.IsMine)
+                return p;
+        }
+        return null;
+    }
+
+    public void ShowInputField(GameObject triggerObject, GameObject[] targetObjects, string keyword, GameObject questionPanel)
+    {
+        if (player != null && player.playerType == PlayerMove.PlayerType.Player2)
+        {
+            Debug.Log("🚫 Player2는 타이핑 퍼즐을 사용할 수 없습니다.");
+            return;
+        }
+
+        currentTriggerObject = triggerObject;
         currentTargets = targetObjects;
         correctKeyword = keyword.Trim().ToLower();
         currentQuestionPanel = questionPanel;
 
-        // 질문 텍스트 설정
         TMP_Text text = currentQuestionPanel.GetComponentInChildren<TMP_Text>();
         if (text != null)
             text.text = keyword;
@@ -71,6 +77,10 @@ public class TypingManager : MonoBehaviour
                 foreach (GameObject obj in currentTargets)
                     obj.SetActive(false);
             }
+
+            if (currentTriggerObject != null)
+                currentTriggerObject.SetActive(false);
+
             HideUI();
         }
         else
