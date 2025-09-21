@@ -56,7 +56,7 @@ public class EnemyMove : MonoBehaviourPun
         
         //Flip Sprite
         if (nextMove != 0)
-            spriteRenderer.flipX = nextMove == 1;
+            spriteRenderer.flipX = nextMove == -1;
 
 
         //재귀함수
@@ -68,7 +68,7 @@ public class EnemyMove : MonoBehaviourPun
     void Turn()
     {
         nextMove *= -1;
-        spriteRenderer.flipX = nextMove == 1;
+        spriteRenderer.flipX = nextMove == -1;
         //Platform 낭떠러지
         CancelInvoke();
         Invoke("Think", 2);
