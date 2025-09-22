@@ -83,6 +83,8 @@ MonoBehaviour:
   - RPC_TriggerGoalEffect
   - RPC_LoadNextScene
   - RPC_SetReady
+  - RPC_CompareFinishItemCount
+  - RPC_UpdateFinishItemUI
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
