@@ -382,8 +382,7 @@ MonoBehaviour:
   stagePoint: 0
   stageIndex: -1
   health: 3
-  playerObj: {fileID: 0}
-  player: {fileID: 0}
+  gameClear: 0
   Stages: []
   UIhealth: []
   UIPoint: {fileID: 0}
@@ -393,13 +392,16 @@ MonoBehaviour:
   Button_StageBack: {fileID: 0}
   Button_Stage1: {fileID: 0}
   Button_Stage2: {fileID: 0}
-  gameClear: 0
   finishItemCount: 0
   totalStages: 3
   finishItemText: {fileID: 0}
-  colorRestoreMode: 0
   goalObject: {fileID: 0}
+  spawnPoints: []
+  playerPrefabNames: []
+  colorRestoreMode: 0
   isInstantDeathMode: 0
+  playerObj: {fileID: 0}
+  player: {fileID: 0}
 --- !u!4 &525329594
 Transform:
   m_ObjectHideFlags: 0
@@ -18851,9 +18853,9 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1492996975}
   - {fileID: 1691873494}
   - {fileID: 336931132}
-  - {fileID: 1492996975}
   - {fileID: 1760194933}
   - {fileID: 525329594}
   - {fileID: 159106760}

@@ -100,9 +100,15 @@ public class ItemManager : MonoBehaviour
             case ItemType.Invincibility:
                 StartCoroutine(ActivateInvincibilityEffect(targetPlayer));
                 break;
+
+            // case ItemType.DoubleJump:
+            //     StartCoroutine(ActivateDoubleJumpEffect(targetPlayer));
+            //     break;
             case ItemType.DoubleJump:
-                StartCoroutine(ActivateDoubleJumpEffect(targetPlayer));
+                //Debug.Log("🪂 Double Jump 아이템 적용 (ItemManager → PlayerMove)");
+                targetPlayer.EnableDoubleJump(5f);   // PlayerMove가 코루틴 관리
                 break;
+
             case ItemType.AccessPass:
                 GrantAccessPass(targetPlayer);
                 break;
@@ -143,12 +149,44 @@ public class ItemManager : MonoBehaviour
         Debug.Log("💥 Invincibility Ended");
     }
 
-    private IEnumerator ActivateDoubleJumpEffect(PlayerMove player)
+    private IEnumerator ActivateDoubleJumpEffect(PlayerMove player, float duration = 5f)
     {
         Debug.Log("🪂 Double Jump Activated!");
-        player.EnableDoubleJump(5f);
+        player.EnableDoubleJump(duration);
         yield return null;
     }
+
+//    private Coroutine doubleJumpCoroutine;
+
+// private IEnumerator ActivateDoubleJumpEffect(PlayerMove player, float duration = 5f)
+// {
+//     Debug.Log("🪂 Double Jump Activated!");
+
+//     // 기존 코루틴이 실행 중이면 중단
+//     if (doubleJumpCoroutine != null)
+//     {
+//         StopCoroutine(doubleJumpCoroutine);
+//         Debug.Log("🔁 기존 더블점프 효과 중단 후 갱신");
+//     }
+
+//     // 새로운 코루틴 실행
+//     doubleJumpCoroutine = StartCoroutine(DoubleJumpRoutine(player, duration));
+//     yield return null;
+// }
+
+// private IEnumerator DoubleJumpRoutine(PlayerMove player, float duration)
+// {
+//     player.EnableDoubleJump(true);
+//     Debug.Log($"⏱️ Double Jump {duration}초 동안 활성화");
+
+//     yield return new WaitForSeconds(duration);
+
+//     player.EnableDoubleJump(false);
+//     Debug.Log("🛑 Double Jump 효과 종료");
+
+//     doubleJumpCoroutine = null; // 끝나면 비움
+// }
+
 
     private void GrantAccessPass(PlayerMove player)
     {

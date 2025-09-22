@@ -18,10 +18,10 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     public bool hasAccessPass = false;
     private bool isInvincible = false;
     private bool doubleJumpActive = false;
-    private bool doubleJumpUsed = false;
-    private bool isJumping = false;
 
-    private bool colorRestoreMode = false;
+    private bool doubleJumpUsed = false; 
+    //private bool isJumping = false; //경고제거
+    //private bool colorRestoreMode = false; //경고제거
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
 
     
@@ -45,6 +45,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     private GameManager gameManager;
     public StageSelectUI stageSelectUI;
+
+    private Coroutine doubleJumpRoutine;
 
     void Awake()
     {
@@ -196,8 +198,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
                 if (gameManager.goalObject != null)
                 {
-                    //StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
-                    gameManager.GoalAppearEffect();
+                    StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
+                    //gameManager.GoalAppearEffect();
                 }
             }
 
@@ -236,16 +238,37 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         spriteRenderer.color = status ? new Color(1, 1, 1, 0.5f) : Color.white;
     }
     
+    // public void EnableDoubleJump(float duration)
+    // {
+    //     StartCoroutine(ActivateDoubleJump(duration));
+    // }
+
+    // IEnumerator ActivateDoubleJump(float duration)
+    // {
+    //     doubleJumpActive = true;
+    //     yield return new WaitForSeconds(duration);
+    //     doubleJumpActive = false;
+    // }
+
     public void EnableDoubleJump(float duration)
     {
-        StartCoroutine(ActivateDoubleJump(duration));
+        // ✅ 이전 효과가 돌고 있으면 중단하고 새로 시작 (중첩 안전)
+        if (doubleJumpRoutine != null)
+            StopCoroutine(doubleJumpRoutine);
+
+        doubleJumpRoutine = StartCoroutine(ActivateDoubleJump(duration));
     }
 
     IEnumerator ActivateDoubleJump(float duration)
     {
         doubleJumpActive = true;
+        Debug.Log($"[DoubleJump] 활성화: {duration}초");
+
         yield return new WaitForSeconds(duration);
+
         doubleJumpActive = false;
+        doubleJumpRoutine = null;
+        Debug.Log("[DoubleJump] 종료");
     }
 
     // ColorRestore가 GameManager를 통해 동작하고, Goal 연출도 GameManager에서 담당
@@ -264,50 +287,95 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                Mathf.Abs(a.g - b.g) < threshold &&
                Mathf.Abs(a.b - b.b) < threshold;
     }
-    void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌들
-    {
+    // void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌들
+    // {
       
+    //     if (collision.CompareTag("Item"))
+    //     {
+    //         string name = collision.name;
+
+    //         bool isCoin = name.Contains("Bronze") || name.Contains("Sliver") || name.Contains("Gold");
+
+    //        // if (rayHit.collider != null)
+    //         //{
+            
+    //             if (isCoin)
+    //             {
+    //                 if (name.Contains("Bronze")) gameManager.stagePoint += 50;
+    //                 else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
+    //                 else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+
+    //                 collision.gameObject.SetActive(false);
+    //                 //PlaySound("Item");
+    //                 return;
+    //             }
+
+    //             if (playerType == PlayerType.Player2)
+    //             {
+    //                 Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
+    //                 return;
+    //             }
+
+    //             if (name.Contains("Buffering")) ItemManager.Instance.UseItem(ItemType.BufferingIcon, this);
+    //             else if (name.Contains("Invincibility")) ItemManager.Instance.UseItem(ItemType.Invincibility, this);
+    //             else if (name.Contains("DoubleJump")) ItemManager.Instance.UseItem(ItemType.DoubleJump, this);
+    //             else if (name.Contains("AccessPass")) ItemManager.Instance.UseItem(ItemType.AccessPass, this);
+    //             else if (name.Contains("RevealPlatform")) ItemManager.Instance.UseItem(ItemType.RevealPlatform, this);
+    //             else if (name.Contains("ColorRestore")) ItemManager.Instance.UseItem(ItemType.ColorRestore, this);
+
+
+    //             StartCoroutine(DeactivateAfterDelay(collision.gameObject, 0.2f));
+
+    //             collision.gameObject.SetActive(false);
+    //             PlaySound("Item");
+    //         //}
+
+    //     }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
         if (collision.CompareTag("Item"))
         {
             string name = collision.name;
 
             bool isCoin = name.Contains("Bronze") || name.Contains("Sliver") || name.Contains("Gold");
 
-           // if (rayHit.collider != null)
-            //{
-            
-                if (isCoin)
-                {
-                    if (name.Contains("Bronze")) gameManager.stagePoint += 50;
-                    else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
-                    else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+            if (isCoin)
+            {
+                if (!photonView.IsMine) return;
 
-                    collision.gameObject.SetActive(false);
-                    //PlaySound("Item");
-                    return;
-                }
-
-                if (playerType == PlayerType.Player2)
-                {
-                    Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
-                    return;
-                }
-
-                if (name.Contains("Buffering")) ItemManager.Instance.UseItem(ItemType.BufferingIcon, this);
-                else if (name.Contains("Invincibility")) ItemManager.Instance.UseItem(ItemType.Invincibility, this);
-                else if (name.Contains("DoubleJump")) ItemManager.Instance.UseItem(ItemType.DoubleJump, this);
-                else if (name.Contains("AccessPass")) ItemManager.Instance.UseItem(ItemType.AccessPass, this);
-                else if (name.Contains("RevealPlatform")) ItemManager.Instance.UseItem(ItemType.RevealPlatform, this);
-                else if (name.Contains("ColorRestore")) ItemManager.Instance.UseItem(ItemType.ColorRestore, this);
-
-
-                StartCoroutine(DeactivateAfterDelay(collision.gameObject, 0.2f));
+                if (name.Contains("Bronze")) gameManager.stagePoint += 50;
+                else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
+                else if (name.Contains("Gold")) gameManager.stagePoint += 300;
 
                 collision.gameObject.SetActive(false);
-                PlaySound("Item");
-            //}
+                PlaySound("Item");   // ✅ 코인 먹는 소리
+                return;
+            }
 
+            if (playerType == PlayerType.Player2)
+            {
+                Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
+                return;
+            }
+
+            if (name.Contains("Buffering")) ItemManager.Instance.UseItem(ItemType.BufferingIcon, this);
+            else if (name.Contains("Invincibility")) ItemManager.Instance.UseItem(ItemType.Invincibility, this);
+            else if (name.Contains("DoubleJump")) ItemManager.Instance.UseItem(ItemType.DoubleJump, this);
+            else if (name.Contains("AccessPass")) ItemManager.Instance.UseItem(ItemType.AccessPass, this);
+            else if (name.Contains("RevealPlatform")) ItemManager.Instance.UseItem(ItemType.RevealPlatform, this);
+            else if (name.Contains("ColorRestore")) ItemManager.Instance.UseItem(ItemType.ColorRestore, this);
+
+            // 아이템 비활성화
+            StartCoroutine(DeactivateAfterDelay(collision.gameObject, 0.2f));
+            collision.gameObject.SetActive(false);
+
+            //PlaySound("Item");   // ✅ 아이템 획득 소리 (한 번만)
+            
+            if (photonView.IsMine)
+                PlaySound("Item");
         }
+
 
         else if (collision.CompareTag("Finish"))
         {
@@ -320,7 +388,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 if (!stageToSelect)
                 {
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
-                    
+
                 }
             }
             else
@@ -328,7 +396,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 if (!stageToSelect)
                 {
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
-                    
+
                 }
             }
         }
