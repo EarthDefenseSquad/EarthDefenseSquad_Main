@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject playerObj;
     public PlayerMove player;
 
+    
+
     // =========================
     //        Unity Hooks
     // =========================
@@ -119,7 +121,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // 스테이지 선택 버튼 와이어링
         WireStageSelectButtons();
-        UpdateFinishItemUI();
+        //UpdateFinishItemUI();
     }
 
     void Update()
@@ -266,7 +268,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     // =========================
     //     Finish / Goal
     // =========================
-    public void AddFinishItem(int add = 1)
+    /*public void AddFinishItem(int add = 1)
     {
         finishItemCount += add;
         if (finishItemCount < 0) finishItemCount = 0;
@@ -292,7 +294,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             finishItemText.text = $"{finishItemCount} / {totalStages}";
         }
-    }
+    }*/
 
     /// <summary>
     /// 목표 도달(예: finishItemCount==totalStages)이면 호출

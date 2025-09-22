@@ -84,6 +84,9 @@ MonoBehaviour:
   - RPC_LoadNextScene
   - RPC_SetReady
   - RPC_SyncFinishItem
+  - RPC_CompareFinishItemCount
+  - RPC_SyncFinishItemCount
+  - RPC_UpdateFinishItemUI
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

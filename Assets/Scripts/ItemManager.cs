@@ -27,7 +27,6 @@ public class ItemManager : MonoBehaviour
         Instance = this;
     }
 
-
     private void Start()
     {
         InitializeItems();

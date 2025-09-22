@@ -29,7 +29,8 @@ public class FinishItem : MonoBehaviour
         if (!collected)
         {
             PlayerPrefs.SetInt(itemID, 1);
-            gm.AddFinishItem();  // 실제 Finish 개수 증가
+            //gm.AddFinishItem();  // 실제 Finish 개수 증가
+            FinishItemManager.Instance.AddFinishItem();
             collected = true;
         }
 
