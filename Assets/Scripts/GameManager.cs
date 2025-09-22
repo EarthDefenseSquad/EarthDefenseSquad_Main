@@ -130,6 +130,15 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (SceneManager.GetActiveScene().name == "StageScene" && UIPoint != null)
         {
             UIPoint.text = totalPoint.ToString();
+
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
+            PlayerPrefs.Save();
+            Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
     }
 
