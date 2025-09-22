@@ -35,24 +35,17 @@ public class FinishItemManager : MonoBehaviourPun
     public void LoadFinishItemCount()
     {
         int localValue = PlayerPrefs.GetInt(FinishItemKey, 0); //일단 값 불러옴
-        photonView.RPC("RPC_CompareFinishItemCount", RpcTarget.MasterClient, localValue); //클라이언트가 마스터에게 값 전송
+        photonView.RPC("RPC_CompareFinishItemCount", RpcTarget.All, localValue); //클라이언트가 마스터에게 값 전송
     }
 
     [PunRPC]
-    public void RPC_CompareFinishItemCount(int clientValue, PhotonMessageInfo info) 
+    public void RPC_CompareFinishItemCount(int clientValue)
     {
-        int masterValue = PlayerPrefs.GetInt(FinishItemKey, 0); 
+        int myValue = PlayerPrefs.GetInt(FinishItemKey, 0);
 
         // 규칙: 더 큰 값을 기준으로 맞추기
-        int syncValue = Mathf.Max(masterValue, clientValue);
+        int syncValue = Mathf.Max(myValue, clientValue);
 
-        // 두 쪽에 모두 적용
-        photonView.RPC("RPC_SyncFinishItemCount", RpcTarget.All, syncValue); //비교해서 나온 큰 값을 모두에게 전송.
-    }
-
-    [PunRPC]
-    public void RPC_SyncFinishItemCount(int syncValue)
-    {
         finishItemCount = syncValue;
         PlayerPrefs.SetInt(FinishItemKey, finishItemCount); //이제 두 명의 값이 같아짐.
     }
