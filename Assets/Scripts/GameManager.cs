@@ -6,579 +6,510 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
-using Unity.VisualScripting;
 using ExitGames.Client.Photon;
+
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public int totalPoint=0;
-    public int stagePoint=0;
-    public int stageIndex=-1;
-    public int health=3;
+    // =========================
+    //        Constants
+    // =========================
+    private const string K_SelectedIndex = "selectedIndex";
+    private const string K_PlayerPrefs_SelectedStage = "SelectedStageIndex";
+
+    // =========================
+    //        Singleton
+    // =========================
+    //public static GameManager Instance;
+
+    // =========================
+    //        Game State
+    // =========================
+    [Header("Game State")]
+    public int totalPoint = 0;
+    public int stagePoint = 0;
+    public int stageIndex = -1;
+    public int health = 3;
+    public bool gameClear = false;
+
+    [Header("Stage / Map Roots")]
+    public GameObject[] Stages; // 각 스테이지 루트 오브젝트 (Inspector)
+
+    [Header("UI - Core")]
+    public Image[] UIhealth;           // 하트(체력) UI
+    public Text UIPoint;               // 점수 UI (UnityEngine.UI.Text)
+    public Text UIStage;               // STAGE n UI
+
+    [Header("UI - Restart / Stage Select")]
+    public GameObject RestartButton;   // 게임오버 시 노출
+    public GameObject StageSelectPanel;
+    public Button Button_StageBack, Button_Stage1, Button_Stage2;
+
+    [Header("Finish / Goal")]
+    public int finishItemCount = 0;    // 수집한 Finish 아이템 개수
+    public int totalStages = 3;        // 총 필요 수
+    public Text finishItemText;        // "n / total" UI
+    public GameObject goalObject;      // 골 오브젝트(숨겨놨다가 등장)
+
+    [Header("Player Spawn")]
+    public Transform[] spawnPoints;        // 0=P1, 1=P2
+    public string[] playerPrefabNames;     // selectedIndex → 프리팹 이름 매핑
+
+    [Header("Etc Options")]
+    public bool colorRestoreMode = false;  // 색 복원 모드
+    public bool isInstantDeathMode = false;// 개발용 즉사 모드
+
+    // =========================
+    //   Runtime / Internals
+    // =========================
+    private HashSet<string> restoredObjectNames = new HashSet<string>();
+    private int myViewID;
+
+    // 마지막으로 스폰된 (내) 플레이어
     public GameObject playerObj;
     public PlayerMove player;
 
-    public GameObject[] Stages;
-
-    public Image[] UIhealth;
-    public Text UIPoint;
-    public Text UIStage;
-    public GameObject RestartButton;
-
-    public GameObject StageSelectPanel;
-    public Button Button_StageBack, Button_Stage1, Button_Stage2;
-    public bool gameClear = false;
-
-
-    // 현재까지 먹은 Finish 아이템 개수 (게임 재시작 시에도 유지됨)
-    public int finishItemCount = 0;
-
-    // 총 Finish 아이템의 개수 (엔딩 분기 기준값) - 인스펙터에서 설정 가능
-    public int totalStages = 3;
-
-    // Finish 아이템 개수를 화면에 표시할 UI 텍스트 (왼쪽 하단에 위치한 Text 오브젝트)
-    public Text finishItemText;
-
-    // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
-    private const string FinishItemKey = "FinishItemCount";
-
-    public bool colorRestoreMode = false;
-    public GameObject goalObject; // Goal 오브젝트 연결
-    private HashSet<string> restoredObjectNames = new HashSet<string>();
-
-
-
-    [Header("개발용 설정 - 즉사 모드")]
-    public bool isInstantDeathMode=false;
-
-    //플레이어들 동기화 스폰
-    //플레이어들 동기화 이동
-    //플레이어들 특정 조건 만족 시 DB로 클리어 기록 전송.(나중에 DB스크립트에서 클리어 기록이 있다면 게임 스테이지 변경)
-    
-    public static GameManager Instance;
-
-    private int myViewID;   // PhotonView ID 저장용
+    // =========================
+    //        Unity Hooks
+    // =========================
     void Awake()
     {
-        if (isInstantDeathMode)
-        {
-            health = 1;
-            UpdateHealthUI(); // ✅ UI 반영
-        }
-        else
-        {
-            health = 3;
-        }
-        Instance = this;
+        //Instance = this;
+
+        // Photon: 씬 자동 동기화 사용 (방장만 LoadLevel 호출)
+        PhotonNetwork.AutomaticallySyncScene = true;
+
+        // 즉사 모드 → 시작 체력 1
+        health = isInstantDeathMode ? 1 : 3;
+        UpdateHealthUI();
+
+        // 내 PhotonView 추적(있으면)
         PhotonView pv = GetComponent<PhotonView>();
         if (pv != null)
         {
             myViewID = pv.ViewID;
-            Debug.Log($"[GameManager] 내 PhotonView ID = {myViewID}");
+            Debug.Log($"[GameManager] PhotonView ID = {myViewID}");
         }
-        else
-        {
-            Debug.LogError("GameManager에 PhotonView가 없습니다!");
-        }
+    }
 
-       
-    }
-    IEnumerator DelayedSpawn()
-    {
-        yield return new WaitForSeconds(1.0f); // 1초 대기
-        SpawnPlayer(PhotonNetwork.LocalPlayer.ActorNumber - 1);
-    }
     void Start()
     {
-
-
-        // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
-        stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
-
-        // ✅ 모든 스테이지 비활성화
+        // 스테이지 표시/활성
+        stageIndex = PlayerPrefs.GetInt(K_PlayerPrefs_SelectedStage, 0);
         for (int i = 0; i < Stages.Length; i++)
-            Stages[i].SetActive(false);
+            if (Stages[i] != null) Stages[i].SetActive(false);
 
-        // ✅ 현재 선택된 스테이지만 활성화
-        if (stageIndex >= 0 && stageIndex < Stages.Length)
+        if (stageIndex >= 0 && stageIndex < Stages.Length && Stages[stageIndex] != null)
         {
             Stages[stageIndex].SetActive(true);
-            UIStage.text = "STAGE " + (stageIndex + 1);
+            if (UIStage != null) UIStage.text = "STAGE " + (stageIndex + 1);
         }
-        else
+
+        // 씬 별 스폰
+        string scene = SceneManager.GetActiveScene().name;
+        if (scene == "WaitingScene")
         {
-            Debug.LogWarning("유효하지 않은 stageIndex 입니다.");
+            StartCoroutine(DelayedSpawn());   // CustomProps 도착 대기 후 스폰
         }
-        string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene == "WaitingScene" || currentScene == "StageScene")
+        else if (scene == "StageScene")
         {
-           if(SceneManager.GetActiveScene().name == "WaitingScene")
-            {
-                StartCoroutine(DelayedSpawn());
-            }
-            else
-            {
-                SpawnPlayer(PhotonNetwork.LocalPlayer.ActorNumber - 1);
-            }
-            
-        }   
+            int idx = GetLocalPlayerIndex();
+            int sel = GetSelectedIndexForLocal();
+            SpawnPlayer(idx, sel);
+        }
+
+        // 스테이지 선택 버튼 와이어링
+        WireStageSelectButtons();
+        UpdateFinishItemUI();
     }
+
     void Update()
     {
-        string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene == "StageScene") //현재 씬이 스테이지씬일 경우에만 포인트 띄움
+        // StageScene에서만 점수 UI 갱신(프로젝트 정책에 맞게)
+        if (SceneManager.GetActiveScene().name == "StageScene" && UIPoint != null)
         {
-            UIPoint.text = (totalPoint + stagePoint).ToString();
-            //photonView.RPC("LoadAndUpdateItem",RpcTarget.AllBuffered);
-            SyncFinishItemCount();
-
-        }
-        // 로컬 저장된 아이템 개수를 불러옴
-        //LoadFinishItemCount();
-
-        // UI에 현재 수치 표시
-        //UpdateFinishItemUI();
-       
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
-            PlayerPrefs.Save();
-            Debug.Log("[개발용] data모은 정도 초기화 완료");
-        }
-
-
-    }
-    
-    public int GetViewID()
-    {
-        return myViewID;
-    }
-    public void SyncFinishItemCount()
-    {
-
-        // 마스터 클라이언트만 로컬 저장 불러오기
-        LoadFinishItemCount();
-        // 다른 모든 클라이언트에게 값 전달
-        int gmId = GameManager.Instance.GetViewID();
-        PhotonView targetView = PhotonView.Find(gmId);
-        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
-        Debug.Log($"내 photonView ID: {photonView.ViewID}");
-        Debug.Log($"찾은 targetView ID: {targetView.ViewID}");
-    }
-
-    [PunRPC]
-    void UpdateFinishItemUI_RPC(int newCount)
-    {
-        finishItemCount = newCount;
-        UpdateFinishItemUI();
-    }
-
-    
-    void SyncWithMaxValue()
-    {
-        int maxCount = 0;
-        foreach (var p in PhotonNetwork.PlayerList)
-        {
-            if (p.CustomProperties.ContainsKey("FinishItemCount"))
-            {
-                int val = (int)p.CustomProperties["FinishItemCount"];
-                if (val > maxCount) maxCount = val;
-            }
-        }
-
-        finishItemCount = maxCount;
-        Debug.Log($"[Sync] 최종 확정된 finishItemCount = {finishItemCount}");
-
-        // UI 갱신
-        UpdateFinishItemUI();
-
-        // 모든 클라이언트에 확정된 값 전송
-        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
-
-    }
-
-    // 로컬 저장된 아이템 개수를 불러오는 함수
-    public void LoadFinishItemCount()
-    {
-        // 만약 저장된 값이 없다면 기본값 0을 반환함
-        finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
-    }
-
-    // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
-    public void ResetFinishItemData()
-    {
-
-        // PlayerPrefs에서 해당 키 제거
-        PlayerPrefs.DeleteKey(FinishItemKey);
-
-        // 메모리 상의 수치도 0으로 초기화
-        finishItemCount = 0;
-
-        // UI 반영
-        UpdateFinishItemUI();
-        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered, finishItemCount);
-    }
-
-    // UI에 Finish 아이템 수치를 업데이트하는 함수
-
-    
-    public void UpdateFinishItemUI()
-    {
-        
-        // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
-        if (finishItemText != null)
-            finishItemText.text = finishItemCount.ToString();
-    }
-
-    // Finish 아이템을 하나 먹었을 때 호출하는 함수
-    public void AddFinishItem()
-    {
-
-        /*// 수치 1 증가
-        finishItemCount++;
-
-        // PlayerPrefs에 저장 (로컬 디스크에 저장됨)
-        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
-        PlayerPrefs.Save(); // 강제로 저장
-
-        // UI 업데이트
-        UpdateFinishItemUI();
-        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);*/
-        
-        finishItemCount++;
-        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
-        PlayerPrefs.Save();
-
-        // 내 커스텀 프로퍼티 갱신
-        var hash = new ExitGames.Client.Photon.Hashtable();
-        hash["FinishItemCount"] = finishItemCount;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
-
-        UpdateFinishItemUI();
-
-        
-    }
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
-    {
-        if (changedProps.ContainsKey("FinishItemCount"))
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                SyncWithMaxValue();
-            }
+            UIPoint.text = totalPoint.ToString();
         }
     }
 
+    // =========================
+    //       Spawn Flow
+    // =========================
+    private IEnumerator DelayedSpawn()
+    {
+        // 룸/로컬 준비까지 대기
+        while (!PhotonNetwork.InRoom || PhotonNetwork.LocalPlayer == null)
+            yield return null;
+
+        // 선택값(CustomProperties) 들어올 때까지 잠깐 대기 (최대 2초)
+        float t = 0f;
+        int selectedIndex = -1;
+        while (t < 2f)
+        {
+            selectedIndex = GetSelectedIndexForLocal();
+            if (selectedIndex >= 0) break;
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        int localIdx = GetLocalPlayerIndex();
+        Debug.Log($"[GameManager] DelayedSpawn → localIdx={localIdx}, selectedIndex={selectedIndex}");
+        SpawnPlayer(localIdx, selectedIndex);
+    }
+
+    /// <summary>
+    /// 2인 고정 게임이면 이 방식이 가장 안전.
+    /// 방장=0, 클라=1.
+    /// </summary>
+    private int GetLocalPlayerIndex()
+    {
+        return PhotonNetwork.IsMasterClient ? 0 : 1;
+    }
+
+    /// <summary>
+    /// 내 캐릭터 선택값을 우선 CustomProperties에서 읽고,
+    /// 없으면 CharacterSelectionData 폴백.
+    /// </summary>
+    private int GetSelectedIndexForLocal()
+    {
+        var lp = PhotonNetwork.LocalPlayer;
+        if (lp != null && lp.CustomProperties != null && lp.CustomProperties.ContainsKey(K_SelectedIndex))
+        {
+            object v = lp.CustomProperties[K_SelectedIndex];
+            if (v is int iv) return iv;
+            if (v != null && int.TryParse(v.ToString(), out var iv2)) return iv2;
+        }
+
+        int myIdx = GetLocalPlayerIndex();
+        int fb = (myIdx == 0) ? CharacterSelectionData.player1SelectedIndex
+                              : CharacterSelectionData.player2SelectedIndex;
+        return fb;
+    }
+
+    /// <summary>
+    /// 기존 시그니처 호환용 (선택값은 내부에서 가져옴)
+    /// </summary>
     public void SpawnPlayer(int player_index)
     {
-        int selectedIndex = (player_index == 0) ? CharacterSelectionData.player1SelectedIndex : CharacterSelectionData.player2SelectedIndex;
-        string prefabName;
-        switch (selectedIndex)
-        {
-            case 0:
-                prefabName = "Player";
-                break;
-            case 1:
-                prefabName = "Player Z-2";
-                break;
-            case 2:
-                prefabName = "Player X-1";
-                break;
-            case 3:
-                prefabName = "Player X-2";
-                break;
-            default:
-                prefabName = "Player"; // 기본값 설정
-                break;
-        }
-        Debug.Log($"Selected prefabName: {prefabName} for player_index: {player_index}");
-        var spawnPositions = new Vector3[]
-        {
-        new Vector3(-1.0f, -0.5f, 0.0f),
-        new Vector3(0.0f, -0.5f, 0.0f)
-        };
-        GameObject playerObject = PhotonNetwork.Instantiate(prefabName, spawnPositions[player_index], Quaternion.identity);
-        player = playerObject.GetComponent<PlayerMove>();
-        //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
-        //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
-        //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
-        //Instantiate(obj, spawnPosition, Quaternion.identity);
-        //위의 두 줄이 의미하는 게 포톤에서는 PhotonNetwork.Instantiate~~저걸로 리소스에서 "PlayerPrefab"이라는 이름의 프리팹 가져옴.
+        int selectedIndex = (player_index == 0) ? CharacterSelectionData.player1SelectedIndex
+                                                : CharacterSelectionData.player2SelectedIndex;
+        SpawnPlayer(player_index, selectedIndex);
+    }
 
-        Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
-        if (playerObject == null)
+    /// <summary>
+    /// 실제 스폰 메서드(선택값 명시).
+    /// </summary>
+    public void SpawnPlayer(int player_index, int selectedIndex)
+    {
+        // 프리팹 이름 결정
+        string prefabName = ResolvePrefabNameBySelectedIndex(selectedIndex, player_index);
+        Debug.Log($"Selected prefabName: {prefabName} for player_index: {player_index}");
+
+        // 스폰 위치
+        Vector3 spawnPos;
+        if (spawnPoints != null && spawnPoints.Length > player_index && spawnPoints[player_index] != null)
+            spawnPos = spawnPoints[player_index].position;
+        else
         {
-            Debug.LogError("플레이어 객체 생성 실패!");
-            return;
+            // 안전 폴백 좌표
+            Vector3[] defaults = { new Vector3(-1f, -0.5f, 0f), new Vector3(0f, -0.5f, 0f) };
+            spawnPos = defaults[Mathf.Clamp(player_index, 0, 1)];
+        }
+
+        // 네트워크 생성
+        GameObject obj = PhotonNetwork.Instantiate(prefabName, spawnPos, Quaternion.identity);
+        playerObj = obj;
+        player = obj.GetComponent<PlayerMove>();
+
+        // PlayerMove 내부 필드 이름이 프로젝트마다 다르므로, 디버그시 안전하게만 출력
+        if (player != null)
+        {
+            Debug.Log($"[PlayerMove] Player{player_index + 1} 스폰 완료");
         }
 
         Debug.Log("플레이어 생성 완료");
 
-        // Camera 세팅
+        // 카메라 유효성(선택)
         if (Camera.main == null)
         {
-            Debug.LogError("Main Camera가 없습니다.");
-            return;
+            Debug.LogWarning("[GameManager] Main Camera가 없습니다. 카메라 세팅을 확인하세요.");
         }
     }
 
-    public void SetCharacterSprite(int selectedIndex)
+    /// <summary>
+    /// 선택 인덱스 → 프리팹 이름 매핑
+    /// </summary>
+    private string ResolvePrefabNameBySelectedIndex(int selectedIndex, int playerIndex)
     {
-        
-    }
-    public void OnGameClear()
-    {
-        gameClear = true;
-    }
-    [PunRPC]
-    void MoveTheClearStageSelectPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
-    {                                   //튜토리얼 선택 패널 동기화
-        StageSelectPanel.SetActive(true);
-    }
-
-    [PunRPC]
-    void DBonGameClear(int clearedStage)
-    {
-        //클리어 기록 관련
-        GameObject obj = GameObject.Find("PlayFabDataManager");
-        Debug.Log(obj);
-        PlayFabDataManager playFabDataManager = obj.GetComponent<PlayFabDataManager>();
-        Debug.Log(playFabDataManager);
-
-        GameObject stageObj = GameObject.Find("StageSelectUI");
-        Debug.Log(stageObj);
-
-        StageSelectUI StageSelectUI = stageObj.GetComponent<StageSelectUI>();
-        Debug.Log(StageSelectUI);
-
-        playFabDataManager.SaveStageClear(clearedStage, clearedStage =>
-        { StageSelectUI.UnlockStage(clearedStage); });
-    }
-
-    public void NextStage()
-    {
-        if (stageIndex < Stages.Length - 1)
+        // Inspector로 매핑 관리하는 걸 권장
+        if (playerPrefabNames != null &&
+            selectedIndex >= 0 &&
+            selectedIndex < playerPrefabNames.Length &&
+            !string.IsNullOrEmpty(playerPrefabNames[selectedIndex]))
         {
-            Stages[stageIndex].SetActive(false);
-            stageIndex++;
-            Stages[stageIndex].SetActive(true);
-            PlayerReposition();
+            return playerPrefabNames[selectedIndex];
+        }
 
-            UIStage.text = "STAGE " + (stageIndex + 1);
+        // 하드코딩 폴백 (프로젝트 네이밍에 맞게 필요시 수정)
+        switch (selectedIndex)
+        {
+            case 0: return "Player";
+            case 1: return "Player Z-2";
+            case 2: return "Player X-1";
+            case 3: return "Player X-2";
+            default:
+                return (playerPrefabNames != null && playerPrefabNames.Length > 0)
+                    ? playerPrefabNames[0]
+                    : "Player";
+        }
+    }
+
+    // =========================
+    //     Finish / Goal
+    // =========================
+    public void AddFinishItem(int add = 1)
+    {
+        finishItemCount += add;
+        if (finishItemCount < 0) finishItemCount = 0;
+        UpdateFinishItemUI();
+
+        // 방장이라면 방에 동기화 (원하면 Buffered)
+        if (PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC(nameof(RPC_SyncFinishItem), RpcTarget.OthersBuffered, finishItemCount);
+        }
+    }
+
+    [PunRPC]
+    private void RPC_SyncFinishItem(int synced)
+    {
+        finishItemCount = synced;
+        UpdateFinishItemUI();
+    }
+
+    private void UpdateFinishItemUI()
+    {
+        if (finishItemText != null)
+        {
+            finishItemText.text = $"{finishItemCount} / {totalStages}";
+        }
+    }
+
+    /// <summary>
+    /// 목표 도달(예: finishItemCount==totalStages)이면 호출
+    /// </summary>
+    public void OnReachGoal()
+    {
+        if (finishItemCount >= totalStages)
+        {
+            gameClear = true;
+            Debug.Log("[GameManager] Stage Clear!");
+            GoalAppearEffect();
         }
         else
         {
-            //Time.timeScale = 0; // Pause the game
-            Debug.Log("모든 스테이지를 클리어했습니다.");
-            //Text btnText = RestartButton.GetComponentInChildren<Text>();
-            //btnText.text = "Clear!";
-            //RestartButton.SetActive(true);
-        }
-
-        totalPoint += stagePoint;
-
-        stagePoint = 0;
-    }
-
-    public void HealthDown()
-    {
-
-
-        {
-            if (health > 0)
-            {
-                health--;
-                Debug.Log("생명 감소");
-                Debug.Log(health);
-                UpdateHealthUI(); // ✅ UI 업데이트
-                //photonView.RPC("PlayerReposition", RpcTarget.All);
-            }
-
-            if (health <= 0)
-            {   
-                Debug.Log(health);
-                player.OnDie();
-                Debug.Log("플레이어가 죽었습니다.");
-                RestartButton.SetActive(true);
-            }
-        }
-
-    }
-
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-
-            if (health > 1)
-            {
-                PlayerReposition();
-            }
-
-
-            HealthDown();
+            Debug.Log("[GameManager] 아직 목표 조건이 부족합니다.");
         }
     }
 
-    [PunRPC]
-    void PlayerReposition()
+    /// <summary>
+    /// PlayerMove에서 호출하던 이름 그대로 유지
+    /// 골(문/포탈 등)을 등장시키는 효과
+    /// </summary>
+
+
+
+    // public void GoalAppearEffect()
+    // {
+    //     if (goalObject != null)
+    //     {
+    //         if (!goalObject.activeSelf)
+    //             goalObject.SetActive(true);
+
+    //         // 필요하다면 간단한 이펙트/애니메이션 트리거 추가 가능
+    //         Debug.Log("[GameManager] GoalAppearEffect executed");
+    //     }
+    //     else
+    //     {
+    //         Debug.LogWarning("[GameManager] goalObject가 설정되지 않았습니다.");
+    //     }
+    // }
+    
+        public IEnumerator GoalAppearEffect()
     {
-        if (player != null)
-        {
-            player.transform.position = new Vector3(-1.0f, -0.5f, 0);
-            //player.VelocityZero();
-        }
-         
-    }
-
-
-    public void RestartGame()
-    {
-        Time.timeScale = 1; // Resume the game
-        PhotonNetwork.LoadLevel(3);
-    }
-
-    public void EnableColorRestoreMode(bool enable)
-    {
-        colorRestoreMode = enable;
-        photonView.RPC("RPC_EnableColorRestore", RpcTarget.All, enable);
-    }
-
-    [PunRPC]
-    void RPC_EnableColorRestore(bool enable)
-    {
-        colorRestoreMode = enable;
-
-
-        if (!enable) return;
-
-
         if (goalObject != null)
         {
-            goalObject.SetActive(false);
+            if (!goalObject.activeSelf)
+                goalObject.SetActive(true);
+
+            // 필요하다면 간단한 이펙트/애니메이션 트리거 추가 가능
+            Debug.Log("[GameManager] GoalAppearEffect executed");
         }
-    }
-
-    public void SyncColorRestoration(string objectName)
-    {
-        if (!PhotonNetwork.IsMasterClient) return;
-
-
-        if (!restoredObjectNames.Contains(objectName))
+        else
         {
-            restoredObjectNames.Add(objectName);
-            photonView.RPC("RPC_SyncColorRestoration", RpcTarget.All, objectName);
-
-
-            GameObject[] restoreAreas = GameObject.FindGameObjectsWithTag("RestoreArea");
-            if (restoreAreas.Length == restoredObjectNames.Count && restoreAreas.Length > 0)
-            {
-                photonView.RPC("RPC_TriggerGoalEffect", RpcTarget.All);
-                colorRestoreMode = false;
-            }
+            Debug.LogWarning("[GameManager] goalObject가 설정되지 않았습니다.");
         }
-    }
 
-    [PunRPC]
-    void RPC_SyncColorRestoration(string objectName)
-    {
-        GameObject obj = GameObject.Find(objectName);
-        if (obj == null) return;
-
-
-        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-        if (sr != null) sr.color = Color.white;
-
-
-        UnityEngine.Tilemaps.Tilemap tilemap = obj.GetComponent<UnityEngine.Tilemaps.Tilemap>();
-        if (tilemap != null) tilemap.color = Color.white;
+        // IEnumerator는 반드시 반환이 필요하므로 종료 처리
+        yield break;
     }
 
 
-    [PunRPC]
-    void RPC_TriggerGoalEffect()
+    // =========================
+    //         Health
+    // =========================
+    public void HealthDown(int amount = 1)
     {
-        StartCoroutine(GoalAppearEffect());
-    }
+        if (health <= 0) return;
+        health -= amount;
+        if (health < 0) health = 0;
+        UpdateHealthUI();
 
-
-    public IEnumerator GoalAppearEffect()
-    {
-        if (goalObject == null) yield break;
-        SpriteRenderer sr = goalObject.GetComponent<SpriteRenderer>();
-        if (sr == null) yield break;
-
-
-        goalObject.SetActive(true);
-        float blinkInterval = 0.2f;
-        int blinkCount = 5;
-
-
-        for (int i = 0; i < blinkCount; i++)
+        if (health <= 0)
         {
-            sr.enabled = false;
-            yield return new WaitForSeconds(blinkInterval);
-            sr.enabled = true;
-            yield return new WaitForSeconds(blinkInterval);
+            OnGameOver();
         }
-
-
-        sr.enabled = true;
     }
 
-
-    // public IEnumerator GoalAppearEffect()
-    // {
-    //     if (goalObject == null)
-    //     {
-    //         Debug.LogWarning("Goal 오브젝트가 비어있습니다.");
-    //         yield break;
-    //     }
-
-    //     SpriteRenderer sr = goalObject.GetComponent<SpriteRenderer>();
-    //     if (sr == null)
-    //     {
-    //         Debug.LogWarning("Goal 오브젝트에 SpriteRenderer가 없습니다.");
-    //         yield break;
-    //     }
-
-    //     goalObject.SetActive(true); // 활성화는 하지만
-    //     float blinkInterval = 0.2f;
-    //     int blinkCount = 5;
-
-    //     for (int i = 0; i < blinkCount; i++)
-    //     {
-    //         sr.enabled = false;
-    //         yield return new WaitForSeconds(blinkInterval);
-    //         sr.enabled = true;
-    //         yield return new WaitForSeconds(blinkInterval);
-    //     }
-
-    //     // 최종적으로 보이도록 유지
-    //     sr.enabled = true;
-    //     Debug.Log("Goal 깜빡임 연출 완료");
-    // }
-
-    void UpdateHealthUI()
+    private void UpdateHealthUI()
     {
-        if (UIhealth == null)
-        {
-            Debug.LogError("UIhealth 배열이 null입니다!");
-            return;
-        }
-
+        if (UIhealth == null) return;
         for (int i = 0; i < UIhealth.Length; i++)
         {
-            if (UIhealth[i] == null)
-            {
-                Debug.LogError($"UIhealth[{i}]가 null입니다!");
-                continue;
-            }
-            UIhealth[i].gameObject.SetActive(i < health);
+            bool on = (i < health);
+            if (UIhealth[i] != null)
+                UIhealth[i].color = on ? Color.white : new Color(1f, 1f, 1f, 0.2f);
         }
     }
+
+    private void OnGameOver()
+    {
+        Debug.Log("[GameManager] Game Over");
+        if (RestartButton != null) RestartButton.SetActive(true);
+        // TODO: 필요하면 게임오버 UI/Logic 추가
+    }
+
+    public void OnClick_Restart()
+    {
+        string scene = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(scene);
+    }
+
+    // =========================
+    //     Stage Select UI
+    // =========================
+    private void WireStageSelectButtons()
+    {
+        if (Button_StageBack != null)
+        {
+            Button_StageBack.onClick.RemoveAllListeners();
+            Button_StageBack.onClick.AddListener(() =>
+            {
+                if (StageSelectPanel != null) StageSelectPanel.SetActive(false);
+            });
+        }
+
+        if (Button_Stage1 != null)
+        {
+            Button_Stage1.onClick.RemoveAllListeners();
+            Button_Stage1.onClick.AddListener(() =>
+            {
+                PlayerPrefs.SetInt(K_PlayerPrefs_SelectedStage, 0);
+                SceneManager.LoadScene("StageScene");
+            });
+        }
+
+        if (Button_Stage2 != null)
+        {
+            Button_Stage2.onClick.RemoveAllListeners();
+            Button_Stage2.onClick.AddListener(() =>
+            {
+                PlayerPrefs.SetInt(K_PlayerPrefs_SelectedStage, 1);
+                SceneManager.LoadScene("StageScene");
+            });
+        }
+    }
+
+    // =========================
+    //   Color Restore(옵션)
+    // =========================
+
+    /// <summary>
+    /// PlayerMove에서 호출할 수 있는 외부 API(이 이름 그대로 필요하다고 하셨음)
+    /// 모드를 활성화하고, 네트워크 동기화가 필요하면 여기서 추가 RPC 호출
+    /// </summary>
+    public void EnableColorRestoreMode()
+    {
+        colorRestoreMode = true;
+        Debug.Log("[GameManager] ColorRestoreMode 활성화");
+    }
+
+    /// <summary>
+    /// PlayerMove에서 호출(이름 그대로). 특정 오브젝트의 색을 복원.
+    /// 내부적으로 네트워크 전파도 수행.
+    /// </summary>
+    public void SyncColorRestoration(string objectName)
+    {
+        // 로컬 즉시 반영
+        RestoreColorLocal(objectName);
+        // 다른 클라이언트에도 반영
+        photonView.RPC(nameof(RPC_SyncColorRestoration), RpcTarget.OthersBuffered, objectName);
+    }
+
+    private void RestoreColorLocal(string objectName)
+    {
+        var go = GameObject.Find(objectName);
+        if (go == null) return;
+
+        var sr = go.GetComponentInChildren<SpriteRenderer>();
+        if (sr != null) sr.color = Color.white;
+
+        // 복원 목록 관리 (선택)
+        RegisterRestorable(objectName);
+    }
+
+    [PunRPC]
+    private void RPC_SyncColorRestoration(string objectName)
+    {
+        RestoreColorLocal(objectName);
+    }
+
+    /// <summary>
+    /// 색 복원 대상 등록
+    /// </summary>
+    public void RegisterRestorable(string objName)
+    {
+        if (string.IsNullOrEmpty(objName)) return;
+        if (!restoredObjectNames.Contains(objName))
+            restoredObjectNames.Add(objName);
+    }
+
+    /// <summary>
+    /// 모드가 켜져 있으면 등록된 오브젝트 색을 복원
+    /// </summary>
+    public void RestoreColorsIfNeeded()
+    {
+        if (!colorRestoreMode) return;
+
+        foreach (var name in restoredObjectNames)
+        {
+            var go = GameObject.Find(name);
+            if (go == null) continue;
+            var rend = go.GetComponentInChildren<SpriteRenderer>();
+            if (rend != null) rend.color = Color.white;
+        }
+        restoredObjectNames.Clear();
+    }
+
+    // =========================
+    //     Photon Callbacks
+    // =========================
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log($"[GameManager] Player entered: {newPlayer.NickName} ({newPlayer.ActorNumber})");
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        Debug.Log($"[GameManager] Player left: {otherPlayer.NickName} ({otherPlayer.ActorNumber})");
+    }
 }
-
-
-
-

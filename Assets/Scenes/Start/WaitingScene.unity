@@ -456,8 +456,7 @@ MonoBehaviour:
   stagePoint: 0
   stageIndex: 0
   health: 3
-  playerObj: {fileID: 4828525040922323524, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
-  player: {fileID: 1265464301027977866, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
+  gameClear: 0
   Stages: []
   UIhealth:
   - {fileID: 689914862}
@@ -470,13 +469,16 @@ MonoBehaviour:
   Button_StageBack: {fileID: 0}
   Button_Stage1: {fileID: 0}
   Button_Stage2: {fileID: 0}
-  gameClear: 0
   finishItemCount: 0
   totalStages: 3
   finishItemText: {fileID: 0}
-  colorRestoreMode: 0
   goalObject: {fileID: 0}
+  spawnPoints: []
+  playerPrefabNames: []
+  colorRestoreMode: 0
   isInstantDeathMode: 0
+  playerObj: {fileID: 4828525040922323524, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
+  player: {fileID: 1265464301027977866, guid: 8c85ab851d5cc60499450f8b24616c43, type: 3}
 --- !u!4 &170673263
 Transform:
   m_ObjectHideFlags: 0
@@ -29582,7 +29584,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1295749815}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0d044cb317e564f46b585553fec41cbd, type: 3}
   m_Name: 
@@ -29599,6 +29601,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   stageNumber: 1
+  stageButtons: []
+  gameSceneName: StageScene
 --- !u!4 &1295749817
 Transform:
   m_ObjectHideFlags: 0
@@ -29723,7 +29727,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 20.009995}
+  m_AnchoredPosition: {x: 0, y: 39978.12}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1303064859
@@ -30102,8 +30106,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 691188648}
   m_HandleRect: {fileID: 691188647}
   m_Direction: 2
-  m_Value: -1996.907
-  m_Size: 0.9994995
+  m_Value: -5118448
+  m_Size: 0.99960965
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -31400,7 +31404,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 349407820}
   m_HandleRect: {fileID: 349407819}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

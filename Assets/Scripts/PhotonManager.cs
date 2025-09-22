@@ -99,7 +99,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             Player1_Info_all.SetActive(true);
             spriteSwitch.set1.ownerPlayerIndex = 0;
-            spriteSwitch.set1.currentIndex = 0;
+            spriteSwitch.set1.currentIndex = CharacterSelectionData.player1SelectedIndex;
             spriteSwitch.set1.ApplyCurrent();
             spriteSwitch.set1.Init(player_Index);
             spriteSwitch.set1.SetConfirmed(false);
@@ -108,7 +108,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             Player2_Info_all.SetActive(true);
             spriteSwitch.set2.ownerPlayerIndex = 1;
-            spriteSwitch.set2.currentIndex = 0;
+            spriteSwitch.set2.currentIndex = CharacterSelectionData.player2SelectedIndex;
             spriteSwitch.set2.ApplyCurrent();
             spriteSwitch.set2.Init(player_Index);
             spriteSwitch.set2.SetConfirmed(false);

@@ -48,7 +48,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        //gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
         stageSelectUI = FindObjectOfType<StageSelectUI>();
         itemManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<ItemManager>();
         gameManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<GameManager>();
@@ -196,7 +196,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
                 if (gameManager.goalObject != null)
                 {
-                    StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
+                    //StartCoroutine(gameManager.GoalAppearEffect()); // 연출 호출
+                    gameManager.GoalAppearEffect();
                 }
             }
 
@@ -250,7 +251,11 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     // ColorRestore가 GameManager를 통해 동작하고, Goal 연출도 GameManager에서 담당
     public void EnableColorRestore(bool enable)
     {
-        gameManager.EnableColorRestoreMode(enable); // GameManager 통해 글로벌 설정
+        if (enable && gameManager != null)
+        {
+            gameManager.EnableColorRestoreMode();
+            Debug.Log("[PlayerMove] ColorRestore 모드 활성화 요청");
+        }
     }
 
     bool ApproximatelyColor(Color a, Color b, float threshold = 0.05f)
