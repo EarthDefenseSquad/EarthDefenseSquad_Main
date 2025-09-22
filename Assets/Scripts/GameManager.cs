@@ -10,10 +10,10 @@ using Unity.VisualScripting;
 using ExitGames.Client.Photon;
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public int totalPoint=0;
-    public int stagePoint=0;
-    public int stageIndex=-1;
-    public int health=3;
+    public int totalPoint = 0;
+    public int stagePoint = 0;
+    public int stageIndex = -1;
+    public int health = 3;
     public GameObject playerObj;
     public PlayerMove player;
 
@@ -48,12 +48,12 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     [Header("개발용 설정 - 즉사 모드")]
-    public bool isInstantDeathMode=false;
+    public bool isInstantDeathMode = false;
 
     //플레이어들 동기화 스폰
     //플레이어들 동기화 이동
     //플레이어들 특정 조건 만족 시 DB로 클리어 기록 전송.(나중에 DB스크립트에서 클리어 기록이 있다면 게임 스테이지 변경)
-    
+
     public static GameManager Instance;
 
     private int myViewID;   // PhotonView ID 저장용
@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.LogError("GameManager에 PhotonView가 없습니다!");
         }
 
-       
+
     }
     IEnumerator DelayedSpawn()
     {
@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
-           if(SceneManager.GetActiveScene().name == "WaitingScene")
+            if (SceneManager.GetActiveScene().name == "WaitingScene")
             {
                 StartCoroutine(DelayedSpawn());
             }
@@ -119,8 +119,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 SpawnPlayer(PhotonNetwork.LocalPlayer.ActorNumber - 1);
             }
-            
-        }   
+
+        }
     }
     void Update()
     {
@@ -137,7 +137,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // UI에 현재 수치 표시
         //UpdateFinishItemUI();
-       
+
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     }
-    
+
     public int GetViewID()
     {
         return myViewID;
@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         UpdateFinishItemUI();
     }
 
-    
+
     void SyncWithMaxValue()
     {
         int maxCount = 0;
@@ -221,10 +221,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     // UI에 Finish 아이템 수치를 업데이트하는 함수
 
-    
+
     public void UpdateFinishItemUI()
     {
-        
+
         // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
         if (finishItemText != null)
             finishItemText.text = finishItemCount.ToString();
@@ -244,7 +244,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         // UI 업데이트
         UpdateFinishItemUI();
         //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);*/
-        
+
         finishItemCount++;
         PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
         PlayerPrefs.Save();
@@ -256,7 +256,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         UpdateFinishItemUI();
 
-        
+
     }
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
     {
@@ -324,7 +324,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     public void SetCharacterSprite(int selectedIndex)
     {
-        
+
     }
     public void OnGameClear()
     {
@@ -395,7 +395,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
 
             if (health <= 0)
-            {   
+            {
                 Debug.Log(health);
                 player.OnDie();
                 Debug.Log("플레이어가 죽었습니다.");
@@ -428,7 +428,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             player.transform.position = new Vector3(-1.0f, -0.5f, 0);
             //player.VelocityZero();
         }
-         
+
     }
 
 
@@ -526,39 +526,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         sr.enabled = true;
     }
 
-
-    // public IEnumerator GoalAppearEffect()
-    // {
-    //     if (goalObject == null)
-    //     {
-    //         Debug.LogWarning("Goal 오브젝트가 비어있습니다.");
-    //         yield break;
-    //     }
-
-    //     SpriteRenderer sr = goalObject.GetComponent<SpriteRenderer>();
-    //     if (sr == null)
-    //     {
-    //         Debug.LogWarning("Goal 오브젝트에 SpriteRenderer가 없습니다.");
-    //         yield break;
-    //     }
-
-    //     goalObject.SetActive(true); // 활성화는 하지만
-    //     float blinkInterval = 0.2f;
-    //     int blinkCount = 5;
-
-    //     for (int i = 0; i < blinkCount; i++)
-    //     {
-    //         sr.enabled = false;
-    //         yield return new WaitForSeconds(blinkInterval);
-    //         sr.enabled = true;
-    //         yield return new WaitForSeconds(blinkInterval);
-    //     }
-
-    //     // 최종적으로 보이도록 유지
-    //     sr.enabled = true;
-    //     Debug.Log("Goal 깜빡임 연출 완료");
-    // }
-
     void UpdateHealthUI()
     {
         if (UIhealth == null)
@@ -577,6 +544,37 @@ public class GameManager : MonoBehaviourPunCallbacks
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }
+
+
+    private Dictionary<string, int> finishItemStates = new Dictionary<string, int>();
+
+    // 동기화 요청 시 받는 함수
+    public void RequestItemSync(string itemID, int myValue)
+    {
+        photonView.RPC("RPC_SyncItem", RpcTarget.Others, itemID, myValue);
+    }
+
+    // 아이템을 먹었을 때 다른 유저에게 전파
+    public void SendItemCollected(string itemID)
+    {
+        photonView.RPC("RPC_SyncItem", RpcTarget.Others, itemID, 1);
+    }
+
+    // RPC 처리
+    [PunRPC]
+    void RPC_SyncItem(string itemID, int otherValue)
+    {
+        int myValue = PlayerPrefs.GetInt(itemID, 0);
+        int syncedValue = Mathf.Max(myValue, otherValue);
+        PlayerPrefs.SetInt(itemID, syncedValue);
+        PlayerPrefs.Save();
+
+        if (!finishItemStates.ContainsKey(itemID))
+            finishItemStates[itemID] = syncedValue;
+        else
+            finishItemStates[itemID] = Mathf.Max(finishItemStates[itemID], syncedValue);
+    }
+
 }
 
 

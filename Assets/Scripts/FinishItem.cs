@@ -10,31 +10,36 @@ public class FinishItem : MonoBehaviour
 
     void Start()
     {
-        // 이미 수집한 적 있다면 투명화 처리
-        if (PlayerPrefs.GetInt(itemID, 0) == 1)
+        int localState = PlayerPrefs.GetInt(itemID, 0);
+
+        // 투명화 처리
+        if (localState == 1)
         {
             collected = true;
-            SetCollectedVisual();  // 투명하게 만들기
+            SetCollectedVisual();
         }
+
+        // GameManager에 동기화 요청 (자기 값 보내기)
+        GameManager.Instance?.RequestItemSync(itemID, localState);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")) return;
+        if (!other.CompareTag("Player") || collected) return;
 
-        // GameManager 가져오기
-        GameManager gm = FindObjectOfType<GameManager>();
+        // 로컬 저장
+        PlayerPrefs.SetInt(itemID, 1);
+        PlayerPrefs.Save();
 
-        // Finish 개수는 한 번만 증가
-        if (!collected)
-        {
-            PlayerPrefs.SetInt(itemID, 1);
-            gm.AddFinishItem();  // 실제 Finish 개수 증가
-            collected = true;
-        }
+        // 시각 효과
+        collected = true;
+        SetCollectedVisual();
 
-        // 항상 다음 스테이지로는 넘어가게
-        //gm.NextStage();
+        // FinishItem 카운트 증가
+        GameManager.Instance?.AddFinishItem();
+
+        // 동기화 전파
+        GameManager.Instance?.SendItemCollected(itemID);
     }
 
     void SetCollectedVisual()

@@ -249,10 +249,15 @@ public class StageSelectNetworkManager : MonoBehaviourPun
         }
         if (year == 1990)
         {
-            if (panel_1990 != null)
-            {
+            if(panel_1990 != null)
+                {
                 panel_year.SetActive(false);
                 panel_1990.SetActive(true);
+                Hashtable props = new Hashtable
+                {
+                    { "SelectedYearIndex", 1990 }
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
             }
         }
         if (year == 2000)
@@ -261,6 +266,11 @@ public class StageSelectNetworkManager : MonoBehaviourPun
             {
                 panel_year.SetActive(false);
                 panel_2000.SetActive(true);
+                Hashtable props = new Hashtable
+                {
+                    { "SelectedYearIndex", 2000 }
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
             }
         }
         if (year == 2010)
@@ -269,6 +279,11 @@ public class StageSelectNetworkManager : MonoBehaviourPun
             {
                 panel_year.SetActive(false);
                 panel_2010.SetActive(true);
+                Hashtable props = new Hashtable
+                {
+                    { "SelectedYearIndex", 2010 }
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
             }
         }
         if (year == 2020)
@@ -277,7 +292,12 @@ public class StageSelectNetworkManager : MonoBehaviourPun
             {
                 panel_year.SetActive(false);
                 panel_2020.SetActive(true);
-            }   
+                Hashtable props = new Hashtable
+                {
+                    { "SelectedYearIndex", 2020 }
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+            }
         }
     }
 
