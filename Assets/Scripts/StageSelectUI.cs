@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
-using ExitGames.Client.Photon; 
+using ExitGames.Client.Photon;
+using Microsoft.SqlServer.Server;
 
 public class StageSelectUI : MonoBehaviourPun
 {
@@ -25,6 +26,7 @@ public class StageSelectUI : MonoBehaviourPun
     [Header("게임 씬 이름")]
     // 선택된 스테이지를 로드할 씬 이름 (모든 스테이지가 포함된 하나의 씬이라고 가정)
     public string gameSceneName = "StageScene"; 
+    public  const string FinishItemKey = "FinishItemCount";
 
     void Awake()
     {
@@ -37,17 +39,32 @@ public class StageSelectUI : MonoBehaviourPun
 
     void Start()
     {
+        
+        
         if (PhotonNetwork.IsMasterClient)
         {
             // 모든 스테이지 버튼을 순회하면서 초기화
             for (int i = 0; i < stageButtons.Length; i++)
             {
+
                 Button button = stageButtons[i];
 
                 // 각 버튼에 붙어 있는 StageButtonData 컴포넌트 가져오기
                 StageButtonData data = button.GetComponent<StageButtonData>();
-
+            
                 if (data == null) continue; // StageButtonData가 없으면 패스
+
+                // --- 스테이지 1(첫 번째)은 무조건 해금 ---
+                /*if (data.stageIndex == 0)
+                {
+                    isUnlocked = true;
+                }
+                else
+                {
+                    // 기존 해금 여부 로직
+                    isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
+                        || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
+                }*/
 
                 // --- 스테이지 해금 여부 확인 ---
                 // requiredFinishID가 없거나, PlayerPrefs에 저장된 값이 1이면 해금
@@ -59,6 +76,25 @@ public class StageSelectUI : MonoBehaviourPun
             }
         }
     } 
+
+
+    [PunRPC]
+    public void RPC_ComparerequiredFinishID(int clientValue)
+    {
+        for (int i = 0; i < stageButtons.Length; i++)
+        {
+            Button button = stageButtons[i];
+            StageButtonData data = button.GetComponent<StageButtonData>();
+            int myValue = PlayerPrefs.GetInt(data.requiredFinishID, 0);
+
+            // 규칙: 더 큰 값을 기준으로 맞추기
+            int syncValue = Mathf.Max(myValue, clientValue);
+
+            int ItemCount = syncValue;
+            PlayerPrefs.SetInt(data.requiredFinishID, ItemCount); //이제 두 명의 값이 같아짐.
+        }
+    }
+    
     [PunRPC]
     void RPC_stageUpdateUI(int index, bool isUnlocked)
     {
@@ -67,6 +103,13 @@ public class StageSelectUI : MonoBehaviourPun
 
             button.interactable = isUnlocked;
             button.enabled = isUnlocked;
+            
+            // --- 스테이지 1(첫 번째)은 항상 해금 ---
+            /*if (data.stageIndex == 0)
+            {
+                isUnlocked = true;
+            }*/
+
 
             // --- 자물쇠 아이콘 처리 ---
             Transform lockIcon = button.transform.Find("LockIcon");

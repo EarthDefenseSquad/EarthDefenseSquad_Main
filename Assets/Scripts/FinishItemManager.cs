@@ -15,18 +15,21 @@ public class FinishItemManager : MonoBehaviourPun
     // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
     public  const string FinishItemKey = "FinishItemCount";
 
-    public FinishItemManager Instance;
+    public static FinishItemManager Instance;
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
-
-    void Update()
+    void Start()
     {
         LoadFinishItemCount();
         UpdateFinishItemUI();
+    }
+    void Update()
+    {
+        
     }
     /// <summary>
     /// FinishItemCount를 불러와서 둘의 싱크를 맞춰줌.

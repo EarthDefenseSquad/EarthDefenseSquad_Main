@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         string currentScene = SceneManager.GetActiveScene().name;
         if (currentScene == "WaitingScene" || currentScene == "StageScene")
         {
-           if(SceneManager.GetActiveScene().name == "WaitingScene")
+            if (SceneManager.GetActiveScene().name == "WaitingScene")
             {
                 StartCoroutine(DelayedSpawn());
             }
@@ -119,8 +119,9 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 SpawnPlayer(PhotonNetwork.LocalPlayer.ActorNumber - 1);
             }
-            
-        }   
+
+        } 
+        UpdateFinishItemUIfromManager();  
     }
     void Update()
     {
@@ -129,7 +130,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             UIPoint.text = (totalPoint + stagePoint).ToString();
             //photonView.RPC("LoadAndUpdateItem",RpcTarget.AllBuffered);
-            SyncFinishItemCount();
+            //SyncFinishItemCount();
 
         }
         // 로컬 저장된 아이템 개수를 불러옴
@@ -137,7 +138,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // UI에 현재 수치 표시
         //UpdateFinishItemUI();
-       
+        
+        
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -148,12 +150,15 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
     }
-    
+    public void UpdateFinishItemUIfromManager()
+    {
+        finishItemText = FinishItemManager.Instance.finishItemText;
+    }
     public int GetViewID()
     {
         return myViewID;
     }
-    public void SyncFinishItemCount()
+    /*public void SyncFinishItemCount()
     {
 
         // 마스터 클라이언트만 로컬 저장 불러오기
@@ -164,7 +169,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
         Debug.Log($"내 photonView ID: {photonView.ViewID}");
         Debug.Log($"찾은 targetView ID: {targetView.ViewID}");
-    }
+    }*/
 
     [PunRPC]
     void UpdateFinishItemUI_RPC(int newCount)

@@ -314,6 +314,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             {
                 if (!stageToSelect)
                 {
+                    StartCoroutine(ChangeSceneCoroutine());
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
                     
                 }
@@ -322,12 +323,18 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             {
                 if (!stageToSelect)
                 {
+                    StartCoroutine(ChangeSceneCoroutine());
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
                     
                 }
             }
         }
 
+    }
+    private IEnumerator ChangeSceneCoroutine()
+    {
+        // 1. 혹시 남아있는 RPC 처리할 시간 주기
+        yield return new WaitForSeconds(2.0f);  
     }
 
     IEnumerator DeactivateAfterDelay(GameObject obj, float delay)
