@@ -20,7 +20,7 @@ public class StoryDialog : MonoBehaviour
 
         dialogTexts.Add(new DialogData("/speed:0.1/아이들은 웃으며 뛰어놀았고, 어른들은 서로를 믿고 살아갔어.\n나이도, 생각도 달랐지만 그 차이는 갈등이 아니었지.. 그땐.\n하지만 누군가 그 균형을 망가뜨렸어.", "Story"));
 
-        dialogTexts.Add(new DialogData("/emote:2//speed:0.1/세상은 눈에 띄게 어두워지기 시작했지.\n사람들은 점점 날카로워졌고, 다른 세대를 향한 시선엔 이해 대신 분노가 담기기 시작했어.\n어디서부터 틀어진 건지, 아무도 말하지 않았고, 아무도 들으려 하지 않았지.\n우리, 지구방위본부를 제외하고 말이야.", "Story"));
+        dialogTexts.Add(new DialogData("/emote:2//speed:0.1/세상은 눈에 띄게 어두워지기 시작했지.\n사람들은 점점 날카로워졌고, 다른 세대를 향한 시선엔 이해 대신 분노가 담기기 시작했어.", "Story"));
 
         dialogTexts.Add(new DialogData("/emote:2//speed:0.1/어디서부터 틀어진 건지, 아무도 말하지 않았고, 아무도 들으려 하지 않았지.\n우리, 지구방위본부를 제외하고 말이야.", "Story"));
 

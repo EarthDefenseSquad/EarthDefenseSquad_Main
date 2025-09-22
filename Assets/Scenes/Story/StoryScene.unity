@@ -1492,7 +1492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4094011681938070648, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -50
+      value: -127.292
       objectReference: {fileID: 0}
     - target: {fileID: 4094011681938070648, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -1500,7 +1500,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4094011681938070648, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 25
+      value: 116.7843
       objectReference: {fileID: 0}
     - target: {fileID: 4094011681938070649, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_IsActive
@@ -1508,7 +1508,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4094011683009168357, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_Text
-      value: "\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\n\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\n\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\n\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8"
+      value: "\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\n\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\n\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\n\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\n\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8\uC784\uC2DC\uD14D\uC2A4\uD2B8"
       objectReference: {fileID: 0}
     - target: {fileID: 4094011683009168357, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_FontData.m_Font
@@ -1533,6 +1533,22 @@ PrefabInstance:
     - target: {fileID: 4094011683009168357, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_FontData.m_VerticalOverflow
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094011683009168358, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094011683009168358, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094011683009168358, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094011683009168358, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4094011683184476936, guid: d536fa71dd00cf349a228e41212ace48, type: 3}
       propertyPath: m_Name
@@ -2429,9 +2445,7 @@ MonoBehaviour:
   player1Button: {fileID: 1775780552}
   player2Button: {fileID: 167873053}
   readyColor: {r: 0.47058824, g: 0.47058824, b: 0.47058824, a: 1}
-  defaultColor: {r: 1, g: 1, b: 1, a: 1}
   readyTextColor: {r: 0, g: 0, b: 0, a: 1}
-  defaultTextColor: {r: 0, g: 0, b: 0, a: 1}
   nextSceneName: WaitingScene
 --- !u!114 &1624101209
 MonoBehaviour:
