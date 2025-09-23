@@ -9351,7 +9351,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 68384420}
+  m_AnchoredPosition: {x: 0, y: 54}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &158870911
@@ -39481,7 +39481,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6142810290923414255, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
       insertIndex: 1
       addedObject: {fileID: 459099154}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7962475001700169350, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 780121113}
   m_SourcePrefab: {fileID: 100100000, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
 --- !u!224 &780121110 stripped
 RectTransform:
@@ -39498,6 +39501,21 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7962475001700169350, guid: 5eab4c26b0940d544b565d6073e97ba5, type: 3}
   m_PrefabInstance: {fileID: 780121109}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &780121113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780121112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
+  m_EffectDistance: {x: 6, y: 5}
+  m_UseGraphicAlpha: 1
 --- !u!1 &782717274
 GameObject:
   m_ObjectHideFlags: 0
@@ -42055,8 +42073,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 325429226}
   m_HandleRect: {fileID: 325429225}
   m_Direction: 2
-  m_Value: -17096110
-  m_Size: 0.83333343
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -51173,6 +51191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1010643705}
   - component: {fileID: 1010643704}
+  - component: {fileID: 1010643706}
   m_Layer: 0
   m_Name: TypingManager
   m_TagString: Untagged
@@ -51209,6 +51228,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1010643706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010643702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 5
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1010901067
 GameObject:
   m_ObjectHideFlags: 0
@@ -110754,6 +110795,7 @@ GameObject:
   - component: {fileID: 2143437438}
   - component: {fileID: 2143437437}
   - component: {fileID: 2143437436}
+  - component: {fileID: 2143437439}
   m_Layer: 5
   m_Name: Restart
   m_TagString: Untagged
@@ -110825,9 +110867,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1125412620}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: RestartGame
+      - m_Target: {fileID: 1623271207}
+        m_TargetAssemblyTypeName: hmGM, Assembly-CSharp
+        m_MethodName: GotoStageSelect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -110875,6 +110917,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2143437434}
   m_CullTransparentMesh: 1
+--- !u!114 &2143437439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2143437434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 6, y: 5}
+  m_UseGraphicAlpha: 1
 --- !u!224 &215945102340154966 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1018774937683626243, guid: 56bc992f661e94338ba8101ab4b021d7, type: 3}
@@ -110984,6 +111041,7 @@ GameObject:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1538645017}
   - {fileID: 1125412621}
   - {fileID: 305386731}
   - {fileID: 1391347251}
@@ -110993,7 +111051,6 @@ SceneRoots:
   - {fileID: 1560134686}
   - {fileID: 1572230814}
   - {fileID: 1357571994}
-  - {fileID: 1538645017}
   - {fileID: 701477067}
   - {fileID: 1623271208}
   - {fileID: 1398477654}

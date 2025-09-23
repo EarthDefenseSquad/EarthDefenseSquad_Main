@@ -1,8 +1,9 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using Photon.Pun;
 
-public class TypingManager : MonoBehaviour
+public class TypingManager : MonoBehaviourPun
 {
     public TMP_InputField inputField;
     public CameraShake_tmp cameraShake;
@@ -72,14 +73,18 @@ public class TypingManager : MonoBehaviour
 
         if (input == correctKeyword)
         {
-            if (currentTargets != null)
-            {
-                foreach (GameObject obj in currentTargets)
-                    obj.SetActive(false);
-            }
+            // if (currentTargets != null)
+            // {
+            //     foreach (GameObject obj in currentTargets)
+            //         obj.SetActive(false);
+            // }
 
-            if (currentTriggerObject != null)
-                currentTriggerObject.SetActive(false);
+            // if (currentTriggerObject != null)
+            //     currentTriggerObject.SetActive(false);
+
+            photonView.RPC("RPC_DeactivateObjects", RpcTarget.AllBuffered,
+            currentTriggerObject != null ? currentTriggerObject.name : "",
+            GetTargetNames());
 
             HideUI();
         }
@@ -101,4 +106,36 @@ public class TypingManager : MonoBehaviour
         if (player != null)
             player.enabled = true;
     }
+
+    // --- RPC 함수: 모든 클라이언트에서 오브젝트 비활성화 ---
+    [PunRPC]
+    void RPC_DeactivateObjects(string triggerName, string[] targetNames)
+    {
+        // Trigger 비활성화
+        if (!string.IsNullOrEmpty(triggerName))
+        {
+            GameObject trig = GameObject.Find(triggerName);
+            if (trig != null) trig.SetActive(false);
+        }
+
+        // Target 비활성화
+        foreach (var tName in targetNames)
+        {
+            GameObject obj = GameObject.Find(tName);
+            if (obj != null) obj.SetActive(false);
+        }
+    }
+
+    // --- 대상 오브젝트 이름 배열로 변환 ---
+    private string[] GetTargetNames()
+    {
+        if (currentTargets == null) return new string[0];
+
+        string[] names = new string[currentTargets.Length];
+        for (int i = 0; i < currentTargets.Length; i++)
+            names[i] = currentTargets[i].name;
+        return names;
+    }
+
+
 }
