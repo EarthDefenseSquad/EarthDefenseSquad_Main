@@ -9351,7 +9351,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 54}
+  m_AnchoredPosition: {x: 0, y: 20.01004}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &158870911
@@ -11979,7 +11979,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage1_finish
+  itemID: 2000_2_finish
 --- !u!61 &213583244
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -37554,7 +37554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage1_finish
+  itemID: 2000_3_finish
 --- !u!61 &746121237
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -42073,8 +42073,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 325429226}
   m_HandleRect: {fileID: 325429225}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: -1999.9584
+  m_Size: 0.9995002
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -72622,7 +72622,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage1_finish
+  itemID: 2000_4_finish
 --- !u!61 &1368966188
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -83089,7 +83089,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage1_finish
+  itemID: 2000_5_finish
 --- !u!61 &1554087727
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -109284,7 +109284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af5fc3cbac4b9d944b197828615b7ef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemID: Stage1_finish
+  itemID: 2000_1_finish
 --- !u!61 &2120199602
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -109321,7 +109321,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.5625, y: 0.71876645}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -109371,7 +109371,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -3708508325519384304, guid: f73dfe034c22cfc41bd7e8799020a5ac, type: 3}
+  m_Sprite: {fileID: 601422034, guid: 8e446f0d5a9ecab429c080225be6c287, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
