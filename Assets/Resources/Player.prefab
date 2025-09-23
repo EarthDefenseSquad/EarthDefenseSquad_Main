@@ -136,7 +136,6 @@ MonoBehaviour:
   audioDie: {fileID: 8300000, guid: a0010a1a0c474473b81729eb770c485f, type: 3}
   audioFinish: {fileID: 8300000, guid: cf6c0e7fbef9449c98a0cdb5ea0c4d9f, type: 3}
   stageSelectUI: {fileID: 0}
-  finishItemManager: {fileID: 0}
 --- !u!50 &351059627983231880
 Rigidbody2D:
   serializedVersion: 4

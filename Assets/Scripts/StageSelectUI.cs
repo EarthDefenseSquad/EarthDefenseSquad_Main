@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using ExitGames.Client.Photon; 
 
-public class StageSelectUI : MonoBehaviourPunCallbacks
+public class StageSelectUI : MonoBehaviourPun
 {
     // 1960년대 스테이지 버튼 배열 (UI 버튼들)
     public Button[] stageButtons1960;
@@ -35,13 +35,10 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
         stageNumber = PlayerMove.clearedStage;
     }
 
-    /*void Start()
+    void Start()
     {
-            int currentCount = 0;
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount"))
-            {
-                currentCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
-            }
+        if (PhotonNetwork.IsMasterClient)
+        {
             // 모든 스테이지 버튼을 순회하면서 초기화
             for (int i = 0; i < stageButtons.Length; i++)
             {
@@ -56,51 +53,12 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
                 // requiredFinishID가 없거나, PlayerPrefs에 저장된 값이 1이면 해금
                 bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
                     || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
-                bool isUnlocked;
-                if (string.IsNullOrEmpty(data.requiredFinishID))
-                {
-                    isUnlocked = true;
-                }
-                else
-                {
-                    object value;
-                    if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(data.requiredFinishID, out value))
-                    {
-                        isUnlocked = (int)value == 1;
-                    }
-                    else
-                    {
-                        isUnlocked = false;
-                    }
-                }
 
                 photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
 
             }
-    } */
-
-    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
-    {
-        if (propertiesThatChanged == null || stageButtons == null) return;
-
-        for (int i = 0; i < stageButtons.Length; i++)
-        {
-            StageButtonData data = stageButtons[i].GetComponent<StageButtonData>();
-            if (data == null) continue;
-
-            bool isUnlocked = false;
-            if (string.IsNullOrEmpty(data.requiredFinishID))
-            {
-                isUnlocked = true;
-            }
-            else if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(data.requiredFinishID, out object value))
-            {
-                isUnlocked = (int)value == 1;
-            }
-
-           photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
         }
-    }
+    } 
     [PunRPC]
     void RPC_stageUpdateUI(int index, bool isUnlocked)
     {

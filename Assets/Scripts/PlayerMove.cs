@@ -46,8 +46,6 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private GameManager gameManager;
     public StageSelectUI stageSelectUI;
 
-    public FinishItemManager finishItemManager;
-
     void Awake()
     {
         //gameManager = FindObjectOfType<GameManager>();
@@ -308,11 +306,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
         else if (collision.CompareTag("Finish"))
         {
-            if (FinishItemManager.Instance != null && FinishItemManager.Instance.photonView != null)
-            {
-                FinishItemManager.Instance.AddFinishItem();
-                Debug.Log("[PlayerMove]피니쉬아이템카운트" + FinishItemManager.Instance.finishItemCount);
-            }          // 수치 증가 + 저장 + UI 갱신
+            //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
             collision.gameObject.SetActive(false); // 아이템 제거
                                                    //gameManager.NextStage();
                                                    //PlaySound("Finish");
