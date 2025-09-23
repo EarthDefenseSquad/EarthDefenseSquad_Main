@@ -5,34 +5,44 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using Unity.VisualScripting;
-
-
-public class FinishItemManager : MonoBehaviourPun
+using UnityEngine.SceneManagement;
+using ExitGames.Client.Photon;
+public class FinishItemManager : MonoBehaviourPunCallbacks
 {
     GameManager gameManager;
     public int finishItemCount = 0;
     public Text finishItemText;
     // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
-    public  const string FinishItemKey = "FinishItemCount";
+    public const string FinishItemKey = "FinishItemCount";
 
-    public FinishItemManager Instance;
+    public static FinishItemManager Instance;
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 꼭 유지하고 싶다면
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject); // 중복 생성 방지
+        }
     }
 
-    void Update()
+    void Start()
     {
-        LoadFinishItemCount();
-        UpdateFinishItemUI();
+
+        Debug.Log("현재 FinishItemManager 개수: " + FindObjectsOfType<FinishItemManager>().Length);
+
+        //LoadFinishItemCount();
+        //UpdateFinishItemUI();
     }
     /// <summary>
     /// FinishItemCount를 불러와서 둘의 싱크를 맞춰줌.
     /// </summary>
     /// 
-    public void LoadFinishItemCount()
+    /*public void LoadFinishItemCount()
     {
         int localValue = PlayerPrefs.GetInt(FinishItemKey, 0); //일단 값 불러옴
         photonView.RPC("RPC_CompareFinishItemCount", RpcTarget.All, localValue); //클라이언트가 마스터에게 값 전송
@@ -63,7 +73,7 @@ public class FinishItemManager : MonoBehaviourPun
         finishItemCount = 0;
 
         // UI 반영
-        UpdateFinishItemUI();
+        //UpdateFinishItemUI();
     }
 
     public void UpdateFinishItemUI()
@@ -73,26 +83,42 @@ public class FinishItemManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void RPC_UpdateFinishItemUI() {
+    public void RPC_UpdateFinishItemUI()
+    {
         // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
         if (finishItemText != null)
             finishItemText.text = $"{finishItemCount}";
     }
-
+*/
     public void AddFinishItem()
     {
-        // 수치 1 증가
+        /*// 수치 1 증가
         finishItemCount++;
-
         // PlayerPrefs에 저장 (로컬 디스크에 저장됨)
         PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
         PlayerPrefs.Save(); // 강제로 저장
 
         LoadFinishItemCount();
         // UI 업데이트
-        UpdateFinishItemUI();
+        //UpdateFinishItemUI();*/
+        // 현재 값 불러오기
+        int currentCount = 0;
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount"))
+        {
+            currentCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
+        }
 
+        // 새로운 값
+        int newCount = currentCount + 1;
+
+        // 조건부 업데이트: FinishItemCount가 currentCount일 때만 업데이트
+        ExitGames.Client.Photon.Hashtable propsToSet = new ExitGames.Client.Photon.Hashtable { { "FinishItemCount", newCount } };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
+
+        Debug.Log("AddFinishItem의 AddFinishItem함수의 값 : " + newCount);
     }
-    
+
+
+
 
 }

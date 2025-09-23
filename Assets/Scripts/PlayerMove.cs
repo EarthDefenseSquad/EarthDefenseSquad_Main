@@ -24,7 +24,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool colorRestoreMode = false;
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
 
-    
+
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
@@ -35,7 +35,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
-    
+
 
     float h = 0; // 좌우 입력값
     bool jumpPressed = false;
@@ -45,6 +45,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     private GameManager gameManager;
     public StageSelectUI stageSelectUI;
+
+    public FinishItemManager finishItemManager;
 
     void Awake()
     {
@@ -61,7 +63,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         anim = GetComponent<Animator>();
         capsulecollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
-        
+
         if (photonView.IsMine)
         {
             if (Camera.main != null)
@@ -92,7 +94,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (gameManager != null)
                 gameManager.HealthDown();
         }
-        
+
         // 플레이어: 방향키, Space
         h = Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
         if (Input.GetKeyDown(KeyCode.Space))
@@ -201,7 +203,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
 
         }
-    
+
     } //update끝
 
     void FixedUpdate()
@@ -209,8 +211,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
         if (!photonView.IsMine) return;
         if (!ChatManager.isChatInputActive && Input.GetKeyDown(KeyCode.Space))
-{           jumpPressed = true;
-}
+        {
+            jumpPressed = true;
+        }
         rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
 
         if (rigid.velocity.x > maxSpeed)
@@ -224,9 +227,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             if (rayHit.collider != null && rayHit.distance < 0.65f)
                 anim.SetBool("isJumping", false);
         }
-        
-            
-        
+
+
+
     }
 
     public void EnableInvincibility(bool status)
@@ -234,7 +237,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         isInvincible = status;
         spriteRenderer.color = status ? new Color(1, 1, 1, 0.5f) : Color.white;
     }
-    
+
     public void EnableDoubleJump(float duration)
     {
         StartCoroutine(ActivateDoubleJump(duration));
@@ -261,52 +264,56 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     }
     void OnTriggerEnter2D(Collider2D collision) //충돌인데 trigger체크 되어있는 충돌들
     {
-      
+
         if (collision.CompareTag("Item"))
         {
             string name = collision.name;
 
             bool isCoin = name.Contains("Bronze") || name.Contains("Sliver") || name.Contains("Gold");
 
-           // if (rayHit.collider != null)
+            // if (rayHit.collider != null)
             //{
-            
-                if (isCoin)
-                {
-                    if (name.Contains("Bronze")) gameManager.stagePoint += 50;
-                    else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
-                    else if (name.Contains("Gold")) gameManager.stagePoint += 300;
 
-                    collision.gameObject.SetActive(false);
-                    //PlaySound("Item");
-                    return;
-                }
-
-                if (playerType == PlayerType.Player2)
-                {
-                    Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
-                    return;
-                }
-
-                if (name.Contains("Buffering")) ItemManager.Instance.UseItem(ItemType.BufferingIcon, this);
-                else if (name.Contains("Invincibility")) ItemManager.Instance.UseItem(ItemType.Invincibility, this);
-                else if (name.Contains("DoubleJump")) ItemManager.Instance.UseItem(ItemType.DoubleJump, this);
-                else if (name.Contains("AccessPass")) ItemManager.Instance.UseItem(ItemType.AccessPass, this);
-                else if (name.Contains("RevealPlatform")) ItemManager.Instance.UseItem(ItemType.RevealPlatform, this);
-                else if (name.Contains("ColorRestore")) ItemManager.Instance.UseItem(ItemType.ColorRestore, this);
-
-
-                StartCoroutine(DeactivateAfterDelay(collision.gameObject, 0.2f));
+            if (isCoin)
+            {
+                if (name.Contains("Bronze")) gameManager.stagePoint += 50;
+                else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
+                else if (name.Contains("Gold")) gameManager.stagePoint += 300;
 
                 collision.gameObject.SetActive(false);
-                PlaySound("Item");
+                //PlaySound("Item");
+                return;
+            }
+
+            if (playerType == PlayerType.Player2)
+            {
+                Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
+                return;
+            }
+
+            if (name.Contains("Buffering")) ItemManager.Instance.UseItem(ItemType.BufferingIcon, this);
+            else if (name.Contains("Invincibility")) ItemManager.Instance.UseItem(ItemType.Invincibility, this);
+            else if (name.Contains("DoubleJump")) ItemManager.Instance.UseItem(ItemType.DoubleJump, this);
+            else if (name.Contains("AccessPass")) ItemManager.Instance.UseItem(ItemType.AccessPass, this);
+            else if (name.Contains("RevealPlatform")) ItemManager.Instance.UseItem(ItemType.RevealPlatform, this);
+            else if (name.Contains("ColorRestore")) ItemManager.Instance.UseItem(ItemType.ColorRestore, this);
+
+
+            StartCoroutine(DeactivateAfterDelay(collision.gameObject, 0.2f));
+
+            collision.gameObject.SetActive(false);
+            PlaySound("Item");
             //}
 
         }
 
         else if (collision.CompareTag("Finish"))
         {
-            //gameManager.AddFinishItem();           // 수치 증가 + 저장 + UI 갱신
+            if (FinishItemManager.Instance != null && FinishItemManager.Instance.photonView != null)
+            {
+                FinishItemManager.Instance.AddFinishItem();
+                Debug.Log("[PlayerMove]피니쉬아이템카운트" + FinishItemManager.Instance.finishItemCount);
+            }          // 수치 증가 + 저장 + UI 갱신
             collision.gameObject.SetActive(false); // 아이템 제거
                                                    //gameManager.NextStage();
                                                    //PlaySound("Finish");
@@ -315,7 +322,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 if (!stageToSelect)
                 {
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
-                    
+
                 }
             }
             else
@@ -323,7 +330,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
                 if (!stageToSelect)
                 {
                     photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
-                    
+
                 }
             }
         }
@@ -367,7 +374,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
             }
             else
             {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
+                photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
             }
         }
     }
@@ -379,19 +386,19 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient && !waitToSelect) //마스터 클라이언트 && 웨이팅씬 나옴.
         {
             clearedStage++;
-            Debug.Log("마스터 클라이언트 clearedStage: "+ clearedStage);
+            Debug.Log("마스터 클라이언트 clearedStage: " + clearedStage);
             photonView.RPC("SyncClearedStage", RpcTarget.OthersBuffered, clearedStage);
             waitToSelect = true;
             stageToSelect = true;
         }
         PhotonNetwork.LoadLevel(sceneName);
-        
+
     }
     [PunRPC]
     void SyncClearedStage(int updatedClearedStage)
     {
         clearedStage = updatedClearedStage;
-        Debug.Log("플레이어 clearedStage : " +clearedStage);
+        Debug.Log("플레이어 clearedStage : " + clearedStage);
     }
     void OnAttack(Transform enemy)
     {
@@ -419,7 +426,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         gameObject.layer = 10;
         spriteRenderer.color = Color.white;
     }
-    
+
 
     public void OnDie()
     {

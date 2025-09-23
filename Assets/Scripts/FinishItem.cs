@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using ExitGames.Client.Photon;
 
-public class FinishItem : MonoBehaviour
+public class FinishItem : MonoBehaviourPun
 {
     public string itemID;  // 고유 ID: 예) "Stage1_Finish"
 
@@ -25,18 +27,26 @@ public class FinishItem : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player") || collected) return;
+        if (!other.CompareTag("Player") || collected || !other.GetComponent<PhotonView>().IsMine) return;
+
 
         // 로컬 저장
         PlayerPrefs.SetInt(itemID, 1);
         PlayerPrefs.Save();
+
+
+        //네트워크 저장
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
+        props[itemID] = 1; // "Stage1_Finish" → 1
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
 
         // 시각 효과
         collected = true;
         SetCollectedVisual();
 
         // FinishItem 카운트 증가
-        GameManager.Instance?.AddFinishItem();
+        FinishItemManager.Instance?.AddFinishItem();
 
         // 동기화 전파
         GameManager.Instance?.SendItemCollected(itemID);
