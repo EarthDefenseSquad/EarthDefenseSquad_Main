@@ -11,7 +11,7 @@ public class FinishItemManager : MonoBehaviourPunCallbacks
 {
     GameManager gameManager;
     public int finishItemCount = 0;
-    public Text finishItemText;
+    
     // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
     public const string FinishItemKey = "FinishItemCount";
 
@@ -32,7 +32,7 @@ public class FinishItemManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-
+    
         Debug.Log("현재 FinishItemManager 개수: " + FindObjectsOfType<FinishItemManager>().Length);
 
         //LoadFinishItemCount();
@@ -111,14 +111,14 @@ public class FinishItemManager : MonoBehaviourPunCallbacks
         // 새로운 값
         int newCount = currentCount + 1;
 
-        // 조건부 업데이트: FinishItemCount가 currentCount일 때만 업데이트
+        
         ExitGames.Client.Photon.Hashtable propsToSet = new ExitGames.Client.Photon.Hashtable { { "FinishItemCount", newCount } };
         PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
 
         Debug.Log("AddFinishItem의 AddFinishItem함수의 값 : " + newCount);
     }
-
-
-
+    
+    
+    
 
 }
