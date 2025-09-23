@@ -68,17 +68,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             health = 3;
         }
-        Instance = this;
-        PhotonView pv = GetComponent<PhotonView>();
-        if (pv != null)
-        {
-            myViewID = pv.ViewID;
-            Debug.Log($"[GameManager] 내 PhotonView ID = {myViewID}");
-        }
-        else
-        {
-            Debug.LogError("GameManager에 PhotonView가 없습니다!");
-        }
+        
 
 
     }
@@ -89,7 +79,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-
 
         // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
@@ -121,6 +110,16 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
 
         }
+        if (finishItemText != null)
+            finishItemText.text = "0"; // 기본값 세팅
+        if (PhotonNetwork.CurrentRoom != null && 
+        PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount")) 
+        {
+            int count = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
+            finishItemText.text = count.ToString();
+            Debug.Log("Stage씬 진입 시 FinishItemCount 적용: " + count);
+        }
+        
     }
     void Update()
     {
@@ -129,7 +128,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             UIPoint.text = (totalPoint + stagePoint).ToString();
             //photonView.RPC("LoadAndUpdateItem",RpcTarget.AllBuffered);
-            SyncFinishItemCount();
+            //SyncFinishItemCount();
 
         }
         // 로컬 저장된 아이템 개수를 불러옴
@@ -143,38 +142,33 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             PlayerPrefs.DeleteAll();     // 저장 데이터 초기화
             PlayerPrefs.Save();
+
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
+            props["FinishItemCount"] = null; // 키 삭제
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
             Debug.Log("[개발용] data모은 정도 초기화 완료");
         }
 
 
     }
 
-    public int GetViewID()
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
-        return myViewID;
+        if (propertiesThatChanged.ContainsKey("FinishItemCount"))
+        {
+            int count = (int)propertiesThatChanged["FinishItemCount"];
+            finishItemText.text = count.ToString();
+            Debug.Log("FinishItemCount 변경됨: " + count);
+        }
     }
-    public void SyncFinishItemCount()
-    {
+    
+   
 
-        // 마스터 클라이언트만 로컬 저장 불러오기
-        LoadFinishItemCount();
-        // 다른 모든 클라이언트에게 값 전달
-        int gmId = GameManager.Instance.GetViewID();
-        PhotonView targetView = PhotonView.Find(gmId);
-        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
-        Debug.Log($"내 photonView ID: {photonView.ViewID}");
-        Debug.Log($"찾은 targetView ID: {targetView.ViewID}");
-    }
-
-    [PunRPC]
-    void UpdateFinishItemUI_RPC(int newCount)
-    {
-        finishItemCount = newCount;
-        UpdateFinishItemUI();
-    }
+    
 
 
-    void SyncWithMaxValue()
+    /*void SyncWithMaxValue()
     {
         int maxCount = 0;
         foreach (var p in PhotonNetwork.PlayerList)
@@ -234,7 +228,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void AddFinishItem()
     {
 
-        /*// 수치 1 증가
+        // 수치 1 증가
         finishItemCount++;
 
         // PlayerPrefs에 저장 (로컬 디스크에 저장됨)
@@ -243,7 +237,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // UI 업데이트
         UpdateFinishItemUI();
-        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);*/
+        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);
 
         finishItemCount++;
         PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
@@ -262,12 +256,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (changedProps.ContainsKey("FinishItemCount"))
         {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                SyncWithMaxValue();
-            }
+            
+            SyncWithMaxValue();
+            
         }
-    }
+    }*/
 
     public void SpawnPlayer(int player_index)
     {
