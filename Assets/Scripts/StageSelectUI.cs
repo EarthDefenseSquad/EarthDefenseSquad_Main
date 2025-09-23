@@ -2,9 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
-using ExitGames.Client.Photon; 
+using ExitGames.Client.Photon;
 
-public class StageSelectUI : MonoBehaviourPun
+public class StageSelectUI : MonoBehaviourPunCallbacks
 {
     // 1960년대 스테이지 버튼 배열 (UI 버튼들)
     public Button[] stageButtons1960;
@@ -24,7 +24,7 @@ public class StageSelectUI : MonoBehaviourPun
 
     [Header("게임 씬 이름")]
     // 선택된 스테이지를 로드할 씬 이름 (모든 스테이지가 포함된 하나의 씬이라고 가정)
-    public string gameSceneName = "StageScene"; 
+    public string gameSceneName = "StageScene";
 
     void Awake()
     {
@@ -35,10 +35,13 @@ public class StageSelectUI : MonoBehaviourPun
         stageNumber = PlayerMove.clearedStage;
     }
 
-    void Start()
+    /*void Start()
     {
-        if (PhotonNetwork.IsMasterClient)
-        {
+            int currentCount = 0;
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount"))
+            {
+                currentCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
+            }
             // 모든 스테이지 버튼을 순회하면서 초기화
             for (int i = 0; i < stageButtons.Length; i++)
             {
@@ -53,56 +56,95 @@ public class StageSelectUI : MonoBehaviourPun
                 // requiredFinishID가 없거나, PlayerPrefs에 저장된 값이 1이면 해금
                 bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
                     || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
+                bool isUnlocked;
+                if (string.IsNullOrEmpty(data.requiredFinishID))
+                {
+                    isUnlocked = true;
+                }
+                else
+                {
+                    object value;
+                    if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(data.requiredFinishID, out value))
+                    {
+                        isUnlocked = (int)value == 1;
+                    }
+                    else
+                    {
+                        isUnlocked = false;
+                    }
+                }
 
                 photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
 
             }
+    } */
+
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        if (propertiesThatChanged == null || stageButtons == null) return;
+
+        for (int i = 0; i < stageButtons.Length; i++)
+        {
+            StageButtonData data = stageButtons[i].GetComponent<StageButtonData>();
+            if (data == null) continue;
+
+            bool isUnlocked = false;
+            if (string.IsNullOrEmpty(data.requiredFinishID))
+            {
+                isUnlocked = true;
+            }
+            else if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(data.requiredFinishID, out object value))
+            {
+                isUnlocked = (int)value == 1;
+            }
+
+            photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
         }
-    } 
+    }
     [PunRPC]
     void RPC_stageUpdateUI(int index, bool isUnlocked)
     {
-            Button button = stageButtons[index];
-            StageButtonData data = button.GetComponent<StageButtonData>();
+        Button button = stageButtons[index];
+        StageButtonData data = button.GetComponent<StageButtonData>();
 
-            button.interactable = isUnlocked;
-            button.enabled = isUnlocked;
+        button.interactable = isUnlocked;
+        button.enabled = isUnlocked;
 
-            // --- 자물쇠 아이콘 처리 ---
-            Transform lockIcon = button.transform.Find("LockIcon");
-            if (lockIcon != null)
+        // --- 자물쇠 아이콘 처리 ---
+        Transform lockIcon = button.transform.Find("LockIcon");
+        if (lockIcon != null)
+        {
+            // 잠겨있으면 자물쇠 켜기, 해금이면 끄기
+            lockIcon.gameObject.SetActive(!isUnlocked);
+
+            // RaycastTarget 꺼서 자물쇠 아이콘이 클릭을 방해하지 않게 함
+            Image img = lockIcon.GetComponent<Image>();
+            if (img != null)
+                img.raycastTarget = false;
+        }
+
+        // 클릭 이벤트 등록
+        int selectedIndex = data.stageIndex; // 캡쳐 문제 방지 위해 지역 변수 사용
+        button.onClick.RemoveAllListeners(); // 중복 방지
+        button.onClick.AddListener(() =>
+        {
+            // 버튼이 해금된 상태일 때만 실행
+            if (isUnlocked)
             {
-                // 잠겨있으면 자물쇠 켜기, 해금이면 끄기
-                lockIcon.gameObject.SetActive(!isUnlocked);
-
-                // RaycastTarget 꺼서 자물쇠 아이콘이 클릭을 방해하지 않게 함
-                Image img = lockIcon.GetComponent<Image>();
-                if (img != null)
-                    img.raycastTarget = false;
-            }
-
-            // 클릭 이벤트 등록
-            int selectedIndex = data.stageIndex; // 캡쳐 문제 방지 위해 지역 변수 사용
-            button.onClick.RemoveAllListeners(); // 중복 방지
-            button.onClick.AddListener(() =>
-            {
-                // 버튼이 해금된 상태일 때만 실행
-                if (isUnlocked)
+                // 선택된 스테이지 인덱스를 포톤 CustomProperties에 저장 (동기화 용도)
+                Hashtable props = new Hashtable
                 {
-                    // 선택된 스테이지 인덱스를 포톤 CustomProperties에 저장 (동기화 용도)
-                    Hashtable props = new Hashtable
-                    {
                         { "SelectedStageIndex", selectedIndex }
-                    };
-                    PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+                };
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
-                    Debug.Log($"selectedIndex: {selectedIndex}");
+                Debug.Log($"selectedIndex: {selectedIndex}");
 
-                    // 게임 씬 로드
-                    PhotonNetwork.LoadLevel(gameSceneName);
-                }
-            });
-        
+                // 게임 씬 로드
+                PhotonNetwork.LoadLevel(gameSceneName);
+            }
+        });
+
     }
     // --- 씬 이동용 버튼 함수들 (UI Button에서 직접 연결 가능) ---
     public void Go1960Scene() => PhotonNetwork.LoadLevel("StageScene");
