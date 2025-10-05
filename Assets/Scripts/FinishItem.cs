@@ -22,7 +22,7 @@ public class FinishItem : MonoBehaviourPun
         }
 
         // GameManager에 동기화 요청 (자기 값 보내기)
-        GameManager.Instance?.RequestItemSync(itemID, localState);
+        //GameManager.Instance?.RequestItemSync(itemID, localState);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -49,7 +49,7 @@ public class FinishItem : MonoBehaviourPun
         FinishItemManager.Instance?.AddFinishItem();
 
         // 동기화 전파
-        GameManager.Instance?.SendItemCollected(itemID);
+        //GameManager.Instance?.SendItemCollected(itemID);
     }
 
     void SetCollectedVisual()

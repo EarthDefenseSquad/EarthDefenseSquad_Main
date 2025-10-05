@@ -23,9 +23,10 @@ public class PlayFabDataManager : MonoBehaviour
             result => {
                 Debug.Log("로그인 성공! PlayFabId: " + result.PlayFabId);
             },
-            error => {
+            error =>
+            {
                 Debug.LogError("로그인 실패: " + error.GenerateErrorReport());
-            }
+            }// 
         );
     }
     // 예시: CustomId로 로그인 (닉네임과 동일하게)

@@ -537,37 +537,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             UIhealth[i].gameObject.SetActive(i < health);
         }
     }
-
-
-    private Dictionary<string, int> finishItemStates = new Dictionary<string, int>();
-
-    // 동기화 요청 시 받는 함수
-    public void RequestItemSync(string itemID, int myValue)
-    {
-        photonView.RPC("RPC_SyncItem", RpcTarget.Others, itemID, myValue);
-    }
-
-    // 아이템을 먹었을 때 다른 유저에게 전파
-    public void SendItemCollected(string itemID)
-    {
-        photonView.RPC("RPC_SyncItem", RpcTarget.Others, itemID, 1);
-    }
-
-    // RPC 처리
-    [PunRPC]
-    void RPC_SyncItem(string itemID, int otherValue)
-    {
-        int myValue = PlayerPrefs.GetInt(itemID, 0);
-        int syncedValue = Mathf.Max(myValue, otherValue);
-        PlayerPrefs.SetInt(itemID, syncedValue);
-        PlayerPrefs.Save();
-
-        if (!finishItemStates.ContainsKey(itemID))
-            finishItemStates[itemID] = syncedValue;
-        else
-            finishItemStates[itemID] = Mathf.Max(finishItemStates[itemID], syncedValue);
-    }
-
+        
 }
 
 

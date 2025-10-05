@@ -115,30 +115,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
         
     }
-    /*[PunRPC]
-    void OnButton_CharacterSelect_LB_Click()
-    {
-        Debug.Log("1player가 레디했습니다.");
-        Button_CharacterSelect_LB_Pressed = true;
-        CheckBothButtonPressed();
-        
-    }
-    [PunRPC]
-    void OnButton_CharacterSelect_RB_Click()
-    {
-        Debug.Log("2player가 레디했습니다.");
-        Button_CharacterSelect_RB_Pressed = true;
-        CheckBothButtonPressed();
-    }
-    void CheckBothButtonPressed()
-    {
-        if (Button_CharacterSelect_LB_Pressed && Button_CharacterSelect_RB_Pressed)
-        {
-            photonView.RPC("MoveTheTutorialPanel", RpcTarget.All);
-            Button_CharacterSelect_LB_Pressed = false;
-            Button_CharacterSelect_RB_Pressed = false;   
-        }
-    }*/
+    
     [PunRPC]
     void SpawnRoomPlayer(int player_index)
     {
@@ -228,7 +205,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     }
 
    
-    [PunRPC]
+    /*[PunRPC]
     void MoveTheTutorialPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
     {                           //튜토리얼 선택 패널 동기화
         CharacterSelect_Panel.SetActive(false);
@@ -248,7 +225,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     {                          //게임씬 이동 동기화
         PhotonNetwork.LoadLevel("WaitingScene");
     }
-
+    
     [PunRPC]
     void MoveThe_CharacterSelectPanel()
     {
@@ -266,6 +243,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
         //int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
        photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex);
-    }
+    }*/
     
 }
