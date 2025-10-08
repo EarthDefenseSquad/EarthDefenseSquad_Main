@@ -29599,6 +29599,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   stageNumber: 1
+  stageButtons: []
+  gameSceneName: StageScene
 --- !u!4 &1295749817
 Transform:
   m_ObjectHideFlags: 0
@@ -29723,7 +29725,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 20.009995}
+  m_AnchoredPosition: {x: 0, y: 39978.152}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1303064859
@@ -30102,8 +30104,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 691188648}
   m_HandleRect: {fileID: 691188647}
   m_Direction: 2
-  m_Value: -1996.907
-  m_Size: 0.9994995
+  m_Value: -3412023.2
+  m_Size: 0.9994145
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -30413,6 +30415,7 @@ GameObject:
   - component: {fileID: 1519885863}
   - component: {fileID: 1519885862}
   - component: {fileID: 1519885865}
+  - component: {fileID: 1519885866}
   m_Layer: 0
   m_Name: Doctor
   m_TagString: Doctor
@@ -30548,6 +30551,28 @@ MonoBehaviour:
   interactRange: 2
   goodEndingScene: GoodEnding
   badEndingScene: BadEnding
+--- !u!114 &1519885866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519885860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1536750510
 GameObject:
   m_ObjectHideFlags: 0
@@ -31400,7 +31425,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 349407820}
   m_HandleRect: {fileID: 349407819}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

@@ -87,6 +87,7 @@ MonoBehaviour:
   - RPC_UpdateFinishItemUI
   - RPC_SyncItem
   - RPC_DeactivateObjects
+  - GoTotheEndingScene
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
