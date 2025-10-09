@@ -3,9 +3,13 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using System.Collections;
 
-public class SpriteSwitch : MonoBehaviourPun
+//public class SpriteSwitch : MonoBehaviourPun
+public class SpriteSwitch : MonoBehaviourPunCallbacks
 {
+    private Coroutine initCo;
+    
     [System.Serializable]
     public class SpriteSet
     {
@@ -30,29 +34,131 @@ public class SpriteSwitch : MonoBehaviourPun
         public Color originalRightColor; // 우측 버튼 원래 색상 저장용
         public System.Action<SpriteSet> onConfirmToggle; // 선택 토글시 호출되는 이벤트
 
+        // ---------- 하드락 유틸 ----------
+        private void SetButtonHardLock(Button btn, bool interactable)
+        {
+            if (btn == null) return;
+            btn.interactable = interactable;
+
+            var img = btn.GetComponent<Image>();
+            if (img != null) img.raycastTarget = interactable;
+            foreach (var g in btn.GetComponentsInChildren<Graphic>(true))
+                g.raycastTarget = interactable;
+
+            var cg = btn.GetComponent<CanvasGroup>();
+            if (cg == null) cg = btn.gameObject.AddComponent<CanvasGroup>();
+            cg.interactable = interactable;
+            cg.blocksRaycasts = interactable;
+        }
+
         // 초기화 함수 - 버튼에 클릭 이벤트 리스너 등록 및 초기 UI 적용
+        // “내 세트만 조작 가능” 로직 추가 - 10.08 수정
         public void Init(int myPlayerIndex)
         {
+            bool isMine = (ownerPlayerIndex == myPlayerIndex);
+
             if (ownerPlayerIndex != myPlayerIndex) return;
             if (sprites.Length == 0 || targetImage == null || names.Length != sprites.Length || infos.Length != sprites.Length) return;
 
             if (leftButton != null)
             {
-                leftButton.onClick.RemoveAllListeners();
-                leftButton.onClick.AddListener(() => { SwitchLeft(); parent?.OnSpriteSetIndexChanged(this); });
-                originalLeftColor = leftButton.image.color;
+                // 주석 = 기존 코드 전체 - 10.08 수정
+                // leftButton.onClick.RemoveAllListeners();
+                // leftButton.onClick.AddListener(() => { SwitchLeft(); parent?.OnSpriteSetIndexChanged(this); });
+                // originalLeftColor = leftButton.image.color;
+
+                if (isMine)
+                {
+                    leftButton.onClick.RemoveAllListeners();
+                    SetButtonHardLock(leftButton, true);
+                    leftButton.onClick.AddListener(() =>
+                    {
+                        // 🔐 로직 가드
+                        if (parent.GetLocalPlayerIndex() != ownerPlayerIndex) return;
+
+                        if (!isConfirmed && sprites != null && sprites.Length > 0)
+                        {
+                            currentIndex = (currentIndex - 1 + sprites.Length) % sprites.Length;
+                            ApplyCurrent();
+                            parent?.OnSpriteSetIndexChanged(this);
+                        }
+                    });
+                    if (leftButton.image != null) originalLeftColor = leftButton.image.color;
+                }
+                else
+                {
+                    SetButtonHardLock(leftButton, false);
+                }
+
             }
+
             if (rightButton != null)
             {
-                rightButton.onClick.RemoveAllListeners();
-                rightButton.onClick.AddListener(() => { SwitchRight(); parent?.OnSpriteSetIndexChanged(this); });
-                originalRightColor = rightButton.image.color;
+                // 주석 = 기존 코드 전체 - 10.08 수정
+                // rightButton.onClick.RemoveAllListeners();
+                // rightButton.onClick.AddListener(() => { SwitchRight(); parent?.OnSpriteSetIndexChanged(this); });
+                // originalRightColor = rightButton.image.color;
+
+                if (isMine)
+                {
+                    rightButton.onClick.RemoveAllListeners();
+                    SetButtonHardLock(rightButton, true);
+                    rightButton.onClick.AddListener(() =>
+                    {
+                        // 🔐 로직 가드
+                        if (parent.GetLocalPlayerIndex() != ownerPlayerIndex) return;
+
+                        if (!isConfirmed && sprites != null && sprites.Length > 0)
+                        {
+                            currentIndex = (currentIndex + 1) % sprites.Length;
+                            ApplyCurrent();
+                            parent?.OnSpriteSetIndexChanged(this);
+                        }
+                    });
+                    if (rightButton.image != null) originalRightColor = rightButton.image.color;
+                }
+                else
+                {
+                    SetButtonHardLock(rightButton, false);
+                }
             }
+
             if (confirmButton != null)
             {
-                confirmButton.onClick.RemoveAllListeners();
-                confirmButton.onClick.AddListener(() => { parent?.OnConfirmToggledLocalWithNetwork(this); });
+                // 주석 = 기존 코드 전체 - 10.08 수정
+                // confirmButton.onClick.RemoveAllListeners();
+                // confirmButton.onClick.AddListener(() => { parent?.OnConfirmToggledLocalWithNetwork(this); });
+
+                if (isMine)
+                {
+                    confirmButton.onClick.RemoveAllListeners();
+                    SetButtonHardLock(confirmButton, true);
+                    confirmButton.onClick.AddListener(() =>
+                    {
+                        if (parent.GetLocalPlayerIndex() != ownerPlayerIndex) return; // 🔐 로직 가드
+                        parent?.OnConfirmToggledLocalWithNetwork(this);
+                    });
+                }
+                else
+                {
+                    SetButtonHardLock(confirmButton, false);
+                }
+
+
             }
+
+            if (!isMine) return; // 상대 세트는 여기서 끝
+
+            // 내 세트만 UI 데이터 적용
+            if (sprites == null || targetImage == null || sprites.Length == 0 ||
+                names == null || infos == null ||
+                names.Length != sprites.Length || infos.Length != sprites.Length)
+            {
+                Debug.LogWarning("[SpriteSet.Init] 데이터 부족");
+                return;
+            }
+
+
             ApplyCurrent();
         }
 
@@ -177,12 +283,37 @@ public class SpriteSwitch : MonoBehaviourPun
 
     void OnEnable()
     {
-        Debug.Log("SpriteSwitch OnEnable - UI 초기화");
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        set1.Init(playerIndex);
-        set1.SetConfirmed(false);
-        set2.Init(playerIndex);
-        set2.SetConfirmed(false);
+        // 기존 초기화 제거
+        // Debug.Log("SpriteSwitch OnEnable - UI 초기화");
+        // int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
+        // set1.Init(playerIndex);
+        // set1.SetConfirmed(false);
+        // set2.Init(playerIndex);
+        // set2.SetConfirmed(false);
+    }
+
+    public override void OnJoinedRoom()
+    {
+        if (initCo != null) StopCoroutine(initCo);
+        initCo = StartCoroutine(WaitAndInit());
+    }
+
+    private IEnumerator WaitAndInit()
+    {
+        // Photon 완전 입장 대기
+        while (!PhotonNetwork.InRoom || PhotonNetwork.LocalPlayer == null || PhotonNetwork.LocalPlayer.ActorNumber <= 0)
+            yield return null;
+
+        int playerIndex = GetLocalPlayerIndex();
+        Debug.Log($"[SpriteSwitch] Init OK. InRoom={PhotonNetwork.InRoom}, Actor={PhotonNetwork.LocalPlayer.ActorNumber}, idx={playerIndex}, set1.owner={set1.ownerPlayerIndex}, set2.owner={set2.ownerPlayerIndex}");
+
+        // 내 세트만 Init
+        set1.Init(set1.ownerPlayerIndex == playerIndex ? playerIndex : -1);
+        set2.Init(set2.ownerPlayerIndex == playerIndex ? playerIndex : -1);
+
+        // 기본 상태 세팅
+        if (set1.ownerPlayerIndex == playerIndex) set1.SetConfirmed(false);
+        if (set2.ownerPlayerIndex == playerIndex) set2.SetConfirmed(false);
     }
 
     // 캐릭터 인덱스 변경 동기화
@@ -206,8 +337,25 @@ public class SpriteSwitch : MonoBehaviourPun
         return otherSet.isConfirmed && toggledSet.GetCharacterGroup() == otherSet.GetCharacterGroup();
     }
 
+
+    // “같은 세대 충돌 방지” 로직 복원 - 10.08 수정
     public void OnConfirmToggledLocalWithNetwork(SpriteSet toggledSet)
     {
+        // 기존 코드 전체 주석처리함
+        // if (IsSameGenerationConflict(toggledSet))
+        // {
+        //     ShowWarning("서로 다른 세대를 선택하세요.");
+        //     return;
+        // }
+        // OnConfirmToggled_Internal(toggledSet, true);
+
+        int myIdx = GetLocalPlayerIndex();
+        if (toggledSet.ownerPlayerIndex != myIdx)
+        {
+            Debug.LogWarning($"[SpriteSwitch] Not your set. owner={toggledSet.ownerPlayerIndex}, me={myIdx}");
+            return;
+        }
+
         if (IsSameGenerationConflict(toggledSet))
         {
             ShowWarning("서로 다른 세대를 선택하세요.");
@@ -228,12 +376,25 @@ public class SpriteSwitch : MonoBehaviourPun
             warningPanel.SetActive(false);
 
         if (isLocalCall)
+        {
             OnConfirmToggle_Network(toggledSet);
+
+            var props = new ExitGames.Client.Photon.Hashtable();
+            props["selectedIndex"] = toggledSet.currentIndex;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+
+            Debug.Log($"[SpriteSwitch] Saved selectedIndex={toggledSet.currentIndex} for player {PhotonNetwork.LocalPlayer.ActorNumber}");
+        }
 
         if (set1.isConfirmed && set2.isConfirmed && PhotonNetwork.IsMasterClient)
         {
             CharacterSelectionData.player1SelectedIndex = set1.currentIndex;
             CharacterSelectionData.player2SelectedIndex = set2.currentIndex;
+
+            var props = new ExitGames.Client.Photon.Hashtable();
+            props["selectedIndex"] = PhotonNetwork.IsMasterClient ? set1.currentIndex : set2.currentIndex;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        
             photonView.RPC(nameof(RPC_LoadNextScene), RpcTarget.AllBuffered, nextSceneName);
         }
 
@@ -246,6 +407,13 @@ public class SpriteSwitch : MonoBehaviourPun
         int currentIndex = toggledSet.currentIndex;
         bool nextState = !toggledSet.isConfirmed;
         photonView.RPC(nameof(RPC_OnConfirmToggle), RpcTarget.AllBuffered, setNumber, currentIndex, nextState);
+    }
+
+    public int GetLocalPlayerIndex()
+    {
+        if (PhotonNetwork.InRoom && PhotonNetwork.LocalPlayer != null && PhotonNetwork.LocalPlayer.ActorNumber > 0)
+            return PhotonNetwork.LocalPlayer.ActorNumber - 1;
+        return PhotonNetwork.IsMasterClient ? 0 : 1;
     }
 
     [PunRPC]
