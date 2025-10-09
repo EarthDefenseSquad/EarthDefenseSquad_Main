@@ -162,10 +162,10 @@ public class GameManager : MonoBehaviourPunCallbacks
             Debug.Log("FinishItemCount 변경됨: " + count);
         }
     }
-    
-   
 
-    
+
+
+
 
 
     /*void SyncWithMaxValue()
@@ -262,57 +262,96 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }*/
 
+private const string K_SelectedIndex = "selectedIndex";
+
     public void SpawnPlayer(int player_index)
     {
-        int selectedIndex = (player_index == 0) ? CharacterSelectionData.player1SelectedIndex : CharacterSelectionData.player2SelectedIndex;
-        string prefabName;
-        switch (selectedIndex)
-        {
-            case 0:
-                prefabName = "Player";
-                break;
-            case 1:
-                prefabName = "Player Z-2";
-                break;
-            case 2:
-                prefabName = "Player X-1";
-                break;
-            case 3:
-                prefabName = "Player X-2";
-                break;
-            default:
-                prefabName = "Player"; // 기본값 설정
-                break;
-        }
-        Debug.Log($"Selected prefabName: {prefabName} for player_index: {player_index}");
-        var spawnPositions = new Vector3[]
-        {
+        int selectedIndex = GetSelectedIndexForLocal();
+        string prefabName = ResolvePrefabNameBySelectedIndex(selectedIndex);
+
+        Vector3[] spawnPositions = {
         new Vector3(-1.0f, -0.5f, 0.0f),
         new Vector3(0.0f, -0.5f, 0.0f)
         };
+
         GameObject playerObject = PhotonNetwork.Instantiate(prefabName, spawnPositions[player_index], Quaternion.identity);
         player = playerObject.GetComponent<PlayerMove>();
-        //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
-        //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
-        //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
-        //Instantiate(obj, spawnPosition, Quaternion.identity);
-        //위의 두 줄이 의미하는 게 포톤에서는 PhotonNetwork.Instantiate~~저걸로 리소스에서 "PlayerPrefab"이라는 이름의 프리팹 가져옴.
+    
+        // 기존 코드 전체 주석 - 10.08 수정
+        // int selectedIndex = (player_index == 0) ? CharacterSelectionData.player1SelectedIndex : CharacterSelectionData.player2SelectedIndex;
+        // string prefabName;
+        // switch (selectedIndex)
+        // {
+        //     case 0:
+        //         prefabName = "Player";
+        //         break;
+        //     case 1:
+        //         prefabName = "Player Z-2";
+        //         break;
+        //     case 2:
+        //         prefabName = "Player X-1";
+        //         break;
+        //     case 3:
+        //         prefabName = "Player X-2";
+        //         break;
+        //     default:
+        //         prefabName = "Player"; // 기본값 설정
+        //         break;
+        // }
+        // Debug.Log($"Selected prefabName: {prefabName} for player_index: {player_index}");
+        // var spawnPositions = new Vector3[]
+        // {
+        // new Vector3(-1.0f, -0.5f, 0.0f),
+        // new Vector3(0.0f, -0.5f, 0.0f)
+        // };
+        // GameObject playerObject = PhotonNetwork.Instantiate(prefabName, spawnPositions[player_index], Quaternion.identity);
+        // player = playerObject.GetComponent<PlayerMove>();
+        // //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
+        // //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
+        // //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
+        // //Instantiate(obj, spawnPosition, Quaternion.identity);
+        // //위의 두 줄이 의미하는 게 포톤에서는 PhotonNetwork.Instantiate~~저걸로 리소스에서 "PlayerPrefab"이라는 이름의 프리팹 가져옴.
 
-        Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
-        if (playerObject == null)
+        // Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
+        // if (playerObject == null)
+        // {
+        //     Debug.LogError("플레이어 객체 생성 실패!");
+        //     return;
+        // }
+
+        // Debug.Log("플레이어 생성 완료");
+
+        // // Camera 세팅
+        // if (Camera.main == null)
+        // {
+        //     Debug.LogError("Main Camera가 없습니다.");
+        //     return;
+        // }
+    }
+
+    private string ResolvePrefabNameBySelectedIndex(int selectedIndex)
+    {
+        switch (selectedIndex)
+    {
+        case 0: return "Player";
+        case 1: return "Player Z-2";
+        case 2: return "Player X-1";
+        case 3: return "Player X-2";
+        default: return "Player"; // 기본값
+    }
+    }
+
+    private int GetSelectedIndexForLocal()
+    {
+        var lp = PhotonNetwork.LocalPlayer;
+        if (lp != null && lp.CustomProperties != null && lp.CustomProperties.ContainsKey(K_SelectedIndex))
         {
-            Debug.LogError("플레이어 객체 생성 실패!");
-            return;
+            object v = lp.CustomProperties[K_SelectedIndex];
+            if (v is int iv) return iv;
+            if (int.TryParse(v.ToString(), out var iv2)) return iv2;
         }
-
-        Debug.Log("플레이어 생성 완료");
-
-        // Camera 세팅
-        if (Camera.main == null)
-        {
-            Debug.LogError("Main Camera가 없습니다.");
-            return;
-        }
+        return PhotonNetwork.IsMasterClient ? CharacterSelectionData.player1SelectedIndex
+                                            : CharacterSelectionData.player2SelectedIndex;
     }
 
     public void SetCharacterSprite(int selectedIndex)
