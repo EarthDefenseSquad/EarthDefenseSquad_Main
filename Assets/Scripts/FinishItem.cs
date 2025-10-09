@@ -12,17 +12,18 @@ public class FinishItem : MonoBehaviourPun
 
     void Start()
     {
-        int localState = PlayerPrefs.GetInt(itemID, 0);
-
-        // 투명화 처리
-        if (localState == 1)
+        // ✅ 방의 커스텀 속성에서 이미 먹은 아이템인지 확인
+        if (PhotonNetwork.CurrentRoom != null &&
+            PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCollectedIDs"))
         {
-            collected = true;
-            SetCollectedVisual();
+            string[] collectedIDs = (string[])PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCollectedIDs"];
+            if (System.Array.Exists(collectedIDs, id => id == itemID))
+            {
+                collected = true;
+                SetCollectedVisual();
+                return;
+            }
         }
-
-        // GameManager에 동기화 요청 (자기 값 보내기)
-        //GameManager.Instance?.RequestItemSync(itemID, localState);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -30,15 +31,9 @@ public class FinishItem : MonoBehaviourPun
         if (!other.CompareTag("Player") || collected || !other.GetComponent<PhotonView>().IsMine) return;
 
 
-        // 로컬 저장
-        PlayerPrefs.SetInt(itemID, 1);
-        PlayerPrefs.Save();
+        // ✅ FinishItemManager에게 아이템 수집 등록 요청
+        FinishItemManager.Instance?.RegisterCollectedItem(itemID);
 
-
-        //네트워크 저장
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable();
-        props[itemID] = 1; // "Stage1_Finish" → 1
-        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
 
 
         // 시각 효과
@@ -48,9 +43,22 @@ public class FinishItem : MonoBehaviourPun
         // FinishItem 카운트 증가
         FinishItemManager.Instance?.AddFinishItem();
 
+        // ✅ 모든 클라이언트에 동기화
+        photonView.RPC("RPC_RemoteCollect", RpcTarget.OthersBuffered, itemID);
+
         // 동기화 전파
         //GameManager.Instance?.SendItemCollected(itemID);
     }
+
+    [PunRPC]
+    void RPC_RemoteCollect(string id)
+    {
+        if (id != itemID || collected) return;
+
+        collected = true;
+        SetCollectedVisual();
+    }
+
 
     void SetCollectedVisual()
     {
@@ -63,4 +71,7 @@ public class FinishItem : MonoBehaviourPun
             sr.color = c;
         }
     }
+
+    
+
 }

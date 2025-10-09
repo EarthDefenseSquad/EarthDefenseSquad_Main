@@ -11,11 +11,12 @@ public class FinishItemManager : MonoBehaviourPunCallbacks
 {
     GameManager gameManager;
     public int finishItemCount = 0;
-    
+
     // PlayerPrefs 저장 키 이름 (로컬 저장용 키)
     public const string FinishItemKey = "FinishItemCount";
 
     public static FinishItemManager Instance;
+    private List<string> collectedItemIDs = new List<string>();
 
     void Awake()
     {
@@ -32,11 +33,30 @@ public class FinishItemManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-    
+
         Debug.Log("현재 FinishItemManager 개수: " + FindObjectsOfType<FinishItemManager>().Length);
 
         //LoadFinishItemCount();
         //UpdateFinishItemUI();
+    }
+
+    // public void RegisterCollectedItem(string itemID)
+    // {
+    //     if (!collectedItemIDs.Contains(itemID))
+    //     {
+    //         collectedItemIDs.Add(itemID);
+    //         SyncCollectedItems();
+    //     }
+    // }
+
+    void SyncCollectedItems()
+    {
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "FinishItemCollectedIDs", collectedItemIDs.ToArray() }
+            };
+
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }
     /// <summary>
     /// FinishItemCount를 불러와서 둘의 싱크를 맞춰줌.
@@ -111,14 +131,38 @@ public class FinishItemManager : MonoBehaviourPunCallbacks
         // 새로운 값
         int newCount = currentCount + 1;
 
-        
+
         ExitGames.Client.Photon.Hashtable propsToSet = new ExitGames.Client.Photon.Hashtable { { "FinishItemCount", newCount } };
         PhotonNetwork.CurrentRoom.SetCustomProperties(propsToSet);
 
         Debug.Log("AddFinishItem의 AddFinishItem함수의 값 : " + newCount);
     }
-    
-    
-    
+
+    public void RegisterCollectedItem(string itemID)
+    {
+        // 기존 리스트 불러오기
+        string[] currentIDs = new string[0];
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCollectedIDs"))
+        {
+            currentIDs = (string[])PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCollectedIDs"];
+        }
+
+        List<string> idList = new List<string>(currentIDs);
+
+        // 중복 방지
+        if (idList.Contains(itemID)) return;
+
+        idList.Add(itemID);
+
+        // 다시 커스텀 속성에 저장
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+    {
+        { "FinishItemCollectedIDs", idList.ToArray() }
+    };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+    }
+
+
+
 
 }
