@@ -26,6 +26,7 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
     // 선택된 스테이지를 로드할 씬 이름 (모든 스테이지가 포함된 하나의 씬이라고 가정)
     public string gameSceneName = "StageScene";
 
+
     void Awake()
     {
         // 게임 매니저 찾기
@@ -35,49 +36,52 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
         stageNumber = PlayerMove.clearedStage;
     }
 
-    /*void Start()
+    /*
+    void Start()
     {
-            int currentCount = 0;
-            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount"))
+        int currentCount = 0;
+
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount"))
+        {
+            currentCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
+        }
+
+        // 모든 스테이지 버튼을 순회하면서 초기화
+        for (int i = 0; i < stageButtons.Length; i++)
+        {
+            Button button = stageButtons[i];
+
+            // 각 버튼에 붙어 있는 StageButtonData 컴포넌트 가져오기
+            StageButtonData data = button.GetComponent<StageButtonData>();
+            if (data == null) continue; // StageButtonData가 없으면 패스
+
+            // --- 스테이지 해금 여부 확인 ---
+            // requiredFinishID가 없거나, PlayerPrefs에 저장된 값이 1이면 해금
+            bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
+                              || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
+
+            bool isUnlocked;
+            if (string.IsNullOrEmpty(data.requiredFinishID))
             {
-                currentCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
+                isUnlocked = true;
             }
-            // 모든 스테이지 버튼을 순회하면서 초기화
-            for (int i = 0; i < stageButtons.Length; i++)
+            else
             {
-                Button button = stageButtons[i];
-
-                // 각 버튼에 붙어 있는 StageButtonData 컴포넌트 가져오기
-                StageButtonData data = button.GetComponent<StageButtonData>();
-
-                if (data == null) continue; // StageButtonData가 없으면 패스
-
-                // --- 스테이지 해금 여부 확인 ---
-                // requiredFinishID가 없거나, PlayerPrefs에 저장된 값이 1이면 해금
-                bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
-                    || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
-                bool isUnlocked;
-                if (string.IsNullOrEmpty(data.requiredFinishID))
+                object value;
+                if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(data.requiredFinishID, out value))
                 {
-                    isUnlocked = true;
+                    isUnlocked = (int)value == 1;
                 }
                 else
                 {
-                    object value;
-                    if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(data.requiredFinishID, out value))
-                    {
-                        isUnlocked = (int)value == 1;
-                    }
-                    else
-                    {
-                        isUnlocked = false;
-                    }
+                    isUnlocked = false;
                 }
-
-                photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
-
             }
-    } */
+
+            photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
+        }
+    }
+    */
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
@@ -89,6 +93,7 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
             if (data == null) continue;
 
             bool isUnlocked = false;
+
             if (string.IsNullOrEmpty(data.requiredFinishID))
             {
                 isUnlocked = true;
@@ -101,6 +106,7 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
             photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
         }
     }
+
     [PunRPC]
     void RPC_stageUpdateUI(int index, bool isUnlocked)
     {
@@ -126,6 +132,7 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
         // 클릭 이벤트 등록
         int selectedIndex = data.stageIndex; // 캡쳐 문제 방지 위해 지역 변수 사용
         button.onClick.RemoveAllListeners(); // 중복 방지
+
         button.onClick.AddListener(() =>
         {
             // 버튼이 해금된 상태일 때만 실행
@@ -134,18 +141,18 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
                 // 선택된 스테이지 인덱스를 포톤 CustomProperties에 저장 (동기화 용도)
                 Hashtable props = new Hashtable
                 {
-                        { "SelectedStageIndex", selectedIndex }
+                    { "SelectedStageIndex", selectedIndex }
                 };
-                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
 
+                PhotonNetwork.LocalPlayer.SetCustomProperties(props);
                 Debug.Log($"selectedIndex: {selectedIndex}");
 
                 // 게임 씬 로드
                 PhotonNetwork.LoadLevel(gameSceneName);
             }
         });
-
     }
+
     // --- 씬 이동용 버튼 함수들 (UI Button에서 직접 연결 가능) ---
     public void Go1960Scene() => PhotonNetwork.LoadLevel("StageScene");
     public void Go1970Scene() => PhotonNetwork.LoadLevel("StageScene");

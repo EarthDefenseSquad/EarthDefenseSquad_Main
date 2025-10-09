@@ -1207,6 +1207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &19156248
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5062,6 +5063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1990_1_finish
+  stageButtons: []
 --- !u!61 &88875558
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7488,6 +7490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1980_3_finish
+  stageButtons: []
 --- !u!61 &124726235
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7766,6 +7769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2020_2_finish
+  stageButtons: []
 --- !u!61 &137111132
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9351,7 +9355,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 68410640}
+  m_AnchoredPosition: {x: 0, y: 410464030}
   m_SizeDelta: {x: 0, y: 20.01}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &158870911
@@ -11836,6 +11840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1980_1_finish
+  stageButtons: []
 --- !u!61 &212423738
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -11980,6 +11985,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2000_2_finish
+  stageButtons: []
 --- !u!61 &213583244
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -12124,6 +12130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2010_6_finish
+  stageButtons: []
 --- !u!61 &213675693
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -14493,6 +14500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2010_2_finish
+  stageButtons: []
 --- !u!61 &274395559
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -14637,6 +14645,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &280525981
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -17030,6 +17039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1990_4_finish
+  stageButtons: []
 --- !u!61 &338183465
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -21225,6 +21235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2020_1_finish
+  stageButtons: []
 --- !u!61 &417145205
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -22915,6 +22926,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2020_5_finish
+  stageButtons: []
 --- !u!61 &441354550
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -24116,6 +24128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_2_finish
+  stageButtons: []
 --- !u!61 &463270873
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -25508,6 +25521,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2010_5_finish
+  stageButtons: []
 --- !u!61 &495190765
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -27428,6 +27442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1990_3_finish
+  stageButtons: []
 --- !u!61 &541655981
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -31535,6 +31550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &625982919
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -34662,6 +34678,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1980_6_finish
+  stageButtons: []
 --- !u!61 &682263376
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -37156,6 +37173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &732607496
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -37555,6 +37573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2000_3_finish
+  stageButtons: []
 --- !u!61 &746121237
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -42073,8 +42092,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 325429226}
   m_HandleRect: {fileID: 325429225}
   m_Direction: 2
-  m_Value: -17102666
-  m_Size: 0.83333343
+  m_Value: -34205340
+  m_Size: 0.62500006
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -46719,6 +46738,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_4_finish
+  stageButtons: []
 --- !u!61 &944802289
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -53816,6 +53836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1980_7_finish
+  stageButtons: []
 --- !u!61 &1058335020
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -56752,6 +56773,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2010_4_finish
+  stageButtons: []
 --- !u!61 &1104333030
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -58052,6 +58074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &1122148559
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -59025,6 +59048,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1990_5_finish
+  stageButtons: []
 --- !u!61 &1138468362
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -60499,6 +60523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1980_4_finish
+  stageButtons: []
 --- !u!61 &1184442715
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -61992,6 +62017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1980_2_finish
+  stageButtons: []
 --- !u!61 &1200432492
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -62412,6 +62438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2020_4_finish
+  stageButtons: []
 --- !u!61 &1210682336
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -62701,6 +62728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_6_finish
+  stageButtons: []
 --- !u!61 &1216397123
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -65106,6 +65134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1980_5_finish
+  stageButtons: []
 --- !u!61 &1271324283
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -72621,6 +72650,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2000_4_finish
+  stageButtons: []
 --- !u!61 &1368966188
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -73033,6 +73063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2020_3_finish
+  stageButtons: []
 --- !u!61 &1372505043
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -73361,6 +73392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &1378289758
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -77532,6 +77564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1990_2_finish
+  stageButtons: []
 --- !u!61 &1441949346
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -77676,6 +77709,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &1442028256
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -79143,6 +79177,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_8_finish
+  stageButtons: []
 --- !u!61 &1475624934
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -79429,6 +79464,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &1477837268
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -83088,6 +83124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2000_5_finish
+  stageButtons: []
 --- !u!61 &1554087727
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -83545,6 +83582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &1563682011
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -84808,6 +84846,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_3_finish
+  stageButtons: []
 --- !u!61 &1596321057
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -87184,6 +87223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2010_1_finish
+  stageButtons: []
 --- !u!61 &1626181638
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -88114,6 +88154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_5_finish
+  stageButtons: []
 --- !u!61 &1648677567
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -89138,6 +89179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2020_6_finish
+  stageButtons: []
 --- !u!61 &1675205184
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -90369,6 +90411,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_7_finish
+  stageButtons: []
 --- !u!61 &1714275392
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -92775,6 +92818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_1_finish
+  stageButtons: []
 --- !u!1 &1757192527
 GameObject:
   m_ObjectHideFlags: 0
@@ -95697,6 +95741,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2010_3_finish
+  stageButtons: []
 --- !u!61 &1819215424
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -100043,6 +100088,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &1913909076
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -105449,6 +105495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 1970_9_finish
+  stageButtons: []
 --- !u!61 &2027768307
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -107422,6 +107469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: Stage1_finish
+  stageButtons: []
 --- !u!61 &2074639435
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -109283,6 +109331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemID: 2000_1_finish
+  stageButtons: []
 --- !u!61 &2120199602
 BoxCollider2D:
   m_ObjectHideFlags: 0

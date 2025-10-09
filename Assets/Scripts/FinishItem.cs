@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using ExitGames.Client.Photon;
+using UnityEngine.UI;
 
 public class FinishItem : MonoBehaviourPun
 {
@@ -10,12 +11,33 @@ public class FinishItem : MonoBehaviourPun
 
     private bool collected = false;
 
+    public Button[] stageButtons;
     void Start()
     {
-        int localState = PlayerPrefs.GetInt(itemID, 0);
+        //int localState = PlayerPrefs.GetInt(itemID, 0);
+    
 
         // 투명화 처리
-        if (localState == 1)
+        // if (localState == 1)
+        // {
+        //     collected = true;
+        //     SetCollectedVisual();
+        // }
+        
+        StageButtonData data = GetComponent<StageButtonData>();
+        string key = data != null ? data.requiredFinishID : itemID;
+
+        bool alreadyCollected = false;
+
+        if (PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties != null)
+        {
+            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(key, out object value))
+            {
+                alreadyCollected = (int)value == 1;
+            }
+        }
+
+        if (alreadyCollected)
         {
             collected = true;
             SetCollectedVisual();
