@@ -271,6 +271,7 @@ MonoBehaviour:
   audioDie: {fileID: 0}
   audioFinish: {fileID: 0}
   stageSelectUI: {fileID: 0}
+  finishItemManager: {fileID: 0}
 --- !u!50 &351059627983231880
 Rigidbody2D:
   serializedVersion: 4
@@ -296,7 +297,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!70 &5450399309358425871
 CapsuleCollider2D:
