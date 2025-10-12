@@ -8,14 +8,6 @@ public class FlipSync : MonoBehaviourPun, IPunObservable
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            Debug.LogError($"[FlipSync] SpriteRenderer not found on: {gameObject.name}");
-        }
-        else
-        {
-            Debug.Log($"[FlipSync] Found SpriteRenderer on: {gameObject.name}");
-        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

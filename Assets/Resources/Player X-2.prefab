@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 1661695695479113464}
   - component: {fileID: 8605364530776694022}
   - component: {fileID: 3611783178850218198}
-  - component: {fileID: 5777142293859634997}
+  - component: {fileID: -1620424957636960737}
   m_Layer: 0
   m_Name: Player X-2
   m_TagString: Player
@@ -335,7 +335,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &5777142293859634997
+--- !u!114 &-1620424957636960737
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
