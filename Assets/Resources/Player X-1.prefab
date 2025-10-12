@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 1661695695479113464}
   - component: {fileID: 8605364530776694022}
   - component: {fileID: 3611783178850218198}
-  - component: {fileID: -1918447918763556662}
+  - component: {fileID: 3282550454761243399}
   m_Layer: 0
   m_Name: Player X-1
   m_TagString: Player
@@ -220,6 +220,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 8605364530776694022}
+  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -335,7 +336,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-1918447918763556662
+--- !u!114 &3282550454761243399
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

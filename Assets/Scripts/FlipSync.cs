@@ -5,25 +5,25 @@ public class FlipSync : MonoBehaviourPun, IPunObservable
 {
     private SpriteRenderer spriteRenderer;
 
+    void Start()
+    {
+        Debug.Log($"[FlipSync] Started. IsMine: {photonView.IsMine}");
+    }
+
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            Debug.LogError($"[FlipSync] SpriteRenderer not found on: {gameObject.name}");
-        }
-        else
-        {
-            Debug.Log($"[FlipSync] Found SpriteRenderer on: {gameObject.name}");
-        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            Debug.Log($"[FlipSync] Sending flipX: {spriteRenderer.flipX}");
+            // 로컬 플레이어의 flipX를 네트워크로 보냄
             stream.SendNext(spriteRenderer.flipX);
+
+            Debug.Log($"[FlipSync] Sending flipX: {spriteRenderer.flipX}");
         }
         else
         {
