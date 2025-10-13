@@ -111,13 +111,20 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         }
         if (finishItemText != null)
-            finishItemText.text = "0"; // 기본값 세팅
-        if (PhotonNetwork.CurrentRoom != null && 
-        PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount")) 
         {
-            int count = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
-            finishItemText.text = count.ToString();
-            Debug.Log("Stage씬 진입 시 FinishItemCount 적용: " + count);
+            finishItemText.text = "0"; // 기본값 세팅
+
+            if (PhotonNetwork.CurrentRoom != null &&
+                PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount"))
+            {
+                int count = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
+                finishItemText.text = count.ToString();
+                Debug.Log("Stage씬 진입 시 FinishItemCount 적용: " + count);
+            }
+        }
+        else
+        {
+            Debug.Log("[GameManager] finishItemText가 이 씬에는 존재하지 않습니다 — 무시됨.");
         }
         
     }
@@ -154,14 +161,22 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+{
+    if (propertiesThatChanged.ContainsKey("FinishItemCount"))
     {
-        if (propertiesThatChanged.ContainsKey("FinishItemCount"))
+        int count = (int)propertiesThatChanged["FinishItemCount"];
+
+        if (finishItemText != null)
         {
-            int count = (int)propertiesThatChanged["FinishItemCount"];
             finishItemText.text = count.ToString();
             Debug.Log("FinishItemCount 변경됨: " + count);
         }
+        else
+        {
+            Debug.Log("[GameManager] finishItemText가 null 상태 — 현재 씬에는 UI 없음, 건너뜀");
+        }
     }
+}
 
 
 
@@ -368,24 +383,7 @@ private const string K_SelectedIndex = "selectedIndex";
         StageSelectPanel.SetActive(true);
     }
 
-    [PunRPC]
-    void DBonGameClear(int clearedStage)
-    {
-        //클리어 기록 관련
-        GameObject obj = GameObject.Find("PlayFabDataManager");
-        Debug.Log(obj);
-        PlayFabDataManager playFabDataManager = obj.GetComponent<PlayFabDataManager>();
-        Debug.Log(playFabDataManager);
-
-        GameObject stageObj = GameObject.Find("StageSelectUI");
-        Debug.Log(stageObj);
-
-        StageSelectUI StageSelectUI = stageObj.GetComponent<StageSelectUI>();
-        Debug.Log(StageSelectUI);
-
-        playFabDataManager.SaveStageClear(clearedStage, clearedStage =>
-        { StageSelectUI.UnlockStage(clearedStage); });
-    }
+    
 
     public void NextStage()
     {

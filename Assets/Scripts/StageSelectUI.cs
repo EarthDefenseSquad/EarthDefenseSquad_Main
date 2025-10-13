@@ -103,12 +103,13 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
                 isUnlocked = (int)value == 1;
             }
 
-            photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
+            //photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
+            stageUpdateUI(i, isUnlocked);
         }
     }
 
-    [PunRPC]
-    void RPC_stageUpdateUI(int index, bool isUnlocked)
+    
+    public void stageUpdateUI(int index, bool isUnlocked)
     {
         Button button = stageButtons[index];
         StageButtonData data = button.GetComponent<StageButtonData>();

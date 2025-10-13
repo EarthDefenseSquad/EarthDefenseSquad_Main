@@ -1,34 +1,40 @@
 using UnityEngine;
 using TMPro;
-using PlayFab;
-using PlayFab.ClientModels;
 using System.Collections.Generic;
 
 public class GameDataManager : MonoBehaviour
 {
     public static GameDataManager Instance { get; private set; }
 
+    [Header("UI Panels")]
     public GameObject Start_Panel;
     public GameObject StageSelectPanel;
 
+    [Header("References")]
     public StageSelectUI stageSelectUI;
 
+    [Header("Selected Info")]
     public int selectedCharacterIndex1P = -1;
     public int selectedCharacterIndex2P = -1;
     public int selectedYear = -1;
     public int selectedStageIndex = -1;
 
+    [Header("Stage Data")]
     public bool[] stageUnlocked;
 
+    [Header("Story Progress")]
     public bool story = false; 
-   
+
+    [Header("Character Names")]
     public string[] characterNames = { "MZ세대", "MZ세대 2", "X세대", "X세대 2" };
 
+    [Header("Character UI")]
     public TextMeshProUGUI selected1PText;
     public TextMeshProUGUI selected2PText;
 
     private void Awake()
     {
+        // 싱글톤 유지
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -37,79 +43,20 @@ public class GameDataManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        // 초기 스테이지 잠금 설정
         stageUnlocked = new bool[10];
-        stageUnlocked[0] = true;
+        stageUnlocked[0] = true; // 첫 스테이지만 해금
     }
 
     private void Start()
     {
         UpdateCharacterUI();
-        LoadDataFromPlayFab();
+
+         UnityEngine.SceneManagement.SceneManager.LoadScene("StartScene");
     }
 
-     
-    // 데이터 저장 - PlayFab 사용
-    public void SaveDataToPlayFab()
-    {
-        string storySeenValue = story ? "1" : "0";
-        var data = new Dictionary<string, string>
-        {
-            { "StorySeen", storySeenValue  },
-            { "SelectedCharacter1P", selectedCharacterIndex1P.ToString() },
-            { "SelectedCharacter2P", selectedCharacterIndex2P.ToString() },
-            { "SelectedYear", selectedYear.ToString() },
-            { "SelectedStage", selectedStageIndex.ToString() },
-            { "StageUnlocked", JsonUtility.ToJson(new Serialization<bool>(stageUnlocked)) }
-        };
-
-        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest { Data = data },
-            result => Debug.Log("게임 데이터 저장 완료 (PlayFab)"),
-            error => Debug.LogError("게임 데이터 저장 실패: " + error.GenerateErrorReport()));
-    }
-
-    // 데이터 불러오기 - PlayFab 사용
-    public void LoadDataFromPlayFab()
-    {
-        PlayFabClientAPI.GetUserData(new GetUserDataRequest(),
-            result =>
-            {
-                var data = result.Data;
-                story = data.ContainsKey("StorySeen") ? data["StorySeen"].Value == "1" : false;
-                selectedCharacterIndex1P = data.ContainsKey("SelectedCharacter1P") ? int.Parse(data["SelectedCharacter1P"].Value) : -1;
-                selectedCharacterIndex2P = data.ContainsKey("SelectedCharacter2P") ? int.Parse(data["SelectedCharacter2P"].Value) : -1;
-                selectedYear = data.ContainsKey("SelectedYear") ? int.Parse(data["SelectedYear"].Value) : -1;
-                selectedStageIndex = data.ContainsKey("SelectedStage") ? int.Parse(data["SelectedStage"].Value) : -1;
-
-                if (data.ContainsKey("StageUnlocked"))
-                {
-                    Serialization<bool> temp = JsonUtility.FromJson<Serialization<bool>>(data["StageUnlocked"].Value);
-                    stageUnlocked = temp.ToArray();
-                }
-                else
-                {
-                    stageUnlocked = new bool[10];
-                    stageUnlocked[0] = true;
-                }
-
-                Debug.Log("게임 데이터 불러오기 완료 (PlayFab)");
-                UpdateCharacterUI();
-                // 스토리 여부에 따라 분기
-                if (!story)
-                {
-                    // 스토리 씬 보여주기
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("StoryScene");
-            }
-                else
-                {
-                    // 바로 다음 씬으로
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("StartScene");
-                }
-            },
-            error => Debug.LogError("게임 데이터 불러오기 실패: " + error.GenerateErrorReport()));
-    }
-
-    // 데이터 초기화 - PlayFab 사용
-    public void ResetDataPlayFab()
+    // ✅ 데이터 초기화
+    public void ResetData()
     {
         selectedCharacterIndex1P = -1;
         selectedCharacterIndex2P = -1;
@@ -117,44 +64,15 @@ public class GameDataManager : MonoBehaviour
         selectedStageIndex = -1;
 
         for (int i = 0; i < stageUnlocked.Length; i++)
-        {
             stageUnlocked[i] = false;
-        }
+
         stageUnlocked[0] = true;
+        story = false;
 
-        var data = new Dictionary<string, string>
-        {
-            { "SelectedCharacter1P", "-1" },
-            { "SelectedCharacter2P", "-1" },
-            { "SelectedYear", "-1" },
-            { "SelectedStage", "-1" },
-            { "StageUnlocked", JsonUtility.ToJson(new Serialization<bool>(stageUnlocked)) }
-        };
-
-        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest { Data = data },
-            result => Debug.Log("게임 데이터 초기화 완료 (PlayFab)"),
-            error => Debug.LogError("게임 데이터 초기화 실패: " + error.GenerateErrorReport()));
+        Debug.Log("데이터 초기화 완료 (로컬 변수만)");
     }
 
-    // 스테이지 잠금 초기화 - PlayFab 사용
-    public void ResetStageUnlockPlayFab()
-    {
-        for (int i = 0; i < stageUnlocked.Length; i++)
-        {
-            stageUnlocked[i] = false;
-        }
-        stageUnlocked[0] = true;
-
-        var data = new Dictionary<string, string>
-        {
-            { "StageUnlocked", JsonUtility.ToJson(new Serialization<bool>(stageUnlocked)) }
-        };
-
-        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest { Data = data },
-            result => Debug.Log("모든 스테이지 잠금 초기화 완료 (PlayFab)"),
-            error => Debug.LogError("모든 스테이지 잠금 초기화 실패: " + error.GenerateErrorReport()));
-    }
-
+    // ✅ 캐릭터 선택 관련
     public void OnCharacterButtonClicked1P(int characterIndex)
     {
         selectedCharacterIndex1P = characterIndex;
@@ -193,25 +111,3 @@ public class GameDataManager : MonoBehaviour
         }
     }
 }
-
-// 배열 직렬화/역직렬화 유틸리티
-[System.Serializable]
-public class Serialization<T>
-{
-    [SerializeField]
-    private List<T> target;
-    public List<T> ToList() { return target; }
-
-    public T[] ToArray() { return target != null ? target.ToArray() : null; }
-
-    public Serialization(List<T> target)
-    {
-        this.target = target;
-    }
-
-    public Serialization(T[] target)
-    {
-        this.target = new List<T>(target);
-    }
-}
-
