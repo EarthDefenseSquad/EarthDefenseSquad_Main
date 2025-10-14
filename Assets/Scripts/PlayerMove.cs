@@ -199,10 +199,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
                             restoredObjects.Add(obj);
                             Debug.Log($"🎨 복원됨: {obj.name}");
 
-                            if (PhotonNetwork.IsMasterClient)
-                            {
-                                gameManager.SyncColorRestoration(obj.name);
-                            }
+                            // 클라이언트는 마스터에게 요청만 보냄
+                            photonView.RPC("RequestColorSync", RpcTarget.MasterClient, obj.name);
                         }
                     }
                 }
@@ -516,4 +514,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
         }
         audioSource.Play();
     }
+
+    [PunRPC]
+    void RequestColorSync(string objName)
+    {
+        if (PhotonNetwork.IsMasterClient)
+            gameManager.SyncColorRestoration(objName);
+    }
+
 }
