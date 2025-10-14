@@ -383,7 +383,7 @@ private const string K_SelectedIndex = "selectedIndex";
         StageSelectPanel.SetActive(true);
     }
 
-    
+
 
     public void NextStage()
     {
@@ -410,29 +410,31 @@ private const string K_SelectedIndex = "selectedIndex";
         stagePoint = 0;
     }
 
-    public void HealthDown()
+    public void LocalHealthDown()
     {
-
-
+        if (health > 0)
         {
-            if (health > 0)
-            {
-                health--;
-                Debug.Log("생명 감소");
-                Debug.Log(health);
-                UpdateHealthUI(); // ✅ UI 업데이트
-                //photonView.RPC("PlayerReposition", RpcTarget.All);
-            }
+            health--;
+            UpdateHealthUI();
 
-            if (health <= 0)
-            {
-                Debug.Log(health);
-                player.OnDie();
-                Debug.Log("플레이어가 죽었습니다.");
-                RestartButton.SetActive(true);
-            }
+            // 모든 클라이언트에게 내 체력 상태를 전달
+            photonView.RPC("HealthDown", RpcTarget.All, health);
         }
 
+        if (health <= 0 && player != null)
+        {
+            player.OnDie();
+            if (player.photonView.IsMine)
+                RestartButton.SetActive(true);
+        }
+    }
+
+    [PunRPC]
+    public void HealthDown(int updatedHealth)
+    {
+        health = updatedHealth;
+        UpdateHealthUI();
+    
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -442,15 +444,17 @@ private const string K_SelectedIndex = "selectedIndex";
 
             if (health > 1)
             {
+                //photonView.RPC("PlayerReposition", RpcTarget.All);
                 PlayerReposition();
             }
 
 
-            HealthDown();
+            LocalHealthDown();
+            //photonView.RPC("HealthDown", RpcTarget.All);
         }
     }
 
-    [PunRPC]
+    
     void PlayerReposition()
     {
         if (player != null)
@@ -556,6 +560,7 @@ private const string K_SelectedIndex = "selectedIndex";
         sr.enabled = true;
     }
 
+    [PunRPC]
     void UpdateHealthUI()
     {
         if (UIhealth == null)

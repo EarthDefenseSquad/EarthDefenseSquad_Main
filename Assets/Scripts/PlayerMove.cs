@@ -92,7 +92,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         if (transform.position.y <= -20f)
         {
             if (gameManager != null)
-                gameManager.HealthDown();
+                gameManager.LocalHealthDown();
         }
 
         // 플레이어: 방향키, Space
@@ -409,7 +409,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     void OnDamaged(Vector2 targetPos)
     {
-        gameManager.HealthDown();
+        gameManager.LocalHealthDown();
         gameObject.layer = 11;
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 

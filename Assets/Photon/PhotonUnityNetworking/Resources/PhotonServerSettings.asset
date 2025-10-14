@@ -88,6 +88,8 @@ MonoBehaviour:
   - RPC_SyncItem
   - RPC_DeactivateObjects
   - GoTotheEndingScene
+  - HealthDown
+  - UpdateHealthUI
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
