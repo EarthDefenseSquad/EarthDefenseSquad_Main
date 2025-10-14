@@ -38,7 +38,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
 
     public AudioClip audioJump, audioAttack, audioDamaged, audioItem, audioDie, audioFinish;
 
-
+    private bool lastFlipX = false;
 
     float h = 0; // 좌우 입력값
     bool jumpPressed = false;
@@ -143,7 +143,15 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
         //if (Input.GetButton("Horizontal"))
         //    spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;
         if (h != 0)
+        {
             spriteRenderer.flipX = h == -1;
+
+            if (spriteRenderer.flipX != lastFlipX)
+            {
+                lastFlipX = spriteRenderer.flipX;
+                photonView.RPC("SyncFlipX", RpcTarget.Others, spriteRenderer.flipX);
+            }
+        }
         // Animation
         if (Mathf.Abs(rigid.velocity.x) < 0.3)
             anim.SetBool("isWalking", false);
@@ -242,17 +250,25 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
 
     }
 
+    [PunRPC]
+    void SyncFlipX(bool flip)
+    {
+        spriteRenderer.flipX = flip;
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
             stream.SendNext(rigid.position);
             stream.SendNext(rigid.velocity);
+            
         }
         else
         {
             Vector2 pos = (Vector2)stream.ReceiveNext();
             Vector2 vel = (Vector2)stream.ReceiveNext();
+            
 
             // ✨ 부드럽게 따라가게 하려면 살짝 보정
             if (!photonView.IsMine)

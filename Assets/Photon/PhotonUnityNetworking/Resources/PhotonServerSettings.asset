@@ -91,6 +91,7 @@ MonoBehaviour:
   - HealthDown
   - UpdateHealthUI
   - RPC_PlayerReposition
+  - SyncFlipX
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
