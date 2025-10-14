@@ -444,8 +444,8 @@ private const string K_SelectedIndex = "selectedIndex";
 
             if (health > 1)
             {
-                //photonView.RPC("PlayerReposition", RpcTarget.All);
-                PlayerReposition();
+                //PlayerReposition()
+               player.RequestReposition(new Vector3(-1.0f, -0.5f, 0f));
             }
 
 

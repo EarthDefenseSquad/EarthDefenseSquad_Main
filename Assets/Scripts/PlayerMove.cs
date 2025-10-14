@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using Photon.Realtime;
 using Unity.VisualScripting;
 
-public class PlayerMove : MonoBehaviourPunCallbacks
+public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
 {
     public enum PlayerType { Player1, Player2 }
     public PlayerType playerType;
@@ -24,6 +24,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
     private bool colorRestoreMode = false;
     private HashSet<GameObject> restoredObjects = new HashSet<GameObject>();
 
+    Vector3 netPos;
+    Vector2 netVel;
+    const float NetLerpSpeed = 10f;
 
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
@@ -55,6 +58,10 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         itemManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<ItemManager>();
         gameManager = GameObject.FindGameObjectWithTag("MainManager").GetComponent<GameManager>();
 
+        // 네트워크 전송/직렬화 빈도 올리기
+        PhotonNetwork.SendRate = 60;
+        PhotonNetwork.SerializationRate = 30;
+
     }
     void Start()
     {
@@ -63,6 +70,9 @@ public class PlayerMove : MonoBehaviourPunCallbacks
         anim = GetComponent<Animator>();
         capsulecollider = GetComponent<CapsuleCollider2D>();
         audioSource = GetComponent<AudioSource>();
+
+        rigid.interpolation = RigidbodyInterpolation2D.Interpolate; // 물리 보간
+        netPos = transform.position; 
 
         if (photonView.IsMine)
         {
@@ -232,6 +242,41 @@ public class PlayerMove : MonoBehaviourPunCallbacks
 
     }
 
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(rigid.position);
+            stream.SendNext(rigid.velocity);
+        }
+        else
+        {
+            Vector2 pos = (Vector2)stream.ReceiveNext();
+            Vector2 vel = (Vector2)stream.ReceiveNext();
+
+            // ✨ 부드럽게 따라가게 하려면 살짝 보정
+            if (!photonView.IsMine)
+            {
+                rigid.position = Vector2.Lerp(rigid.position, pos, Time.deltaTime * 10f);
+                rigid.velocity = vel;
+            }
+        }
+    }
+
+
+    [PunRPC]
+    public void RPC_PlayerReposition(Vector3 newPos)
+    {
+        rigid.velocity = Vector2.zero;
+        rigid.position = newPos;
+        netPos = newPos; // 💡 보간 기준점도 즉시 갱신 → 순간이동 방지
+    }
+
+    // 외부(GameManager 등)에서 호출할 때는 이걸 사용
+    public void RequestReposition(Vector3 newPos)
+    {
+        photonView.RPC("RPC_PlayerReposition", RpcTarget.All, newPos);
+    }
     public void EnableInvincibility(bool status)
     {
         isInvincible = status;
