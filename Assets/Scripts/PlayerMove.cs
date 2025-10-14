@@ -339,7 +339,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
             {
                 if (name.Contains("Bronze")) gameManager.stagePoint += 50;
                 else if (name.Contains("Sliver")) gameManager.stagePoint += 100;
-                else if (name.Contains("Gold")) gameManager.stagePoint += 300;
+                else if (name.Contains("Gold")) gameManager.stagePoint += 200;
 
                 collision.gameObject.SetActive(false);
                 //PlaySound("Item");
