@@ -98,7 +98,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (!photonView.IsMine) return; //멀티 기능이므로 자기 자신이 아니면 움직이지 않도록 리턴시킴.
 
-        // y값이 -20보다 작아지면 추락으로 간주
+        // // y값이 -20보다 작아지면 추락으로 간주
         if (transform.position.y <= -20f)
         {
             if (gameManager != null)
@@ -376,24 +376,46 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
             collision.gameObject.SetActive(false); // 아이템 제거
                                                    //gameManager.NextStage();
                                                    //PlaySound("Finish");
-            if (PhotonNetwork.IsMasterClient)
+            if (!stageToSelect)
             {
-                if (!stageToSelect)
+                stageToSelect = true;
+                // ✅ 마스터라면 직접 씬 이동 브로드캐스트
+                if (PhotonNetwork.IsMasterClient)
                 {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.All, "StageSelect");
-
+                    photonView.RPC("RPC_LoadStageSelect", RpcTarget.All);
                 }
-            }
-            else
-            {
-                if (!stageToSelect)
+                // ✅ 클라이언트라면 마스터에게 요청
+                else
                 {
-                    photonView.RPC("ReqeustLoadLeveltoStage", RpcTarget.MasterClient, "StageSelect");
-
+                    photonView.RPC("RPC_RequestStageSelect", RpcTarget.MasterClient);
                 }
             }
         }
 
+    }
+
+    [PunRPC]
+    void RPC_RequestStageSelect()
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Debug.Log("[Master] 클라이언트가 Finish에 닿았다고 요청함. 모든 클라이언트 StageSelect로 이동.");
+            photonView.RPC("RPC_LoadStageSelect", RpcTarget.All);
+        }
+    }
+
+    // ✅ 마스터가 모든 클라이언트에게 씬 전환 브로드캐스트
+    [PunRPC]
+    void RPC_LoadStageSelect()
+    {
+        if (!waitToSelect)
+        {
+            waitToSelect = true;
+            clearedStage++;
+            Debug.Log($"[RPC_LoadStageSelect] clearedStage 증가: {clearedStage}");
+
+            PhotonNetwork.LoadLevel("StageSelect");  // AutomaticallySyncScene = true 필요
+        }
     }
 
     IEnumerator DeactivateAfterDelay(GameObject obj, float delay)

@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public GameObject goalObject; // Goal 오브젝트 연결
     private HashSet<string> restoredObjectNames = new HashSet<string>();
 
-
+    private bool isHealthProcessing = false;
 
     [Header("개발용 설정 - 즉사 모드")]
     public bool isInstantDeathMode = false;
@@ -412,10 +412,18 @@ private const string K_SelectedIndex = "selectedIndex";
 
     public void LocalHealthDown()
     {
+        if (isHealthProcessing) return; // ✅ 중복 방지
+        isHealthProcessing = true;
+        StartCoroutine(ResetHealthProcessingDelay());
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            photonView.RPC("RequestHealthDown", RpcTarget.MasterClient);
+            return;
+        }
+
         if (health > 0)
         {
             health--;
-            UpdateHealthUI();
 
             // 모든 클라이언트에게 내 체력 상태를 전달
             photonView.RPC("HealthDown", RpcTarget.All, health);
@@ -427,6 +435,19 @@ private const string K_SelectedIndex = "selectedIndex";
             if (player.photonView.IsMine)
                 RestartButton.SetActive(true);
         }
+    }
+    private IEnumerator ResetHealthProcessingDelay()
+    {
+        yield return new WaitForSeconds(0.5f); // ✅ 0.5초 동안 추가 감지 무시
+        isHealthProcessing = false;
+    }
+
+    [PunRPC]
+    void RequestHealthDown()
+    {
+        if (!PhotonNetwork.IsMasterClient) return; // 안전장치
+        Debug.Log("[Health] 클라이언트가 체력 감소 요청을 보냄");
+        LocalHealthDown(); // 마스터가 대신 감소 처리
     }
 
     [PunRPC]

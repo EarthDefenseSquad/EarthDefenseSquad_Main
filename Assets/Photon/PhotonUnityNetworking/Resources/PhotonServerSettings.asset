@@ -93,6 +93,9 @@ MonoBehaviour:
   - RPC_PlayerReposition
   - SyncFlipX
   - RequestColorSync
+  - RPC_LoadStageSelect
+  - RPC_RequestStageSelect
+  - RequestHealthDown
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
