@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Brick_Tileset_2
+  m_Name: Platforms-1970_12
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 981546284, guid: b25ae9583aa10064c9d7bddbeeb4477b, type: 3}
+  m_Sprite: {fileID: 1521901308, guid: 16daec07aca2700449af4d339035aa35, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
