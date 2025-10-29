@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ColorRestoreManager : MonoBehaviour
 {
-    [Header("🎯 이 스테이지에서 사용할 Goal 오브젝트 (직접 할당)")]
+    [Header("이 스테이지에서 사용할 Goal 오브젝트 (직접 할당)")]
     [SerializeField] private GameObject goalObject;
 
     private GameManager gameManager;

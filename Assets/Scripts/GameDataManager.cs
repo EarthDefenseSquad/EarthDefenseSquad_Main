@@ -55,7 +55,7 @@ public class GameDataManager : MonoBehaviour
          UnityEngine.SceneManagement.SceneManager.LoadScene("StartScene");
     }
 
-    // ✅ 데이터 초기화
+    // 데이터 초기화
     public void ResetData()
     {
         selectedCharacterIndex1P = -1;
@@ -72,7 +72,7 @@ public class GameDataManager : MonoBehaviour
         Debug.Log("데이터 초기화 완료 (로컬 변수만)");
     }
 
-    // ✅ 캐릭터 선택 관련
+    // 캐릭터 선택 관련
     public void OnCharacterButtonClicked1P(int characterIndex)
     {
         selectedCharacterIndex1P = characterIndex;

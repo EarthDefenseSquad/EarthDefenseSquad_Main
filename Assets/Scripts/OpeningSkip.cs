@@ -93,7 +93,7 @@ public class OpeningSkip : MonoBehaviourPun
 
         Debug.Log($"Player{playerNumber} 준비 완료. (player1={player1Ready}, player2={player2Ready})");
 
-        // 🔸 두 명 모두 준비 완료 시 마스터가 씬 전환
+        // 두 명 모두 준비 완료 시 마스터가 씬 전환
         if (player1Ready && player2Ready && PhotonNetwork.IsMasterClient)
         {
             photonView.RPC(nameof(RPC_LoadNextScene), RpcTarget.AllBuffered, nextSceneName);
