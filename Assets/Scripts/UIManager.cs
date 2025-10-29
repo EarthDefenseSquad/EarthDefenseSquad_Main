@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public class hmGM : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
 
     public GameObject Pausepanel;
