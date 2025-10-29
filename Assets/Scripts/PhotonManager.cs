@@ -204,45 +204,5 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
     }
 
-   
-    /*[PunRPC]
-    void MoveTheTutorialPanel() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
-    {                           //튜토리얼 선택 패널 동기화
-        CharacterSelect_Panel.SetActive(false);
-        Tutorial_Panel.SetActive(true);
-        Button_Tutorial_Back.onClick.RemoveAllListeners(); //뒤로가기
-        Button_Tutorial_Back.onClick.AddListener(() => photonView.RPC("MoveThe_CharacterSelectPanel", RpcTarget.All));
-        Button_Tutorial_OK.onClick.RemoveAllListeners(); //ok버튼
-        Button_Tutorial_OK.onClick.AddListener(() => photonView.RPC("MoveTheWaitingScene", RpcTarget.All));
-        if (!PhotonNetwork.IsMasterClient) //만약 방장이 아니면 버튼 눌러도 이벤트 발생 안함.
-        {
-            Button_Tutorial_Back.gameObject.SetActive(false); //뒤로가기 버튼은 안보이도록.
-            Button_Tutorial_OK.gameObject.SetActive(false); //다음 버튼은 안보이도록.
-        }
-    }
-    [PunRPC]
-    void MoveTheWaitingScene() //방장만 선택할 수 있으므로 다른 플레이어에게도 보이도록 
-    {                          //게임씬 이동 동기화
-        PhotonNetwork.LoadLevel("WaitingScene");
-    }
-    
-    [PunRPC]
-    void MoveThe_CharacterSelectPanel()
-    {
-        Tutorial_Panel.SetActive(false);
-        CharacterSelect_Panel.SetActive(true);
-        Player1_Info_all.SetActive(false);
-        Player2_Info_all.SetActive(false);
-        Button_CharacterSelect_Back.onClick.RemoveAllListeners(); // 중복 방지
-        Button_CharacterSelect_Back.onClick.AddListener(OnCharacterSelect_BackButtonClicked);
-        Button_CharacterSelect_LB.onClick.RemoveAllListeners(); // 중복 방지
-        Button_CharacterSelect_RB.onClick.RemoveAllListeners(); // 중복 방지
-        Button_CharacterSelect_LB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_LB_Click", RpcTarget.All));
-        Button_CharacterSelect_RB.onClick.AddListener(() => photonView.RPC("OnButton_CharacterSelect_RB_Click", RpcTarget.All));
-
-        int playerIndex = PhotonNetwork.IsMasterClient ? 0 : 1;
-        //int playerIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
-       photonView.RPC("SpawnCharacterRoom", RpcTarget.AllBuffered, playerIndex);
-    }*/
     
 }

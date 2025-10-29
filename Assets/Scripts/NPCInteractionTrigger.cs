@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class NPCInteractionTrigger : MonoBehaviour
 {
-    public GameObject interactionUI;      // 머리 위 UI 오브젝트
-    public GameObject outlineObject;      // 테두리 오브젝트
+    public GameObject interactionUI;      
+    public GameObject outlineObject;    
     private bool playerInRange = false;
 
     void OnTriggerEnter(Collider other)
@@ -31,7 +31,7 @@ public class NPCInteractionTrigger : MonoBehaviour
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.F))
         {
-            LoadNextScene(); // 씬 전환
+            LoadNextScene(); 
         }
     }
 

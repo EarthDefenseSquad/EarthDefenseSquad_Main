@@ -42,18 +42,14 @@ public class TypingManager : MonoBehaviourPun
 
     public void ShowInputField(GameObject triggerObject, GameObject[] targetObjects, string keyword, GameObject questionPanel, string questionText)
 {
-        // if (player != null && player.playerType == PlayerMove.PlayerType.Player2)
-        // {
-        //     Debug.Log("🚫 Player2는 타이핑 퍼즐을 사용할 수 없습니다.");
-        //     return;
-        // }
+        
 
         currentTriggerObject = triggerObject;
         currentTargets = targetObjects;
         correctKeyword = keyword.Trim().ToLower();
         currentQuestionPanel = questionPanel;
 
-        // ✅ questionText로 UI에 표시 (정답 keyword는 노출하지 않음)
+        // questionText로 UI에 표시 (정답 keyword는 노출하지 않음)
         TMP_Text text = currentQuestionPanel.GetComponentInChildren<TMP_Text>();
         if (text != null)
         text.text = questionText; 
@@ -75,14 +71,7 @@ public class TypingManager : MonoBehaviourPun
 
         if (input == correctKeyword)
         {
-            // if (currentTargets != null)
-            // {
-            //     foreach (GameObject obj in currentTargets)
-            //         obj.SetActive(false);
-            // }
-
-            // if (currentTriggerObject != null)
-            //     currentTriggerObject.SetActive(false);
+            
 
             photonView.RPC("RPC_DeactivateObjects", RpcTarget.AllBuffered,
             currentTriggerObject != null ? currentTriggerObject.name : "",
@@ -105,7 +94,7 @@ public class TypingManager : MonoBehaviourPun
 
         inputField.gameObject.SetActive(false);
 
-        // ✅ 모든 플레이어 이동 복원
+        // 모든 플레이어 이동 복원
         PlayerMove[] allPlayers = FindObjectsOfType<PlayerMove>();
         foreach (var p in allPlayers)
         p.enabled = true;
@@ -129,7 +118,7 @@ public class TypingManager : MonoBehaviourPun
             if (obj != null) obj.SetActive(false);
         }
 
-        // 🔥 UI도 같이 끄기
+        // UI도 같이 끄기
         HideUI();   
     }
 

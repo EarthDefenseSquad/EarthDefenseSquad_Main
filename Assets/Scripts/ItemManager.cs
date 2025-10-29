@@ -12,16 +12,7 @@ public class ItemManager : MonoBehaviour
     // 멀티플레이어 지원
     private List<PlayerMove> players = new List<PlayerMove>();
 
-    // private void Awake()
-    // {
-    //     if (Instance != null && Instance != this)
-    //     {
-    //         Destroy(gameObject);
-    //         return;
-    //     }
-    //     Instance = this;
-    //     DontDestroyOnLoad(gameObject); // 씬 전환 시 유지
-    // }
+    
     private void Awake()
     {
         Instance = this;
@@ -49,7 +40,7 @@ public class ItemManager : MonoBehaviour
 
     private void InitializeItems()
     {
-        Debug.Log("✅ Items Initialized.");
+        Debug.Log("Items Initialized.");
     }
 
     // 플레이어 등록
@@ -64,7 +55,7 @@ public class ItemManager : MonoBehaviour
 
             newPlayer.EnableInvincibility(false);
 
-            Debug.Log($"🎮 Player 등록됨: {newPlayer.name}, 타입: {newPlayer.playerType}");
+            Debug.Log($"Player 등록됨: {newPlayer.name}, 타입: {newPlayer.playerType}");
         }
     }
 
@@ -74,7 +65,7 @@ public class ItemManager : MonoBehaviour
         if (players.Contains(playerToRemove))
         {
             players.Remove(playerToRemove);
-            Debug.Log($"🗑️ Player 제거됨: {playerToRemove.name}");
+            Debug.Log($"Player 제거됨: {playerToRemove.name}");
         }
     }
 
@@ -86,11 +77,11 @@ public class ItemManager : MonoBehaviour
         // Player2 제약 유지
         if (targetPlayer.playerType == PlayerMove.PlayerType.Player2)
         {
-            Debug.Log("🚫 Player2는 아이템을 사용할 수 없습니다.");
+            Debug.Log("Player2는 아이템을 사용할 수 없습니다.");
             return;
         }
 
-        Debug.Log($"🧪 {targetPlayer.playerType} 이(가) {itemType} 사용");
+        Debug.Log($"{targetPlayer.playerType} 이(가) {itemType} 사용");
 
         switch (itemType)
         {
@@ -110,7 +101,7 @@ public class ItemManager : MonoBehaviour
                 if (revealCoroutine != null)
                 {
                     StopCoroutine(revealCoroutine);
-                    Debug.Log("🔁 기존 RevealPlatform 효과 중단");
+                    Debug.Log("기존 RevealPlatform 효과 중단");
                 }
                 revealCoroutine = StartCoroutine(ActivateRevealPlatform());
                 break;
@@ -118,7 +109,7 @@ public class ItemManager : MonoBehaviour
                 StartCoroutine(ActivateColorRestore(targetPlayer));
                 break;
             default:
-                Debug.LogWarning("❓ Unknown item type");
+                Debug.LogWarning("Unknown item type");
                 break;
         }
     }
@@ -127,38 +118,38 @@ public class ItemManager : MonoBehaviour
     // 아이템별 효과 구현
     private IEnumerator ActivateBufferingEffect(PlayerMove player)
     {
-        Debug.Log("🐢 Buffering Effect Activated!");
+        Debug.Log("Buffering Effect Activated!");
         player.maxSpeed /= 2;
         yield return new WaitForSeconds(5f);
         player.maxSpeed *= 2;
-        Debug.Log("⏩ Buffering Effect Ended");
+        Debug.Log("Buffering Effect Ended");
     }
 
     private IEnumerator ActivateInvincibilityEffect(PlayerMove player)
     {
-        Debug.Log("🛡️ Invincibility Activated!");
+        Debug.Log("Invincibility Activated!");
         player.EnableInvincibility(true);
         yield return new WaitForSeconds(5f);
         player.EnableInvincibility(false);
-        Debug.Log("💥 Invincibility Ended");
+        Debug.Log("Invincibility Ended");
     }
 
     private IEnumerator ActivateDoubleJumpEffect(PlayerMove player)
     {
-        Debug.Log("🪂 Double Jump Activated!");
+        Debug.Log("Double Jump Activated!");
         player.EnableDoubleJump(5f);
         yield return null;
     }
 
     private void GrantAccessPass(PlayerMove player)
     {
-        Debug.Log("🗝️ Access Pass Granted!");
+        Debug.Log("Access Pass Granted!");
         player.hasAccessPass = true;
     }
 
     private IEnumerator ActivateRevealPlatform()
     {
-        Debug.Log("🔍 RevealPlatform 아이템 사용됨: 숨겨진 플랫폼 활성화 시도");
+        Debug.Log("RevealPlatform 아이템 사용됨: 숨겨진 플랫폼 활성화 시도");
 
         GameObject[] allObjects = FindObjectsOfType<GameObject>();
         List<GameObject> hiddenPlatforms = new List<GameObject>();
@@ -171,11 +162,11 @@ public class ItemManager : MonoBehaviour
 
         if (hiddenPlatforms.Count == 0)
         {
-            Debug.LogWarning("❌ HiddenPlatform 레이어 오브젝트 없음");
+            Debug.LogWarning("HiddenPlatform 레이어 오브젝트 없음");
         }
         else
         {
-            Debug.Log($"✅ {hiddenPlatforms.Count}개 플랫폼 활성화");
+            Debug.Log($"{hiddenPlatforms.Count}개 플랫폼 활성화");
 
             foreach (GameObject platform in hiddenPlatforms)
             {
@@ -197,20 +188,20 @@ public class ItemManager : MonoBehaviour
                 if (collider != null) collider.enabled = false;
             }
 
-            Debug.Log("🎬 플랫폼 다시 숨겨짐");
+            Debug.Log("플랫폼 다시 숨겨짐");
             revealCoroutine = null;
         }
     }
 
     private IEnumerator ActivateColorRestore(PlayerMove player)
     {
-        Debug.Log("🌈 Color Restore Started");
+        Debug.Log("Color Restore Started");
         player.EnableColorRestore(true);
 
         if (gameManager != null && gameManager.goalObject != null)
         {
             gameManager.goalObject.SetActive(false);
-            Debug.Log("🚫 Goal 비활성화");
+            Debug.Log("Goal 비활성화");
         }
 
         yield return null;

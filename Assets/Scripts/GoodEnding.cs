@@ -53,11 +53,8 @@ public class GoodEnding : MonoBehaviour
     
     public void GoToStartScene()
     {
-        SceneManager.LoadScene("StartScene");  // "MainScene"은 실제 메인 씬 이름으로 바꿔줘
+        SceneManager.LoadScene("StartScene");  
     }
     
-    //private void GoNextScene()
-    //{
-    //    SceneManager.LoadScene("SceneName");
-    //}
+  
 }

@@ -14,15 +14,6 @@ public class FinishItem : MonoBehaviourPun
     public Button[] stageButtons;
     void Start()
     {
-        //int localState = PlayerPrefs.GetInt(itemID, 0);
-    
-
-        // 투명화 처리
-        // if (localState == 1)
-        // {
-        //     collected = true;
-        //     SetCollectedVisual();
-        // }
         
         StageButtonData data = GetComponent<StageButtonData>();
         string key = data != null ? data.requiredFinishID : itemID;
@@ -43,8 +34,6 @@ public class FinishItem : MonoBehaviourPun
             SetCollectedVisual();
         }
 
-        // GameManager에 동기화 요청 (자기 값 보내기)
-        //GameManager.Instance?.RequestItemSync(itemID, localState);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -70,8 +59,6 @@ public class FinishItem : MonoBehaviourPun
         // FinishItem 카운트 증가
         FinishItemManager.Instance?.AddFinishItem();
 
-        // 동기화 전파
-        //GameManager.Instance?.SendItemCollected(itemID);
     }
 
     void SetCollectedVisual()

@@ -25,46 +25,4 @@ public class Intromanager : MonoBehaviour
         StartPanel.SetActive(true);
     }
 
-    // Update is called once per frame
-/*    
-    public void GoWaitingScene()
-    {
-        SceneManager.LoadScene("WaitingScene");
-    }
-
-
-    public void GoGameScene()
-    {
-        SceneManager.LoadScene("GameScene");
-    }
-
-    public void Quit()
-    {
-        // 에디터에서는 실행 멈춤
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        // 실제 빌드에서는 애플리케이션 종료
-        Application.Quit();
-#endif
-    }
-    
-    //public void OptionButtonOn()
-    //{
-    //        OpenOption();
-    //}
-
-    public void OpenOption()
-    {
-        Time.timeScale = 0f;  // 게임 멈춤
-        Optionpanel.SetActive(true);  // 메뉴 보이기
-        //isPaused = true;
-    }
-
-    public void ResumeGame()
-    {
-        Time.timeScale = 1f;  // 게임 재개
-        Optionpanel.SetActive(false);  // 메뉴 숨기기
-        //isPaused = false;
-    }*/
 }

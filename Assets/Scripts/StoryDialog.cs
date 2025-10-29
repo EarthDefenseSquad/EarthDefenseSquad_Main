@@ -68,8 +68,5 @@ public class StoryDialog : MonoBehaviour
         SceneManager.LoadScene("StartScene");
     }
     
-    //private void GoNextScene()
-    //{
-    //    SceneManager.LoadScene("SceneName");
-    //}
+
 }

@@ -36,52 +36,7 @@ public class StageSelectUI : MonoBehaviourPunCallbacks
         stageNumber = PlayerMove.clearedStage;
     }
 
-    /*
-    void Start()
-    {
-        int currentCount = 0;
-
-        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("FinishItemCount"))
-        {
-            currentCount = (int)PhotonNetwork.CurrentRoom.CustomProperties["FinishItemCount"];
-        }
-
-        // 모든 스테이지 버튼을 순회하면서 초기화
-        for (int i = 0; i < stageButtons.Length; i++)
-        {
-            Button button = stageButtons[i];
-
-            // 각 버튼에 붙어 있는 StageButtonData 컴포넌트 가져오기
-            StageButtonData data = button.GetComponent<StageButtonData>();
-            if (data == null) continue; // StageButtonData가 없으면 패스
-
-            // --- 스테이지 해금 여부 확인 ---
-            // requiredFinishID가 없거나, PlayerPrefs에 저장된 값이 1이면 해금
-            bool isUnlocked = string.IsNullOrEmpty(data.requiredFinishID)
-                              || PlayerPrefs.GetInt(data.requiredFinishID, 0) == 1;
-
-            bool isUnlocked;
-            if (string.IsNullOrEmpty(data.requiredFinishID))
-            {
-                isUnlocked = true;
-            }
-            else
-            {
-                object value;
-                if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(data.requiredFinishID, out value))
-                {
-                    isUnlocked = (int)value == 1;
-                }
-                else
-                {
-                    isUnlocked = false;
-                }
-            }
-
-            photonView.RPC("RPC_stageUpdateUI", RpcTarget.AllBuffered, i, isUnlocked);
-        }
-    }
-    */
+    
 
     public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {

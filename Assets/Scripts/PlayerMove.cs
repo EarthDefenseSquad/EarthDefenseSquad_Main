@@ -119,8 +119,8 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
                 doubleJumpUsed = false;
                 PlaySound("Jump");
 
-                jumpPressed = false;   // ✅ 여기서 바로 false 처리 → 같은 프레임에서 else if 못 탐
-                return;                // ✅ 강제 리턴 → 2단 점프 분기 진입 방지
+                jumpPressed = false;   // 여기서 바로 false 처리 → 같은 프레임에서 else if 못 탐
+                return;                // 강제 리턴 → 2단 점프 분기 진입 방지
             }
             else if (doubleJumpActive && !doubleJumpUsed) // 2단 점프
             {
@@ -197,7 +197,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
                         if (restored)
                         {
                             restoredObjects.Add(obj);
-                            Debug.Log($"🎨 복원됨: {obj.name}");
+                            Debug.Log($"복원됨: {obj.name}");
 
                             // 클라이언트는 마스터에게 요청만 보냄
                             photonView.RPC("RequestColorSync", RpcTarget.MasterClient, obj.name);
@@ -268,7 +268,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
             Vector2 vel = (Vector2)stream.ReceiveNext();
             
 
-            // ✨ 부드럽게 따라가게 하려면 살짝 보정
+            // 살짝 보정
             if (!photonView.IsMine)
             {
                 rigid.position = Vector2.Lerp(rigid.position, pos, Time.deltaTime * 10f);
@@ -283,7 +283,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
     {
         rigid.velocity = Vector2.zero;
         rigid.position = newPos;
-        netPos = newPos; // 💡 보간 기준점도 즉시 갱신 → 순간이동 방지
+        netPos = newPos; // 보간 기준점도 즉시 갱신 → 순간이동 방지
     }
 
     // 외부(GameManager 등)에서 호출할 때는 이걸 사용
@@ -379,12 +379,12 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
             if (!stageToSelect)
             {
                 stageToSelect = true;
-                // ✅ 마스터라면 직접 씬 이동 브로드캐스트
+                // 마스터라면 직접 씬 이동 브로드캐스트
                 if (PhotonNetwork.IsMasterClient)
                 {
                     photonView.RPC("RPC_LoadStageSelect", RpcTarget.All);
                 }
-                // ✅ 클라이언트라면 마스터에게 요청
+                // 클라이언트라면 마스터에게 요청
                 else
                 {
                     photonView.RPC("RPC_RequestStageSelect", RpcTarget.MasterClient);
@@ -404,7 +404,7 @@ public class PlayerMove : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    // ✅ 마스터가 모든 클라이언트에게 씬 전환 브로드캐스트
+    // 마스터가 모든 클라이언트에게 씬 전환 브로드캐스트
     [PunRPC]
     void RPC_LoadStageSelect()
     {

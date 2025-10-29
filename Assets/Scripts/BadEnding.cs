@@ -54,8 +54,4 @@ public class BadEnding : MonoBehaviour
         SceneManager.LoadScene("StartScene");  // "MainScene"은 실제 메인 씬 이름으로 바꿔줘
     }
     
-    //private void GoNextScene()
-    //{
-    //    SceneManager.LoadScene("SceneName");
-    //}
 }

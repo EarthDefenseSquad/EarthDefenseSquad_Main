@@ -80,14 +80,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Start()
     {
 
-        // ✅ 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
+        // 선택된 스테이지 인덱스를 PlayerPrefs에서 불러옴
         stageIndex = PlayerPrefs.GetInt("SelectedStageIndex", 0);
 
-        // ✅ 모든 스테이지 비활성화
+        // 모든 스테이지 비활성화
         for (int i = 0; i < Stages.Length; i++)
             Stages[i].SetActive(false);
 
-        // ✅ 현재 선택된 스테이지만 활성화
+        // 현재 선택된 스테이지만 활성화
         if (stageIndex >= 0 && stageIndex < Stages.Length)
         {
             Stages[stageIndex].SetActive(true);
@@ -183,100 +183,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
 
 
-    /*void SyncWithMaxValue()
-    {
-        int maxCount = 0;
-        foreach (var p in PhotonNetwork.PlayerList)
-        {
-            if (p.CustomProperties.ContainsKey("FinishItemCount"))
-            {
-                int val = (int)p.CustomProperties["FinishItemCount"];
-                if (val > maxCount) maxCount = val;
-            }
-        }
-
-        finishItemCount = maxCount;
-        Debug.Log($"[Sync] 최종 확정된 finishItemCount = {finishItemCount}");
-
-        // UI 갱신
-        UpdateFinishItemUI();
-
-        // 모든 클라이언트에 확정된 값 전송
-        photonView.RPC("UpdateFinishItemUI_RPC", RpcTarget.AllBuffered, finishItemCount);
-
-    }
-
-    // 로컬 저장된 아이템 개수를 불러오는 함수
-    public void LoadFinishItemCount()
-    {
-        // 만약 저장된 값이 없다면 기본값 0을 반환함
-        finishItemCount = PlayerPrefs.GetInt(FinishItemKey, 0);
-    }
-
-    // 아이템 수치를 초기화하는 함수 (버튼이나 디버그 용도)
-    public void ResetFinishItemData()
-    {
-
-        // PlayerPrefs에서 해당 키 제거
-        PlayerPrefs.DeleteKey(FinishItemKey);
-
-        // 메모리 상의 수치도 0으로 초기화
-        finishItemCount = 0;
-
-        // UI 반영
-        UpdateFinishItemUI();
-        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered, finishItemCount);
-    }
-
-    // UI에 Finish 아이템 수치를 업데이트하는 함수
-
-
-    public void UpdateFinishItemUI()
-    {
-
-        // 텍스트 컴포넌트가 정상 연결되어 있으면 숫자를 표시함
-        if (finishItemText != null)
-            finishItemText.text = finishItemCount.ToString();
-    }
-
-    // Finish 아이템을 하나 먹었을 때 호출하는 함수
-    public void AddFinishItem()
-    {
-
-        // 수치 1 증가
-        finishItemCount++;
-
-        // PlayerPrefs에 저장 (로컬 디스크에 저장됨)
-        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
-        PlayerPrefs.Save(); // 강제로 저장
-
-        // UI 업데이트
-        UpdateFinishItemUI();
-        //photonView.RPC("UpdateFinishItemUI",RpcTarget.AllBuffered,finishItemCount);
-
-        finishItemCount++;
-        PlayerPrefs.SetInt(FinishItemKey, finishItemCount);
-        PlayerPrefs.Save();
-
-        // 내 커스텀 프로퍼티 갱신
-        var hash = new ExitGames.Client.Photon.Hashtable();
-        hash["FinishItemCount"] = finishItemCount;
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
-
-        UpdateFinishItemUI();
-
-
-    }
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
-    {
-        if (changedProps.ContainsKey("FinishItemCount"))
-        {
-            
-            SyncWithMaxValue();
-            
-        }
-    }*/
-
 private const string K_SelectedIndex = "selectedIndex";
 
     public void SpawnPlayer(int player_index)
@@ -292,56 +198,6 @@ private const string K_SelectedIndex = "selectedIndex";
         GameObject playerObject = PhotonNetwork.Instantiate(prefabName, spawnPositions[player_index], Quaternion.identity);
         player = playerObject.GetComponent<PlayerMove>();
     
-        // 기존 코드 전체 주석 - 10.08 수정
-        // int selectedIndex = (player_index == 0) ? CharacterSelectionData.player1SelectedIndex : CharacterSelectionData.player2SelectedIndex;
-        // string prefabName;
-        // switch (selectedIndex)
-        // {
-        //     case 0:
-        //         prefabName = "Player";
-        //         break;
-        //     case 1:
-        //         prefabName = "Player Z-2";
-        //         break;
-        //     case 2:
-        //         prefabName = "Player X-1";
-        //         break;
-        //     case 3:
-        //         prefabName = "Player X-2";
-        //         break;
-        //     default:
-        //         prefabName = "Player"; // 기본값 설정
-        //         break;
-        // }
-        // Debug.Log($"Selected prefabName: {prefabName} for player_index: {player_index}");
-        // var spawnPositions = new Vector3[]
-        // {
-        // new Vector3(-1.0f, -0.5f, 0.0f),
-        // new Vector3(0.0f, -0.5f, 0.0f)
-        // };
-        // GameObject playerObject = PhotonNetwork.Instantiate(prefabName, spawnPositions[player_index], Quaternion.identity);
-        // player = playerObject.GetComponent<PlayerMove>();
-        // //"PlayerPrefab"이라는 오브젝트 스폰포지션에 생성. 
-        // //유니티에는 생성자(instantiate)와 파괴자(destroy)가 존재. 오브젝트 생성시 사용. 
-        // //GameObject obj = Resources.Load<GameObject>("PlayerPrefab");
-        // //Instantiate(obj, spawnPosition, Quaternion.identity);
-        // //위의 두 줄이 의미하는 게 포톤에서는 PhotonNetwork.Instantiate~~저걸로 리소스에서 "PlayerPrefab"이라는 이름의 프리팹 가져옴.
-
-        // Debug.Log("SpawnPlayer 시작");  // 이게 안 뜨면 함수가 아예 호출 안 됨
-        // if (playerObject == null)
-        // {
-        //     Debug.LogError("플레이어 객체 생성 실패!");
-        //     return;
-        // }
-
-        // Debug.Log("플레이어 생성 완료");
-
-        // // Camera 세팅
-        // if (Camera.main == null)
-        // {
-        //     Debug.LogError("Main Camera가 없습니다.");
-        //     return;
-        // }
     }
 
     private string ResolvePrefabNameBySelectedIndex(int selectedIndex)
@@ -438,7 +294,7 @@ private const string K_SelectedIndex = "selectedIndex";
     }
     private IEnumerator ResetHealthProcessingDelay()
     {
-        yield return new WaitForSeconds(0.5f); // ✅ 0.5초 동안 추가 감지 무시
+        yield return new WaitForSeconds(0.5f); // 0.5초 동안 추가 감지 무시
         isHealthProcessing = false;
     }
 

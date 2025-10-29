@@ -26,21 +26,16 @@ public class AccessGate : MonoBehaviour
         {
             if (!player.hasAccessPass)
             {
-                Debug.Log("❌ AccessPass 아이템이 없습니다.");
+                Debug.Log("AccessPass 아이템이 없습니다.");
                 return;
             }
 
-            // if (GameManager.Instance == null)
-            // {
-            //     Debug.LogError("GameManager.Instance가 null입니다! AccessGate에서 참조 실패");
-            //     return;
-            // }
 
 
             if (gameManager.stagePoint >= requiredScore)
             {
                 gameManager.stagePoint -= requiredScore;
-                Debug.Log($"✅ {requiredScore}점 차감 후 통과. 남은 점수: {gameManager.stagePoint}");
+                Debug.Log($"{requiredScore}점 차감 후 통과. 남은 점수: {gameManager.stagePoint}");
 
                 col.enabled = false;
                 // 오브젝트 전체 비활성화
@@ -48,7 +43,7 @@ public class AccessGate : MonoBehaviour
             }
             else
             {
-                Debug.Log($"❌ 점수 부족 ({gameManager.stagePoint} / 필요: {requiredScore})");
+                Debug.Log($"점수 부족 ({gameManager.stagePoint} / 필요: {requiredScore})");
             }
         }
     }

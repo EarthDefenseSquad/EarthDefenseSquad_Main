@@ -28,13 +28,13 @@ public class NPCInteraction : MonoBehaviourPun
             int required = 3;
             if (collected >= required)
             {
-                Debug.Log("🎉 Good Ending으로 이동");
+                Debug.Log("Good Ending으로 이동");
                 //SceneManager.LoadScene(goodEndingScene);
                 photonView.RPC("GoTotheEndingScene", RpcTarget.All, "GoodEnding");
             }
             else
             {
-                Debug.Log("💀 Bad Ending으로 이동");
+                Debug.Log("Bad Ending으로 이동");
                 //SceneManager.LoadScene(badEndingScene);
                 photonView.RPC("GoTotheEndingScene", RpcTarget.All, "BadEnding");
             }
